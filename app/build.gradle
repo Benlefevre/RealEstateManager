@@ -32,6 +32,9 @@ dependencies {
     implementation 'com.jakewharton:butterknife:10.1.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
 
+//    EasyPermissions
+    implementation 'pub.devrel:easypermissions:3.0.0'
+
 //    Material Design
     implementation 'com.google.android.material:material:1.1.0-alpha09'
 

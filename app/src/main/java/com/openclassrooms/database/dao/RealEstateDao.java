@@ -8,8 +8,13 @@ import androidx.room.Update;
 
 import com.openclassrooms.models.RealEstate;
 
+import java.util.List;
+
 @Dao
 public interface RealEstateDao {
+
+    @Query("SELECT * FROM RealEstate")
+    LiveData<List<RealEstate>> getAllRealEstate();
 
     @Query("SELECT * FROM RealEstate WHERE mId = :mId")
     LiveData<RealEstate> getRealEstate(long mId);
