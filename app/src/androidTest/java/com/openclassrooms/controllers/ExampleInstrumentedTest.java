@@ -1,4 +1,4 @@
-package com.openclassrooms.realestatemanager;
+package com.openclassrooms.controllers;
 
 import android.content.Context;
 import androidx.test.InstrumentationRegistry;

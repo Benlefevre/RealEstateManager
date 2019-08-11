@@ -1,7 +1,9 @@
-package com.openclassrooms.realestatemanager;
+package com.openclassrooms.controllers.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.openclassrooms.controllers.R;
 
 public class SecondActivity extends AppCompatActivity {
 

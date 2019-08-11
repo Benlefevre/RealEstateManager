@@ -23,7 +23,7 @@ public abstract class RealEstateDatabase extends RoomDatabase {
 
     private static volatile RealEstateDatabase INSTANCE;
 
-    public abstract RealEstateDao mPropertyDao();
+    public abstract RealEstateDao mRealEstateDao();
 
     public static RealEstateDatabase getInstance(Context context){
         if (INSTANCE == null){
@@ -62,8 +62,12 @@ public abstract class RealEstateDatabase extends RoomDatabase {
                 contentValues.put("mCity", "Kansas City");
                 contentValues.put("mStatus", "For sale");
                 contentValues.put("mInitialSale", String.valueOf(date));
-
-                db.insert("Property", OnConflictStrategy.IGNORE, contentValues);
+                contentValues.put("mFinalSale", "");
+                contentValues.put("mRealEstateAgent", "Lefèvre Benoit");
+                contentValues.put("mYearConstruction", "");
+                contentValues.put("mFloors", 3);
+                contentValues.put("mCoOwnership", true);
+                db.insert("RealEstate", OnConflictStrategy.IGNORE, contentValues);
             }
         };
     }

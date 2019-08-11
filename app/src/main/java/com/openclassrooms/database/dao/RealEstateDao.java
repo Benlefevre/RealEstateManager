@@ -12,11 +12,11 @@ import com.openclassrooms.models.RealEstate;
 public interface RealEstateDao {
 
     @Query("SELECT * FROM RealEstate WHERE mId = :mId")
-    LiveData<RealEstate> getProperties(long mId);
+    LiveData<RealEstate> getRealEstate(long mId);
 
     @Insert
-    long insertProperty(RealEstate realEstate);
+    long insertRealEstate(RealEstate realEstate);
 
     @Update
-    int updateProperty(RealEstate realEstate);
+    int updateRealEstate(RealEstate realEstate);
 }
