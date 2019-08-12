@@ -1,4 +1,4 @@
-package com.openclassrooms.database;
+package com.openclassrooms.data.database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -11,13 +11,14 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import com.openclassrooms.database.dao.RealEstateDao;
-import com.openclassrooms.models.RealEstate;
+import com.openclassrooms.data.dao.RealEstateDao;
+import com.openclassrooms.data.entities.RealEstate;
+import com.openclassrooms.data.entities.RealEstatePictures;
 import com.openclassrooms.utils.Converters;
 
 import java.util.Date;
 
-@Database(entities = {RealEstate.class}, version = 1, exportSchema = false)
+@Database(entities = {RealEstate.class, RealEstatePictures.class}, version = 1, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class RealEstateDatabase extends RoomDatabase {
 
@@ -68,6 +69,12 @@ public abstract class RealEstateDatabase extends RoomDatabase {
                 contentValues.put("mFloors", 3);
                 contentValues.put("mCoOwnership", true);
                 db.insert("RealEstate", OnConflictStrategy.IGNORE, contentValues);
+
+                contentValues = new ContentValues();
+                contentValues.put("mUri", "content://media/external/images/media/163");
+                contentValues.put("mRealEstateId",1);
+
+                db.insert("RealEstatePictures", OnConflictStrategy.IGNORE, contentValues);
             }
         };
     }

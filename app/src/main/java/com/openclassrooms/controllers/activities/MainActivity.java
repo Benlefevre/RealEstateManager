@@ -19,7 +19,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.openclassrooms.controllers.R;
 import com.openclassrooms.injections.Injection;
 import com.openclassrooms.injections.ViewModelFactory;
-import com.openclassrooms.models.RealEstate;
+import com.openclassrooms.data.entities.RealEstate;
 import com.openclassrooms.utils.Utils;
 import com.openclassrooms.viewmodel.RealEstateViewModel;
 
@@ -126,8 +126,8 @@ public class MainActivity extends AppCompatActivity {
     public void onViewClicked() {
         String[] perms = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         if (EasyPermissions.hasPermissions(this, perms)) {
-                openCamera();
-//            pickImageFromGallery();
+//                openCamera();
+            pickImageFromGallery();
         } else {
             EasyPermissions.requestPermissions(this, "We need this permissions to access to the camera and save your pictures.",
                     RC_CAMERA_AND_WRITE_EXTERNAL_STORAGE, perms);
@@ -145,10 +145,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == IMAGE_CAPTURE_CODE) {
-            Log.i("info", image_uri.toString() + image_uri.getPath());
+            Log.i("info", image_uri.toString());
             mImageView.setImageURI(image_uri);
         } else if (resultCode == RESULT_OK && requestCode == IMAGE_PICK_CODE) {
-            Log.i("info", "onActivityResult:" + data.getData().getPath());
+            Log.i("info", String.valueOf(data.getData()));
             mImageView.setImageURI(data.getData());
         }
     }

@@ -1,5 +1,7 @@
 package com.openclassrooms.utils;
 
+import android.net.Uri;
+
 import androidx.room.TypeConverter;
 
 import java.util.Date;
@@ -13,5 +15,15 @@ public class Converters {
     @TypeConverter
     public static Long dateToTimestamp(Date date) {
         return date == null ? null : date.getTime();
+    }
+
+    @TypeConverter
+    public static Uri fromString(String value){
+        return value == null ? null : Uri.parse(value);
+    }
+
+    @TypeConverter
+    public static String fromUri(Uri value){
+        return value.toString();
     }
 }

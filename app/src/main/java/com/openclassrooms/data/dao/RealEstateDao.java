@@ -1,4 +1,4 @@
-package com.openclassrooms.database.dao;
+package com.openclassrooms.data.dao;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -6,7 +6,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.openclassrooms.models.RealEstate;
+import com.openclassrooms.data.entities.RealEstate;
 
 import java.util.List;
 

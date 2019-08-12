@@ -1,4 +1,4 @@
-package com.openclassrooms.models;
+package com.openclassrooms.data.entities;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;

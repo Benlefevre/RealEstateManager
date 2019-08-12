@@ -2,8 +2,8 @@ package com.openclassrooms.repositories;
 
 import androidx.lifecycle.LiveData;
 
-import com.openclassrooms.database.dao.RealEstateDao;
-import com.openclassrooms.models.RealEstate;
+import com.openclassrooms.data.dao.RealEstateDao;
+import com.openclassrooms.data.entities.RealEstate;
 
 public class RealEstateDataRepository {
 

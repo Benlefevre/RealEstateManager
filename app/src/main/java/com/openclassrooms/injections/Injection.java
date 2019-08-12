@@ -2,7 +2,7 @@ package com.openclassrooms.injections;
 
 import android.content.Context;
 
-import com.openclassrooms.database.RealEstateDatabase;
+import com.openclassrooms.data.database.RealEstateDatabase;
 import com.openclassrooms.repositories.RealEstateDataRepository;
 
 import java.util.concurrent.Executor;

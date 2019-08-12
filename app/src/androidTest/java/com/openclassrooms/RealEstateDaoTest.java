@@ -1,12 +1,12 @@
-package com.openclassrooms.controllers;
+package com.openclassrooms;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.room.Room;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.openclassrooms.database.RealEstateDatabase;
-import com.openclassrooms.models.RealEstate;
+import com.openclassrooms.data.database.RealEstateDatabase;
+import com.openclassrooms.data.entities.RealEstate;
 import com.openclassrooms.utils.LiveDataTestUtil;
 
 import org.junit.After;

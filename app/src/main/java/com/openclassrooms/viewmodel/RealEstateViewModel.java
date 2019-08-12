@@ -3,7 +3,7 @@ package com.openclassrooms.viewmodel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.openclassrooms.models.RealEstate;
+import com.openclassrooms.data.entities.RealEstate;
 import com.openclassrooms.repositories.RealEstateDataRepository;
 
 import java.util.concurrent.Executor;
