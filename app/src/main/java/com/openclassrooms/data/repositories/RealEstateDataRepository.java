@@ -1,9 +1,11 @@
-package com.openclassrooms.repositories;
+package com.openclassrooms.data.repositories;
 
 import androidx.lifecycle.LiveData;
 
 import com.openclassrooms.data.dao.RealEstateDao;
 import com.openclassrooms.data.entities.RealEstate;
+
+import java.util.List;
 
 public class RealEstateDataRepository {
 
@@ -17,6 +19,11 @@ public class RealEstateDataRepository {
 //    Get
     public LiveData<RealEstate> getRealEstate(long realEstateId){
         return mRealEstateDao.getRealEstate(realEstateId);
+    }
+
+//    Get
+    public LiveData<List<RealEstate>> getAllRealEstate(){
+        return mRealEstateDao.getAllRealEstate();
     }
 
 //    Create

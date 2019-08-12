@@ -10,16 +10,16 @@ import androidx.room.PrimaryKey;
         parentColumns = "mId",
         childColumns = "mRealEstateId"))
 
-public class RealEstatePictures {
+public class Pictures {
 
     @PrimaryKey(autoGenerate = true)
     private long mId;
     private Uri mUri;
     private long mRealEstateId;
 
-    public RealEstatePictures(){}
+    public Pictures(){}
 
-    public RealEstatePictures(Uri uri, long realEstateId){
+    public Pictures(Uri uri, long realEstateId){
         mUri = uri;
         mRealEstateId = realEstateId;
     }

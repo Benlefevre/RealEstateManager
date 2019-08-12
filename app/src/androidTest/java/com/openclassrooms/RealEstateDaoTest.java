@@ -32,7 +32,7 @@ public class RealEstateDaoTest {
     public InstantTaskExecutorRule mInstantTaskExecutorRule = new InstantTaskExecutorRule();
 
     @Before
-    public void initDb() throws Exception{
+    public void initDb() {
         mRealEstateDatabase = Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getInstrumentation().getContext(),
                 RealEstateDatabase.class)
                 .allowMainThreadQueries()
@@ -40,7 +40,7 @@ public class RealEstateDaoTest {
     }
 
     @After
-    public void closeDb() throws Exception{
+    public void closeDb() {
         mRealEstateDatabase.close();
     }
 

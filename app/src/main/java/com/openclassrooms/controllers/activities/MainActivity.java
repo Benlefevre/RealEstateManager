@@ -17,11 +17,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.openclassrooms.controllers.R;
+import com.openclassrooms.data.entities.Pictures;
 import com.openclassrooms.injections.Injection;
 import com.openclassrooms.injections.ViewModelFactory;
 import com.openclassrooms.data.entities.RealEstate;
-import com.openclassrooms.utils.Utils;
 import com.openclassrooms.viewmodel.RealEstateViewModel;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,11 +37,6 @@ import static com.openclassrooms.utils.Constants.RC_CAMERA_AND_WRITE_EXTERNAL_ST
 
 public class MainActivity extends AppCompatActivity {
 
-
-    @BindView(R.id.activity_main_activity_text_view_main)
-    TextView textViewMain;
-    @BindView(R.id.activity_main_activity_text_view_quantity)
-    TextView textViewQuantity;
     @BindView(R.id.ID)
     TextView mId;
     @BindView(R.id.address)
@@ -67,23 +64,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        this.configureTextViewMain();
-        this.configureTextViewQuantity();
         configureViewModel();
         getRealEstate(1);
-    }
 
-    private void configureTextViewMain() {
-        this.textViewMain.setTextSize(15);
-        this.textViewMain.setText("Le premier bien immobilier enregistré vaut ");
     }
-
-    private void configureTextViewQuantity() {
-        int quantity = Utils.convertDollarToEuro(100);
-        this.textViewQuantity.setTextSize(20);
-        this.textViewQuantity.setText("" + quantity);
-    }
-
 
     //    Configuring ViewModel
     private void configureViewModel() {
@@ -91,8 +75,17 @@ public class MainActivity extends AppCompatActivity {
         mRealEstateViewModel = ViewModelProviders.of(this, viewModelFactory).get(RealEstateViewModel.class);
     }
 
+    private void getAllRealEstate(){
+//        mRealEstateViewModel.getAllRealEstate().observe(this,this:: .....);
+//TODO créer une fonction une fois la recycler view implémentée qui sera ajoutée à .observe.
+    }
+
     private void getRealEstate(long id) {
-        mRealEstateViewModel.getRealEstate(id).observe(this, this::configureTest);
+        mRealEstateViewModel.getRealEstate(id).observe(this, realEstate -> configureTest(realEstate));
+    }
+
+    private void getPictures(long id){
+        mRealEstateViewModel.getPictures(id).observe(this, pictures -> configureImageView(pictures));
     }
 
     private void configureTest(RealEstate realEstate) {
@@ -104,6 +97,13 @@ public class MainActivity extends AppCompatActivity {
         mNbBathroom.setText(realEstate.getNbBathrooms() + "");
     }
 
+    private void configureImageView(List<Pictures> pictures){
+        mImageView.setImageURI(pictures.get(0).getUri());
+    }
+
+    /**
+     * Opens the device's camera to take a picture and fetch the file's path
+     */
     private void openCamera() {
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, "New Picture");
@@ -115,6 +115,9 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE);
     }
 
+    /**
+     * Opens an App to pick a picture and fetch the file's path
+     */
     private void pickImageFromGallery() {
         Intent intentGallery = new Intent(Intent.ACTION_PICK);
         intentGallery.setType("image/*");
@@ -126,8 +129,9 @@ public class MainActivity extends AppCompatActivity {
     public void onViewClicked() {
         String[] perms = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         if (EasyPermissions.hasPermissions(this, perms)) {
-//                openCamera();
-            pickImageFromGallery();
+                openCamera();
+//            pickImageFromGallery();
+//            getPictures(1);
         } else {
             EasyPermissions.requestPermissions(this, "We need this permissions to access to the camera and save your pictures.",
                     RC_CAMERA_AND_WRITE_EXTERNAL_STORAGE, perms);

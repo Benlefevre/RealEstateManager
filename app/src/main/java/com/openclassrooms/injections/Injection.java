@@ -3,7 +3,8 @@ package com.openclassrooms.injections;
 import android.content.Context;
 
 import com.openclassrooms.data.database.RealEstateDatabase;
-import com.openclassrooms.repositories.RealEstateDataRepository;
+import com.openclassrooms.data.repositories.RealEstateDataRepository;
+import com.openclassrooms.data.repositories.PicturesDataRepository;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -15,13 +16,19 @@ public class Injection {
         return new RealEstateDataRepository(realEstateDatabase.mRealEstateDao());
     }
 
+    public static PicturesDataRepository providePicturesDataSource(Context context){
+        RealEstateDatabase realEstateDatabase = RealEstateDatabase.getInstance(context);
+        return new PicturesDataRepository(realEstateDatabase.mRealEstatePicturesDao());
+    }
+
     public static Executor providerExcutor(){
         return Executors.newSingleThreadExecutor();
     }
 
     public static ViewModelFactory providerViewModelFactory(Context context){
         RealEstateDataRepository realEstateDataRepository = provideRealEstateDataSource(context);
+        PicturesDataRepository picturesDataRepository = providePicturesDataSource(context);
         Executor executor = providerExcutor();
-        return new ViewModelFactory(realEstateDataRepository,executor);
+        return new ViewModelFactory(realEstateDataRepository,executor, picturesDataRepository);
     }
 }

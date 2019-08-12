@@ -11,20 +11,22 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.openclassrooms.data.dao.PicturesDao;
 import com.openclassrooms.data.dao.RealEstateDao;
 import com.openclassrooms.data.entities.RealEstate;
-import com.openclassrooms.data.entities.RealEstatePictures;
+import com.openclassrooms.data.entities.Pictures;
 import com.openclassrooms.utils.Converters;
 
 import java.util.Date;
 
-@Database(entities = {RealEstate.class, RealEstatePictures.class}, version = 1, exportSchema = false)
+@Database(entities = {RealEstate.class, Pictures.class}, version = 1, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class RealEstateDatabase extends RoomDatabase {
 
     private static volatile RealEstateDatabase INSTANCE;
 
     public abstract RealEstateDao mRealEstateDao();
+    public abstract PicturesDao mRealEstatePicturesDao();
 
     public static RealEstateDatabase getInstance(Context context){
         if (INSTANCE == null){
@@ -74,7 +76,7 @@ public abstract class RealEstateDatabase extends RoomDatabase {
                 contentValues.put("mUri", "content://media/external/images/media/163");
                 contentValues.put("mRealEstateId",1);
 
-                db.insert("RealEstatePictures", OnConflictStrategy.IGNORE, contentValues);
+                db.insert("Pictures", OnConflictStrategy.IGNORE, contentValues);
             }
         };
     }
