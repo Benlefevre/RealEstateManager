@@ -8,7 +8,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.openclassrooms.realestatemanager.controllers.R;
+import com.openclassrooms.realestatemanager.data.entities.Pictures;
 import com.openclassrooms.realestatemanager.data.entities.RealEstate;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,7 +32,11 @@ public class RealEstateViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this,itemView);
     }
 
-    public void updateUI(RealEstate realEstate){
+    public void updateUI(RealEstate realEstate, List<Pictures> pictures){
+        for (Pictures pictures1 : pictures){
+            if (pictures1.getRealEstateId() == realEstate.getId())
+                mImageView.setImageURI(pictures1.getUri());
+        }
         mTypeProperty.setText(realEstate.getTypeProperty());
         mCity.setText(realEstate.getCity());
         mPrice.setText(String.valueOf(realEstate.getPrice()));

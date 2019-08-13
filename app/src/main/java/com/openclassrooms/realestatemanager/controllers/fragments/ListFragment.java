@@ -10,11 +10,13 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.openclassrooms.realestatemanager.adapters.RealEstateAdapter;
 import com.openclassrooms.realestatemanager.controllers.R;
+import com.openclassrooms.realestatemanager.data.entities.Pictures;
 import com.openclassrooms.realestatemanager.data.entities.RealEstate;
 import com.openclassrooms.realestatemanager.injections.Injection;
 import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
@@ -40,6 +42,7 @@ public class ListFragment extends Fragment {
 
     private RealEstateViewModel mRealEstateViewModel;
     private List<RealEstate> mRealEstates;
+    private List<Pictures> mPictures;
 
 
     private OnFragmentInteractionListener mListener;
@@ -80,10 +83,10 @@ public class ListFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_list, container, false);
         ButterKnife.bind(this, view);
+        mPictures = new ArrayList<>();
         Log.i("info", "onCreateView: fragment créé");
         configureViewModel();
         getAllRealEstate();
-//        configureRecyclerView();
         return view;
     }
 
@@ -94,26 +97,39 @@ public class ListFragment extends Fragment {
         mRealEstateViewModel = ViewModelProviders.of(this, viewModelFactory).get(RealEstateViewModel.class);
     }
 
+//    Récupération de l'ensemble des biens
     private void getAllRealEstate(){
         mRealEstateViewModel.getAllRealEstate().observe(this, realEstates -> initList(realEstates));
     }
 
-    private void initList(List<RealEstate> realEstates){
-        for (RealEstate realEstate : realEstates){
-            Log.i("info", "initList: " + realEstate.toString());
-        }
-        mRealEstates = new ArrayList<>();
-        mRealEstates.addAll(realEstates);
-        for (RealEstate realEstate : mRealEstates){
-            Log.i("info", "initList: " + realEstate.toString());
+//    Récupération d'une photo pour la liste
+    private void getPictures(long realEstateId){
+        mRealEstateViewModel.getOnePicture(realEstateId).observe(this,this::initPictures);
+    }
+
+    private void initPictures(Pictures pictures){
+        mPictures.add(pictures);
+        for (Pictures pictures1 : mPictures){
+            Log.i("info", "initPictures: " + pictures1.toString());
         }
         configureRecyclerView();
     }
 
 
+    private void initList(List<RealEstate> realEstates){
+        mRealEstates = realEstates;
+        for (RealEstate realEstate : mRealEstates){
+            Log.i("info", "initList: " + realEstate.toString());
+            getPictures(realEstate.getId());
+        }
+    }
+
+
     private void configureRecyclerView(){
-        RealEstateAdapter realEstateAdapter = new RealEstateAdapter(mRealEstates);
+        RealEstateAdapter realEstateAdapter = new RealEstateAdapter(mRealEstates,mPictures);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getActivity(), linearLayoutManager.getOrientation());
+        mRecyclerView.addItemDecoration(dividerItemDecoration);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(realEstateAdapter);

@@ -15,6 +15,9 @@ public interface PicturesDao {
     @Query("SELECT * FROM Pictures WHERE mRealEstateId = :realEstateId")
     LiveData<List<Pictures>> getPictures(long realEstateId);
 
+    @Query("SELECT * FROM Pictures WHERE mRealEstateId = :realEstateId LIMIT 1")
+    LiveData<Pictures> getOnePicture(long realEstateId);
+
     @Insert
     long insertPicture(Pictures pictures);
 

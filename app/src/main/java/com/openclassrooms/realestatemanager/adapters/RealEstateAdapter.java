@@ -1,7 +1,6 @@
 package com.openclassrooms.realestatemanager.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.openclassrooms.realestatemanager.controllers.R;
+import com.openclassrooms.realestatemanager.data.entities.Pictures;
 import com.openclassrooms.realestatemanager.data.entities.RealEstate;
 import com.openclassrooms.realestatemanager.viewholder.RealEstateViewHolder;
 
@@ -18,10 +18,12 @@ import java.util.List;
 public class RealEstateAdapter extends RecyclerView.Adapter<RealEstateViewHolder> {
 
     private List<RealEstate> mRealEstates;
+    private List<Pictures> mPictures;
 
 
-    public RealEstateAdapter(List<RealEstate> realEstates) {
+    public RealEstateAdapter(List<RealEstate> realEstates, List<Pictures> pictures) {
         mRealEstates = realEstates;
+        mPictures = pictures;
     }
 
     @NonNull
@@ -34,7 +36,7 @@ public class RealEstateAdapter extends RecyclerView.Adapter<RealEstateViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull RealEstateViewHolder holder, int position) {
-        holder.updateUI(mRealEstates.get(position));
+        holder.updateUI(mRealEstates.get(position),mPictures);
     }
 
     @Override

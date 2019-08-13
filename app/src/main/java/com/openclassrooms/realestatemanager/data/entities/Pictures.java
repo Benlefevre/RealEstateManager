@@ -6,8 +6,6 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-import com.openclassrooms.realestatemanager.controllers.R;
-
 @Entity(foreignKeys = @ForeignKey(entity = RealEstate.class,
         parentColumns = "mId",
         childColumns = "mRealEstateId"))

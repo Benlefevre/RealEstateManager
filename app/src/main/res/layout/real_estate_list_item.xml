@@ -7,10 +7,9 @@
 
     <ImageView
         android:id="@+id/item_photo_img"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:scaleType="fitXY"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -18,21 +17,21 @@
         android:id="@+id/item_type_property_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:text="TextView"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
         app:layout_constraintBottom_toTopOf="@+id/item_city_txt"
-        app:layout_constraintStart_toEndOf="@+id/item_photo_img"
+        app:layout_constraintStart_toStartOf="@+id/item_city_txt"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/item_city_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:text="TextView"
         android:textAppearance="@android:style/TextAppearance.Material.Body2"
         app:layout_constraintBottom_toTopOf="@+id/item_price_txt"
-        app:layout_constraintStart_toStartOf="@+id/item_type_property_txt"
+        app:layout_constraintStart_toEndOf="@+id/item_photo_img"
         app:layout_constraintTop_toBottomOf="@+id/item_type_property_txt" />
 
     <TextView
@@ -41,7 +40,7 @@
         android:layout_height="wrap_content"
         android:text="TextView"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-        app:layout_constraintBottom_toBottomOf="@+id/item_photo_img"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/item_city_txt"
         app:layout_constraintTop_toBottomOf="@+id/item_city_txt" />
 

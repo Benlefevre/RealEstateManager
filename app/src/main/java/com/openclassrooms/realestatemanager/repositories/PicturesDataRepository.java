@@ -20,6 +20,11 @@ public class PicturesDataRepository {
         return mPicturesDao.getPictures(realEstateId);
     }
 
+//    Get
+    public LiveData<Pictures> getOnePicture(long realEstateId){
+        return mPicturesDao.getOnePicture(realEstateId);
+    }
+
 //    Create
     public void createRealEstatePicture(Pictures pictures){
         mPicturesDao.insertPicture(pictures);

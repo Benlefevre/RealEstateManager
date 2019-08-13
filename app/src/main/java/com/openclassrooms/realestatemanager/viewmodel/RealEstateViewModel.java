@@ -1,5 +1,7 @@
 package com.openclassrooms.realestatemanager.viewmodel;
 
+import android.graphics.Picture;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -36,5 +38,9 @@ public class RealEstateViewModel extends ViewModel {
 
     public LiveData<List<Pictures>> getPictures(long realEstateId){
         return mPicturesDataRepository.getPictures(realEstateId);
+    }
+
+    public LiveData<Pictures> getOnePicture(long realEstateId){
+        return mPicturesDataRepository.getOnePicture(realEstateId);
     }
 }
