@@ -7,10 +7,19 @@
     tools:context="com.openclassrooms.realestatemanager.controllers.activities.MainActivity"
     android:gravity="center">
 
+    <include
+        android:id="@+id/activity_main_toolbar"
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <FrameLayout
         android:id="@+id/activity_main_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_main_toolbar" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

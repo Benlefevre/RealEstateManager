@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".controllers.fragments.DetailsFragment">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/fragment_details_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/fragment_details_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/description"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_details_recyclerview" />
+
+    <TextView
+        android:id="@+id/fragment_details_desc_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/real_estate_s_description"
+        app:layout_constraintStart_toStartOf="@+id/fragment_details_description"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_details_description" />
+
+    <TextView
+        android:id="@+id/fragment_details_surface"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:drawableStart="@drawable/ic_area"
+        android:drawablePadding="8dp"
+        android:text="@string/surface"
+        app:layout_constraintStart_toStartOf="@+id/fragment_details_desc_txt"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_details_desc_txt" />
+
+    <TextView
+        android:id="@+id/fragment_details_surface_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:paddingStart="8dp"
+        android:text="@string/surface"
+        app:layout_constraintStart_toStartOf="@+id/fragment_details_surface"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_details_surface" />
+
+    <TextView
+        android:id="@+id/fragment_details_rooms"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:drawableStart="@drawable/ic_plan"
+        android:drawablePadding="8dp"
+        android:text="@string/number_of_rooms"
+        app:layout_constraintStart_toStartOf="@+id/fragment_details_surface_txt"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_details_surface_txt" />
+
+    <TextView
+        android:id="@+id/fragment_details_rooms_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:paddingStart="8dp"
+        android:text="@string/number_of_rooms"
+        app:layout_constraintStart_toStartOf="@+id/fragment_details_rooms"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_details_rooms" />
+
+    <TextView
+        android:id="@+id/fragment_details_bedrooms"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:drawableStart="@drawable/ic_bedroom"
+        android:drawablePadding="8dp"
+        android:text="@string/number_of_bedrooms"
+        app:layout_constraintStart_toStartOf="@+id/fragment_details_rooms_txt"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_details_rooms_txt" />
+
+    <TextView
+        android:id="@+id/fragment_details_bedrooms_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:paddingStart="8dp"
+        android:text="@string/number_of_bedrooms"
+        app:layout_constraintStart_toStartOf="@+id/fragment_details_bedrooms"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_details_bedrooms" />
+
+    <TextView
+        android:id="@+id/fragment_details_bathroom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:drawableStart="@drawable/ic_bathroom"
+        android:drawablePadding="8dp"
+        android:text="@string/number_of_bathrooms"
+        app:layout_constraintStart_toStartOf="@+id/fragment_details_bedrooms_txt"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_details_bedrooms_txt" />
+
+    <TextView
+        android:id="@+id/fragment_details_bathroom_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:paddingStart="8dp"
+        android:text="@string/number_of_bathrooms"
+        app:layout_constraintStart_toStartOf="@+id/fragment_details_bathroom"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_details_bathroom" />
+
+    <TextView
+        android:id="@+id/fragment_details_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:drawableStart="@drawable/ic_location"
+        android:drawablePadding="8dp"
+        android:text="@string/location"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_details_desc_txt" />
+
+    <TextView
+        android:id="@+id/fragment_details_location_txt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/location"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/fragment_details_location"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_details_location" />
+
+    <TextView
+        android:id="@+id/fragment_details_floors"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:drawableStart="@drawable/ic_floors"
+        android:drawablePadding="8dp"
+        android:text="@string/number_of_floors"
+        app:layout_constraintStart_toStartOf="@+id/fragment_details_bathroom_txt"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_details_bathroom_txt" />
+
+    <TextView
+        android:id="@+id/fragment_details_floors_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:paddingStart="8dp"
+        android:text="@string/number_of_floors"
+        app:layout_constraintStart_toStartOf="@+id/fragment_details_floors"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_details_floors" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

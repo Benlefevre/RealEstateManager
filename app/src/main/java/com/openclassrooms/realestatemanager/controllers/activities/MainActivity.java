@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.controllers.activities;
 
+import android.Manifest;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
@@ -8,7 +9,9 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -20,12 +23,17 @@ import com.openclassrooms.realestatemanager.viewmodel.RealEstateViewModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
 import static com.openclassrooms.realestatemanager.utils.Constants.IMAGE_CAPTURE_CODE;
 import static com.openclassrooms.realestatemanager.utils.Constants.IMAGE_PICK_CODE;
+import static com.openclassrooms.realestatemanager.utils.Constants.READ_AND_WRITE_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity {
 
+    @BindView(R.id.activity_main_toolbar)
+    Toolbar mToolbar;
     @BindView(R.id.activity_main_container)
     FrameLayout mContainer;
 
@@ -38,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        getPermissionsExternalStorage();
+        configureToolbar();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.activity_main_container,ListFragment.newInstance()).commit();
         Log.i("info", "onCreate: fragment ajouté");
@@ -45,6 +55,12 @@ public class MainActivity extends AppCompatActivity {
 //        getRealEstate(1);
 
     }
+
+    private void configureToolbar() {
+        mToolbar.setTitle("Real Estate Manager");
+        setSupportActionBar(mToolbar);
+    }
+
 
     //    Configuring ViewModel
     private void configureViewModel() {
@@ -95,8 +111,17 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intentGallery, IMAGE_PICK_CODE);
     }
 
+    @AfterPermissionGranted(READ_AND_WRITE_EXTERNAL_STORAGE)
+    private void getPermissionsExternalStorage(){
+        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        if (!EasyPermissions.hasPermissions(this, perms)) {
+            EasyPermissions.requestPermissions(this, "We need this permissions to access pictures saved in your device.",
+                    READ_AND_WRITE_EXTERNAL_STORAGE, perms);
+        }
+    }
+
 //    @OnClick(R.id.photo_btn)
-//    @AfterPermissionGranted(RC_CAMERA_AND_WRITE_EXTERNAL_STORAGE)
+//    @AfterPermissionGranted(READ_AND_WRITE_EXTERNAL_STORAGE)
 //    public void onViewClicked() {
 //        String[] perms = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 //        if (EasyPermissions.hasPermissions(this, perms)) {
@@ -105,16 +130,16 @@ public class MainActivity extends AppCompatActivity {
 //            getPictures(1);
 //        } else {
 //            EasyPermissions.requestPermissions(this, "We need this permissions to access to the camera and save your pictures.",
-//                    RC_CAMERA_AND_WRITE_EXTERNAL_STORAGE, perms);
+//                    READ_AND_WRITE_EXTERNAL_STORAGE, perms);
 //        }
 //    }
 
 
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-//    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
 //
 //    @Override
 //    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.controllers.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +21,7 @@ import com.openclassrooms.realestatemanager.data.entities.Pictures;
 import com.openclassrooms.realestatemanager.data.entities.RealEstate;
 import com.openclassrooms.realestatemanager.injections.Injection;
 import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
+import com.openclassrooms.realestatemanager.viewholder.RealEstateViewHolder;
 import com.openclassrooms.realestatemanager.viewmodel.RealEstateViewModel;
 
 import java.util.ArrayList;
@@ -84,7 +86,6 @@ public class ListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
         ButterKnife.bind(this, view);
         mPictures = new ArrayList<>();
-        Log.i("info", "onCreateView: fragment créé");
         configureViewModel();
         getAllRealEstate();
         return view;
@@ -104,7 +105,7 @@ public class ListFragment extends Fragment {
 
 //    Récupération d'une photo pour la liste
     private void getPictures(long realEstateId){
-        mRealEstateViewModel.getOnePicture(realEstateId).observe(this,this::initPictures);
+        mRealEstateViewModel.getOnePicture(realEstateId).observe(this, pictures -> initPictures(pictures));
     }
 
     private void initPictures(Pictures pictures){
@@ -127,6 +128,14 @@ public class ListFragment extends Fragment {
 
     private void configureRecyclerView(){
         RealEstateAdapter realEstateAdapter = new RealEstateAdapter(mRealEstates,mPictures);
+        realEstateAdapter.setOnItemClickListener(view -> {
+            RealEstateViewHolder holder = (RealEstateViewHolder) view.getTag();
+            int position = holder.getAdapterPosition();
+            long id = mRealEstates.get(position).getId();
+            getFragmentManager().beginTransaction().replace(R.id.activity_main_container,DetailsFragment.newInstance(id))
+                    .addToBackStack("Fragment")
+                    .commit();
+        });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getActivity(), linearLayoutManager.getOrientation());
         mRecyclerView.addItemDecoration(dividerItemDecoration);

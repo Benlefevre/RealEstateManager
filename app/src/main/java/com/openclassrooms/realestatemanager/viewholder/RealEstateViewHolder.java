@@ -30,6 +30,7 @@ public class RealEstateViewHolder extends RecyclerView.ViewHolder {
     public RealEstateViewHolder(@NonNull View itemView) {
         super(itemView);
         ButterKnife.bind(this,itemView);
+        itemView.setTag(this);
     }
 
     public void updateUI(RealEstate realEstate, List<Pictures> pictures){
