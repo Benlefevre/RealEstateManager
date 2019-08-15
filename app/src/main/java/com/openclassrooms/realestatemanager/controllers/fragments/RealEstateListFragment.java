@@ -1,8 +1,6 @@
 package com.openclassrooms.realestatemanager.controllers.fragments;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,7 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class ListFragment extends Fragment {
+public class RealEstateListFragment extends Fragment {
 
     @BindView(R.id.fragment_list_recycler_view)
     RecyclerView mRecyclerView;
@@ -49,22 +47,12 @@ public class ListFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public ListFragment() {
+    public RealEstateListFragment() {
         // Required empty public constructor
     }
 
-
-//    public static ListFragment newInstance(String param1, String param2) {
-//        ListFragment fragment = new ListFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
-
-    public static ListFragment newInstance() {
-        ListFragment fragment = new ListFragment();
+    public static RealEstateListFragment newInstance() {
+        RealEstateListFragment fragment = new RealEstateListFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -73,10 +61,6 @@ public class ListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-//            mParam2 = getArguments().getString(ARG_PARAM2);
-//        }
     }
 
     @Override
@@ -98,43 +82,41 @@ public class ListFragment extends Fragment {
         mRealEstateViewModel = ViewModelProviders.of(this, viewModelFactory).get(RealEstateViewModel.class);
     }
 
-//    Récupération de l'ensemble des biens
-    private void getAllRealEstate(){
-        mRealEstateViewModel.getAllRealEstate().observe(this, realEstates -> initList(realEstates));
+    //    Récupération de l'ensemble des biens
+    private void getAllRealEstate() {
+        mRealEstateViewModel.getAllRealEstate().observe(getViewLifecycleOwner(), realEstates -> initList(realEstates));
     }
 
-//    Récupération d'une photo pour la liste
-    private void getPictures(long realEstateId){
-        mRealEstateViewModel.getOnePicture(realEstateId).observe(this, pictures -> initPictures(pictures));
+    //    Récupération d'une photo pour la liste
+    private void getOnePicture(long realEstateId) {
+        mRealEstateViewModel.getOnePicture(realEstateId).observe(getViewLifecycleOwner(), pictures -> initPictures(pictures));
     }
 
-    private void initPictures(Pictures pictures){
+    private void initPictures(Pictures pictures) {
         mPictures.add(pictures);
-        for (Pictures pictures1 : mPictures){
+        for (Pictures pictures1 : mPictures) {
             Log.i("info", "initPictures: " + pictures1.toString());
         }
         configureRecyclerView();
     }
 
 
-    private void initList(List<RealEstate> realEstates){
+    private void initList(List<RealEstate> realEstates) {
         mRealEstates = realEstates;
-        for (RealEstate realEstate : mRealEstates){
+        for (RealEstate realEstate : mRealEstates) {
             Log.i("info", "initList: " + realEstate.toString());
-            getPictures(realEstate.getId());
+            getOnePicture(realEstate.getId());
         }
     }
 
 
-    private void configureRecyclerView(){
-        RealEstateAdapter realEstateAdapter = new RealEstateAdapter(mRealEstates,mPictures);
+    private void configureRecyclerView() {
+        RealEstateAdapter realEstateAdapter = new RealEstateAdapter(mRealEstates, mPictures);
         realEstateAdapter.setOnItemClickListener(view -> {
             RealEstateViewHolder holder = (RealEstateViewHolder) view.getTag();
             int position = holder.getAdapterPosition();
             long id = mRealEstates.get(position).getId();
-            getFragmentManager().beginTransaction().replace(R.id.activity_main_container,DetailsFragment.newInstance(id))
-                    .addToBackStack("Fragment")
-                    .commit();
+            passIdToDetailsFragment(id);
         });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getActivity(), linearLayoutManager.getOrientation());
@@ -146,27 +128,22 @@ public class ListFragment extends Fragment {
     }
 
 
-
-
-
-
-
-
-    public void onButtonPressed(Uri uri) {
+    //    Passe l'id du bien selectionné via le callback à l'activité
+    public void passIdToDetailsFragment(long id) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onFragmentInteraction(id);
         }
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override
@@ -176,7 +153,6 @@ public class ListFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-
-        void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(long id);
     }
 }

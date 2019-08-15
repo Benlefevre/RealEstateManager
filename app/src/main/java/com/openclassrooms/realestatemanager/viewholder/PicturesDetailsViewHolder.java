@@ -31,5 +31,4 @@ public class PicturesDetailsViewHolder extends RecyclerView.ViewHolder {
         mImageTitle.setText(pictures.getDescription());
     }
 
-
 }

@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.openclassrooms.realestatemanager.controllers.R;
 
@@ -20,29 +19,17 @@ import butterknife.ButterKnife;
 public class FullScreenPhoto extends Fragment {
 
     private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     @BindView(R.id.fragment_fullscreen_img)
     ImageView mFullscreenImg;
 
 
     private Uri mUri;
-//    private String mParam2;
 
 //    private OnFragmentInteractionListener mListener;
 
     public FullScreenPhoto() {
         // Required empty public constructor
     }
-
-
-//    public static FullScreenPhoto newInstance(String param1, String param2) {
-//        FullScreenPhoto fragment = new FullScreenPhoto();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
 
     public static FullScreenPhoto newInstance(Uri uri) {
         FullScreenPhoto fragment = new FullScreenPhoto();
@@ -52,12 +39,12 @@ public class FullScreenPhoto extends Fragment {
         return fragment;
     }
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mUri = Uri.parse((getArguments().getString(ARG_PARAM1)));
-
         }
     }
 
@@ -72,9 +59,11 @@ public class FullScreenPhoto extends Fragment {
     }
 
 
-    private void bindPhotoInImageView(){
+    private void bindPhotoInImageView() {
         mFullscreenImg.setImageURI(mUri);
     }
+
+
 //    public void onButtonPressed(Uri uri) {
 //        if (mListener != null) {
 //            mListener.onFragmentInteraction(uri);

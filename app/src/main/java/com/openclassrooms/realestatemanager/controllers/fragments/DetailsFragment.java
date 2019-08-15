@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.constraintlayout.widget.Guideline;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -34,7 +33,6 @@ import butterknife.ButterKnife;
 public class DetailsFragment extends Fragment {
 
     private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
     @BindView(R.id.fragment_details_desc_txt)
     TextView mDescription;
@@ -58,22 +56,12 @@ public class DetailsFragment extends Fragment {
 
     private long mRealEstateId;
     private RealEstateViewModel mRealEstateViewModel;
-    private String mParam2;
 
 //    private OnFragmentInteractionListener mListener;
 
     public DetailsFragment() {
         // Required empty public constructor
     }
-
-//    public static DetailsFragment newInstance(String param1, String param2) {
-//        DetailsFragment fragment = new DetailsFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
 
     public static DetailsFragment newInstance(long param1) {
         DetailsFragment fragment = new DetailsFragment();
@@ -111,8 +99,8 @@ public class DetailsFragment extends Fragment {
     }
 
     private void getRealEstateDetails(long realEstateId) {
-        mRealEstateViewModel.getRealEstate(realEstateId).observe(this, this::initDetails);
-        mRealEstateViewModel.getPictures(realEstateId).observe(this, this::configureRecyclerViewWithPhotos);
+        mRealEstateViewModel.getRealEstate(realEstateId).observe(getViewLifecycleOwner(), this::initDetails);
+        mRealEstateViewModel.getPictures(realEstateId).observe(getViewLifecycleOwner(), this::configureRecyclerViewWithPhotos);
     }
 
     private void configureRecyclerViewWithPhotos(List<Pictures> pictures) {
@@ -121,11 +109,11 @@ public class DetailsFragment extends Fragment {
             PicturesDetailsViewHolder holder = (PicturesDetailsViewHolder) view.getTag();
             int position = holder.getAdapterPosition();
             Uri uri = pictures.get(position).getUri();
-            getFragmentManager().beginTransaction().replace(R.id.activity_main_container,FullScreenPhoto.newInstance(uri))
+            getFragmentManager().beginTransaction().replace(R.id.activity_main_container, FullScreenPhoto.newInstance(uri))
                     .addToBackStack("Fragment")
                     .commit();
         });
-        mPhotoRecyclerview.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false));
+        mPhotoRecyclerview.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         mPhotoRecyclerview.setAdapter(detailsPhotoAdapter);
     }
 

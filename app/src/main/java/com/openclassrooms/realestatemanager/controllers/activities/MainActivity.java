@@ -6,20 +6,16 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.openclassrooms.realestatemanager.controllers.R;
-import com.openclassrooms.realestatemanager.controllers.fragments.ListFragment;
-import com.openclassrooms.realestatemanager.injections.Injection;
-import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
-import com.openclassrooms.realestatemanager.viewmodel.RealEstateViewModel;
+import com.openclassrooms.realestatemanager.controllers.fragments.DetailsFragment;
+import com.openclassrooms.realestatemanager.controllers.fragments.RealEstateListFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,15 +26,14 @@ import static com.openclassrooms.realestatemanager.utils.Constants.IMAGE_CAPTURE
 import static com.openclassrooms.realestatemanager.utils.Constants.IMAGE_PICK_CODE;
 import static com.openclassrooms.realestatemanager.utils.Constants.READ_AND_WRITE_EXTERNAL_STORAGE;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RealEstateListFragment.OnFragmentInteractionListener {
 
     @BindView(R.id.activity_main_toolbar)
     Toolbar mToolbar;
     @BindView(R.id.activity_main_container)
     FrameLayout mContainer;
 
-
-    private RealEstateViewModel mRealEstateViewModel;
+    private FragmentManager mFragmentManager;
     private Uri image_uri;
 
     @Override
@@ -48,45 +43,22 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         getPermissionsExternalStorage();
         configureToolbar();
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.activity_main_container,ListFragment.newInstance()).commit();
-        Log.i("info", "onCreate: fragment ajouté");
-//        configureViewModel();
-//        getRealEstate(1);
+        mFragmentManager = getSupportFragmentManager();
+        displayMainFragment();
+    }
 
+    private void displayMainFragment() {
+        RealEstateListFragment realEstateListFragment = (RealEstateListFragment) mFragmentManager.findFragmentByTag("EstateListFragment");
+        if (realEstateListFragment == null) {
+            mFragmentManager.beginTransaction().add(R.id.activity_main_container,
+                    RealEstateListFragment.newInstance(), "EstateListFragment").commit();
+        }
     }
 
     private void configureToolbar() {
         mToolbar.setTitle("Real Estate Manager");
         setSupportActionBar(mToolbar);
     }
-
-
-    //    Configuring ViewModel
-    private void configureViewModel() {
-        ViewModelFactory viewModelFactory = Injection.providerViewModelFactory(this);
-        mRealEstateViewModel = ViewModelProviders.of(this, viewModelFactory).get(RealEstateViewModel.class);
-    }
-
-//    private void getAllRealEstate(){
-////        mRealEstateViewModel.getAllRealEstate().observe(this,this:: .....);
-////TODO créer une fonction une fois la recycler view implémentée qui sera ajoutée à .observe.
-//    }
-
-//    private void getRealEstate(long id) {
-//        mRealEstateViewModel.getRealEstate(id).observe(this, realEstate -> configureTest(realEstate));
-//    }
-
-//    private void getPictures(long id) {
-//        mRealEstateViewModel.getPictures(id).observe(this, pictures -> configureImageView(pictures));
-//    }
-
-
-//    private void configureImageView(List<Pictures> pictures) {
-//        if (!pictures.isEmpty()) {
-//            mImageView.setImageURI(pictures.get(0).getUri());
-//        }
-//    }
 
     /**
      * Opens the device's camera to take a picture and fetch the file's path
@@ -112,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @AfterPermissionGranted(READ_AND_WRITE_EXTERNAL_STORAGE)
-    private void getPermissionsExternalStorage(){
+    private void getPermissionsExternalStorage() {
         String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
         if (!EasyPermissions.hasPermissions(this, perms)) {
             EasyPermissions.requestPermissions(this, "We need this permissions to access pictures saved in your device.",
@@ -139,6 +111,16 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onFragmentInteraction(long id) {
+        DetailsFragment detailsFragment = (DetailsFragment) mFragmentManager.findFragmentByTag("DetailsFragment");
+        if (detailsFragment == null) {
+            mFragmentManager.beginTransaction().replace(R.id.activity_main_container, DetailsFragment.newInstance(id), "DetailsFragment")
+                    .addToBackStack("Fragment")
+                    .commit();
+        }
     }
 //
 //    @Override

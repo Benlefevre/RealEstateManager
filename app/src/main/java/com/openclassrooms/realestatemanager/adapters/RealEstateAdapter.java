@@ -31,7 +31,7 @@ public class RealEstateAdapter extends RecyclerView.Adapter<RealEstateViewHolder
     @Override
     public RealEstateViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
-        View view = LayoutInflater.from(context).inflate(R.layout.real_estate_list_item, parent,false);
+        View view = LayoutInflater.from(context).inflate(R.layout.real_estate_list_item, parent, false);
         RealEstateViewHolder realEstateViewHolder = new RealEstateViewHolder(view);
         realEstateViewHolder.itemView.setOnClickListener(v -> mClickListener.onClick(v));
         return new RealEstateViewHolder(view);
@@ -39,7 +39,7 @@ public class RealEstateAdapter extends RecyclerView.Adapter<RealEstateViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull RealEstateViewHolder holder, int position) {
-        holder.updateUI(mRealEstates.get(position),mPictures);
+        holder.updateUI(mRealEstates.get(position), mPictures);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class RealEstateAdapter extends RecyclerView.Adapter<RealEstateViewHolder
         return mRealEstates.size();
     }
 
-    public void setOnItemClickListener(View.OnClickListener clickListener){
+    public void setOnItemClickListener(View.OnClickListener clickListener) {
         mClickListener = clickListener;
     }
 }
