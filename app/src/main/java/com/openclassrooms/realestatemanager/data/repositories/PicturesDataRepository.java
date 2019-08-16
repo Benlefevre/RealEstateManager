@@ -1,4 +1,4 @@
-package com.openclassrooms.realestatemanager.repositories;
+package com.openclassrooms.realestatemanager.data.repositories;
 
 import androidx.lifecycle.LiveData;
 

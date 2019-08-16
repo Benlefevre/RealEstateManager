@@ -1,4 +1,4 @@
-package com.openclassrooms.realestatemanager.adapters;
+package com.openclassrooms.realestatemanager.ui.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,10 +8,10 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.openclassrooms.realestatemanager.controllers.R;
+import com.openclassrooms.realestatemanager.ui.controllers.R;
 import com.openclassrooms.realestatemanager.data.entities.Pictures;
 import com.openclassrooms.realestatemanager.data.entities.RealEstate;
-import com.openclassrooms.realestatemanager.viewholder.RealEstateViewHolder;
+import com.openclassrooms.realestatemanager.ui.viewholder.RealEstateViewHolder;
 
 import java.util.List;
 

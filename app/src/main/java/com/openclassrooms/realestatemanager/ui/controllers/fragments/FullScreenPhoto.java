@@ -1,4 +1,4 @@
-package com.openclassrooms.realestatemanager.controllers.fragments;
+package com.openclassrooms.realestatemanager.ui.controllers.fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -6,11 +6,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
-import com.openclassrooms.realestatemanager.controllers.R;
+import com.openclassrooms.realestatemanager.data.entities.Pictures;
+import com.openclassrooms.realestatemanager.ui.adapters.FullScreenViewPagerAdapter;
+import com.openclassrooms.realestatemanager.ui.controllers.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,11 +24,11 @@ import butterknife.ButterKnife;
 public class FullScreenPhoto extends Fragment {
 
     private static final String ARG_PARAM1 = "param1";
-    @BindView(R.id.fragment_fullscreen_img)
-    ImageView mFullscreenImg;
 
+    @BindView(R.id.fragment_fullscreen_viewpager)
+    ViewPager mViewPager;
 
-    private Uri mUri;
+    private List<Uri> mUriList;
 
 //    private OnFragmentInteractionListener mListener;
 
@@ -31,10 +36,15 @@ public class FullScreenPhoto extends Fragment {
         // Required empty public constructor
     }
 
-    public static FullScreenPhoto newInstance(Uri uri) {
+
+    public static FullScreenPhoto newInstance(List<Pictures> picturesList) {
+        ArrayList<String> uriList = new ArrayList<>();
         FullScreenPhoto fragment = new FullScreenPhoto();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, uri.toString());
+        for (Pictures pictures : picturesList) {
+            uriList.add(pictures.getUri().toString());
+        }
+        args.putStringArrayList(ARG_PARAM1, uriList);
         fragment.setArguments(args);
         return fragment;
     }
@@ -44,7 +54,10 @@ public class FullScreenPhoto extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mUri = Uri.parse((getArguments().getString(ARG_PARAM1)));
+            mUriList = new ArrayList<>();
+            for (String string : getArguments().getStringArrayList(ARG_PARAM1)){
+                mUriList.add(Uri.parse(string));
+            }
         }
     }
 
@@ -54,13 +67,13 @@ public class FullScreenPhoto extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_full_screen_photo, container, false);
         ButterKnife.bind(this, view);
-        bindPhotoInImageView();
+        configureViewPager();
         return view;
     }
 
-
-    private void bindPhotoInImageView() {
-        mFullscreenImg.setImageURI(mUri);
+    private void configureViewPager() {
+        FullScreenViewPagerAdapter adapter = new FullScreenViewPagerAdapter(getActivity(),mUriList);
+        mViewPager.setAdapter(adapter);
     }
 
 

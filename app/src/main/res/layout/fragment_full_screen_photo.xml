@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<androidx.viewpager.widget.ViewPager
+    android:id="@+id/fragment_fullscreen_viewpager"
     android:layout_height="match_parent"
-    android:background="@android:color/black">
-
-    <ImageView
-        android:id="@+id/fragment_fullscreen_img"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="center"
-        android:src="@mipmap/leak_canary_icon"
-        android:contentDescription="@string/the_photo_title"/>
-</FrameLayout>
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@android:color/black"/>

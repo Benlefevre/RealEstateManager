@@ -1,4 +1,4 @@
-package com.openclassrooms.realestatemanager.viewholder;
+package com.openclassrooms.realestatemanager.ui.viewholder;
 
 import android.view.View;
 import android.widget.ImageView;
@@ -7,7 +7,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.openclassrooms.realestatemanager.controllers.R;
+import com.openclassrooms.realestatemanager.ui.controllers.R;
 import com.openclassrooms.realestatemanager.data.entities.Pictures;
 
 import butterknife.BindView;

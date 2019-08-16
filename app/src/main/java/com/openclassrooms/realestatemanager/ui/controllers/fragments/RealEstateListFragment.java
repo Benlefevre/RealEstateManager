@@ -1,4 +1,4 @@
-package com.openclassrooms.realestatemanager.controllers.fragments;
+package com.openclassrooms.realestatemanager.ui.controllers.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,14 +13,14 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.openclassrooms.realestatemanager.adapters.RealEstateAdapter;
-import com.openclassrooms.realestatemanager.controllers.R;
+import com.openclassrooms.realestatemanager.ui.adapters.RealEstateAdapter;
+import com.openclassrooms.realestatemanager.ui.controllers.R;
 import com.openclassrooms.realestatemanager.data.entities.Pictures;
 import com.openclassrooms.realestatemanager.data.entities.RealEstate;
 import com.openclassrooms.realestatemanager.injections.Injection;
 import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
-import com.openclassrooms.realestatemanager.viewholder.RealEstateViewHolder;
-import com.openclassrooms.realestatemanager.viewmodel.RealEstateViewModel;
+import com.openclassrooms.realestatemanager.ui.viewholder.RealEstateViewHolder;
+import com.openclassrooms.realestatemanager.ui.viewmodel.RealEstateViewModel;
 
 import java.util.ArrayList;
 import java.util.List;

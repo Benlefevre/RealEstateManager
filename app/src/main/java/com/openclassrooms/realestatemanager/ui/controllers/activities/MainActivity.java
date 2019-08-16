@@ -1,4 +1,4 @@
-package com.openclassrooms.realestatemanager.controllers.activities;
+package com.openclassrooms.realestatemanager.ui.controllers.activities;
 
 import android.Manifest;
 import android.content.ContentValues;
@@ -13,9 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 
-import com.openclassrooms.realestatemanager.controllers.R;
-import com.openclassrooms.realestatemanager.controllers.fragments.DetailsFragment;
-import com.openclassrooms.realestatemanager.controllers.fragments.RealEstateListFragment;
+import com.openclassrooms.realestatemanager.ui.controllers.R;
+import com.openclassrooms.realestatemanager.ui.controllers.fragments.DetailsFragment;
+import com.openclassrooms.realestatemanager.ui.controllers.fragments.RealEstateListFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

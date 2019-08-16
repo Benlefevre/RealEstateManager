@@ -3,8 +3,8 @@ package com.openclassrooms.realestatemanager.injections;
 import android.content.Context;
 
 import com.openclassrooms.realestatemanager.data.database.RealEstateDatabase;
-import com.openclassrooms.realestatemanager.repositories.RealEstateDataRepository;
-import com.openclassrooms.realestatemanager.repositories.PicturesDataRepository;
+import com.openclassrooms.realestatemanager.data.repositories.RealEstateDataRepository;
+import com.openclassrooms.realestatemanager.data.repositories.PicturesDataRepository;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;

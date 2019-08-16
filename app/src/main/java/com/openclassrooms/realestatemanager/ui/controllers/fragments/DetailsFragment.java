@@ -1,4 +1,4 @@
-package com.openclassrooms.realestatemanager.controllers.fragments;
+package com.openclassrooms.realestatemanager.ui.controllers.fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -15,14 +15,14 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.openclassrooms.realestatemanager.adapters.DetailsPhotoAdapter;
-import com.openclassrooms.realestatemanager.controllers.R;
+import com.openclassrooms.realestatemanager.ui.adapters.DetailsPhotoAdapter;
+import com.openclassrooms.realestatemanager.ui.controllers.R;
 import com.openclassrooms.realestatemanager.data.entities.Pictures;
 import com.openclassrooms.realestatemanager.data.entities.RealEstate;
 import com.openclassrooms.realestatemanager.injections.Injection;
 import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
-import com.openclassrooms.realestatemanager.viewholder.PicturesDetailsViewHolder;
-import com.openclassrooms.realestatemanager.viewmodel.RealEstateViewModel;
+import com.openclassrooms.realestatemanager.ui.viewholder.PicturesDetailsViewHolder;
+import com.openclassrooms.realestatemanager.ui.viewmodel.RealEstateViewModel;
 
 import java.util.List;
 
@@ -109,7 +109,7 @@ public class DetailsFragment extends Fragment {
             PicturesDetailsViewHolder holder = (PicturesDetailsViewHolder) view.getTag();
             int position = holder.getAdapterPosition();
             Uri uri = pictures.get(position).getUri();
-            getFragmentManager().beginTransaction().replace(R.id.activity_main_container, FullScreenPhoto.newInstance(uri))
+            getFragmentManager().beginTransaction().replace(R.id.activity_main_container,FullScreenPhoto.newInstance(pictures))
                     .addToBackStack("Fragment")
                     .commit();
         });
