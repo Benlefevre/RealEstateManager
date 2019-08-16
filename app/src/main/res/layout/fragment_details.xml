@@ -20,6 +20,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/description"
         app:layout_constraintStart_toStartOf="parent"
+        style="@style/TextAppearance.MaterialComponents.Subtitle1"
         app:layout_constraintTop_toBottomOf="@+id/fragment_details_recyclerview" />
 
     <TextView
@@ -36,6 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        style="@style/TextAppearance.MaterialComponents.Subtitle2"
         android:drawableStart="@drawable/ic_area"
         android:drawablePadding="8dp"
         android:text="@string/surface"
@@ -56,6 +58,7 @@
         android:id="@+id/fragment_details_rooms"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/TextAppearance.MaterialComponents.Subtitle2"
         android:layout_marginTop="16dp"
         android:drawableStart="@drawable/ic_plan"
         android:drawablePadding="8dp"
@@ -77,6 +80,7 @@
         android:id="@+id/fragment_details_bedrooms"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/TextAppearance.MaterialComponents.Subtitle2"
         android:layout_marginTop="16dp"
         android:drawableStart="@drawable/ic_bedroom"
         android:drawablePadding="8dp"
@@ -98,6 +102,7 @@
         android:id="@+id/fragment_details_bathroom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/TextAppearance.MaterialComponents.Subtitle2"
         android:layout_marginTop="16dp"
         android:drawableStart="@drawable/ic_bathroom"
         android:drawablePadding="8dp"
@@ -119,6 +124,7 @@
         android:id="@+id/fragment_details_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/TextAppearance.MaterialComponents.Subtitle2"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:drawableStart="@drawable/ic_location"
@@ -142,6 +148,7 @@
         android:id="@+id/fragment_details_floors"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/TextAppearance.MaterialComponents.Subtitle2"
         android:layout_marginTop="16dp"
         android:drawableStart="@drawable/ic_floors"
         android:drawablePadding="8dp"
@@ -165,7 +172,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

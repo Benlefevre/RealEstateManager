@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.ui.viewholder;
 
+import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -7,9 +8,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.openclassrooms.realestatemanager.ui.controllers.R;
 import com.openclassrooms.realestatemanager.data.entities.Pictures;
 import com.openclassrooms.realestatemanager.data.entities.RealEstate;
+import com.openclassrooms.realestatemanager.ui.controllers.R;
 
 import java.util.List;
 
@@ -22,15 +23,22 @@ public class RealEstateViewHolder extends RecyclerView.ViewHolder {
     ImageView mImageView;
     @BindView(R.id.item_type_property_txt)
     TextView mTypeProperty;
+    @BindView(R.id.item_rooms_bedrooms)
+    TextView mNbRoomsBedrooms;
+    @BindView(R.id.item_surface)
+    TextView mSurface;
     @BindView(R.id.item_city_txt)
     TextView mCity;
     @BindView(R.id.item_price_txt)
     TextView mPrice;
 
-    public RealEstateViewHolder(@NonNull View itemView) {
+    private Context mContext;
+
+    public RealEstateViewHolder(@NonNull View itemView, Context context) {
         super(itemView);
         ButterKnife.bind(this,itemView);
         itemView.setTag(this);
+        mContext = context;
     }
 
     public void updateUI(RealEstate realEstate, List<Pictures> pictures){
@@ -39,6 +47,8 @@ public class RealEstateViewHolder extends RecyclerView.ViewHolder {
                 mImageView.setImageURI(pictures1.getUri());
         }
         mTypeProperty.setText(realEstate.getTypeProperty());
+        mNbRoomsBedrooms.setText(mContext.getString(R.string.rooms_and_bedrooms,realEstate.getNbPieces(), realEstate.getNbBedrooms()));
+        mSurface.setText(realEstate.getSurface() + "");
         mCity.setText(realEstate.getCity());
         mPrice.setText(String.valueOf(realEstate.getPrice()));
     }

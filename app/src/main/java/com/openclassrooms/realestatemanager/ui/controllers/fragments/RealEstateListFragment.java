@@ -9,16 +9,15 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.openclassrooms.realestatemanager.ui.adapters.RealEstateAdapter;
-import com.openclassrooms.realestatemanager.ui.controllers.R;
 import com.openclassrooms.realestatemanager.data.entities.Pictures;
 import com.openclassrooms.realestatemanager.data.entities.RealEstate;
 import com.openclassrooms.realestatemanager.injections.Injection;
 import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
+import com.openclassrooms.realestatemanager.ui.adapters.RealEstateAdapter;
+import com.openclassrooms.realestatemanager.ui.controllers.R;
 import com.openclassrooms.realestatemanager.ui.viewholder.RealEstateViewHolder;
 import com.openclassrooms.realestatemanager.ui.viewmodel.RealEstateViewModel;
 
@@ -118,11 +117,8 @@ public class RealEstateListFragment extends Fragment {
             long id = mRealEstates.get(position).getId();
             passIdToDetailsFragment(id);
         });
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getActivity(), linearLayoutManager.getOrientation());
-        mRecyclerView.addItemDecoration(dividerItemDecoration);
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(linearLayoutManager);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
         mRecyclerView.setAdapter(realEstateAdapter);
         realEstateAdapter.notifyDataSetChanged();
     }

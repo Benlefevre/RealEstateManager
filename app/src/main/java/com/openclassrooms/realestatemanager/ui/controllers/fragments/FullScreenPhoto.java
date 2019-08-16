@@ -1,6 +1,5 @@
 package com.openclassrooms.realestatemanager.ui.controllers.fragments;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,6 +15,7 @@ import com.openclassrooms.realestatemanager.ui.controllers.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,7 +30,6 @@ public class FullScreenPhoto extends Fragment {
 
     private List<Uri> mUriList;
 
-//    private OnFragmentInteractionListener mListener;
 
     public FullScreenPhoto() {
         // Required empty public constructor
@@ -55,7 +54,7 @@ public class FullScreenPhoto extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mUriList = new ArrayList<>();
-            for (String string : getArguments().getStringArrayList(ARG_PARAM1)){
+            for (String string : Objects.requireNonNull(getArguments().getStringArrayList(ARG_PARAM1))){
                 mUriList.add(Uri.parse(string));
             }
         }
@@ -75,33 +74,4 @@ public class FullScreenPhoto extends Fragment {
         FullScreenViewPagerAdapter adapter = new FullScreenViewPagerAdapter(getActivity(),mUriList);
         mViewPager.setAdapter(adapter);
     }
-
-
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-//        mListener = null;
-    }
-
-
-//    public interface OnFragmentInteractionListener {
-//        void onFragmentInteraction(Uri uri);
-//    }
 }

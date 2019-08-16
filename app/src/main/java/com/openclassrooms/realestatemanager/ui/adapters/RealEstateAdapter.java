@@ -32,9 +32,9 @@ public class RealEstateAdapter extends RecyclerView.Adapter<RealEstateViewHolder
     public RealEstateViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.real_estate_list_item, parent, false);
-        RealEstateViewHolder realEstateViewHolder = new RealEstateViewHolder(view);
+        RealEstateViewHolder realEstateViewHolder = new RealEstateViewHolder(view, context);
         realEstateViewHolder.itemView.setOnClickListener(v -> mClickListener.onClick(v));
-        return new RealEstateViewHolder(view);
+        return realEstateViewHolder;
     }
 
     @Override
