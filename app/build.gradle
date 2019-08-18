@@ -11,6 +11,10 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+        debug {
+            buildConfigField("String", "google_maps_key", GOOGLE_MAPS_API_KEY)
+            resValue("string", "google_maps_key", GOOGLE_MAPS_API_KEY)
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -53,6 +57,12 @@ dependencies {
 
 //    Stetho
     implementation 'com.facebook.stetho:stetho:1.5.1'
+
+//    GoogleMap
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+
+//    GooglePlay Location
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
 
     testImplementation 'junit:junit:4.13-beta-3'
     androidTestImplementation 'androidx.test:runner:1.3.0-alpha02'

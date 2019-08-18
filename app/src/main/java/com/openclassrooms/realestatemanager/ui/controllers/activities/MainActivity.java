@@ -13,9 +13,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 
-import com.openclassrooms.realestatemanager.ui.controllers.R;
+import com.openclassrooms.realestatemanager.R;
+import com.openclassrooms.realestatemanager.data.entities.Pictures;
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.DetailsFragment;
+import com.openclassrooms.realestatemanager.ui.controllers.fragments.FullScreenFragment;
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.RealEstateListFragment;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,7 +30,8 @@ import static com.openclassrooms.realestatemanager.utils.Constants.IMAGE_CAPTURE
 import static com.openclassrooms.realestatemanager.utils.Constants.IMAGE_PICK_CODE;
 import static com.openclassrooms.realestatemanager.utils.Constants.READ_AND_WRITE_EXTERNAL_STORAGE;
 
-public class MainActivity extends AppCompatActivity implements RealEstateListFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements RealEstateListFragment.OnFragmentInteractionListener,
+        DetailsFragment.OnFragmentInteractionListener {
 
     @BindView(R.id.activity_main_toolbar)
     Toolbar mToolbar;
@@ -118,6 +123,16 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
         DetailsFragment detailsFragment = (DetailsFragment) mFragmentManager.findFragmentByTag("DetailsFragment");
         if (detailsFragment == null) {
             mFragmentManager.beginTransaction().replace(R.id.activity_main_container, DetailsFragment.newInstance(id), "DetailsFragment")
+                    .addToBackStack("Fragment")
+                    .commit();
+        }
+    }
+
+    @Override
+    public void onFragmentInteraction(List<Pictures> pictures, Uri uri) {
+        FullScreenFragment fullScreenFragment = (FullScreenFragment) mFragmentManager.findFragmentByTag("FullScreenFragment");
+        if (fullScreenFragment == null){
+            mFragmentManager.beginTransaction().replace(R.id.activity_main_container, FullScreenFragment.newInstance(pictures,uri),"FullScreenFragment")
                     .addToBackStack("Fragment")
                     .commit();
         }

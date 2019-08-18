@@ -7,17 +7,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.data.entities.Pictures;
 import com.openclassrooms.realestatemanager.data.entities.RealEstate;
 import com.openclassrooms.realestatemanager.injections.Injection;
 import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
 import com.openclassrooms.realestatemanager.ui.adapters.RealEstateAdapter;
-import com.openclassrooms.realestatemanager.ui.controllers.R;
 import com.openclassrooms.realestatemanager.ui.viewholder.RealEstateViewHolder;
 import com.openclassrooms.realestatemanager.ui.viewmodel.RealEstateViewModel;
 
@@ -32,12 +33,6 @@ public class RealEstateListFragment extends Fragment {
 
     @BindView(R.id.fragment_list_recycler_view)
     RecyclerView mRecyclerView;
-
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    private String mParam1;
-    private String mParam2;
 
     private RealEstateViewModel mRealEstateViewModel;
     private List<RealEstate> mRealEstates;
@@ -63,7 +58,7 @@ public class RealEstateListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_list, container, false);
@@ -83,12 +78,12 @@ public class RealEstateListFragment extends Fragment {
 
     //    Récupération de l'ensemble des biens
     private void getAllRealEstate() {
-        mRealEstateViewModel.getAllRealEstate().observe(getViewLifecycleOwner(), realEstates -> initList(realEstates));
+        mRealEstateViewModel.getAllRealEstate().observe(getViewLifecycleOwner(), this::initList);
     }
 
     //    Récupération d'une photo pour la liste
     private void getOnePicture(long realEstateId) {
-        mRealEstateViewModel.getOnePicture(realEstateId).observe(getViewLifecycleOwner(), pictures -> initPictures(pictures));
+        mRealEstateViewModel.getOnePicture(realEstateId).observe(getViewLifecycleOwner(), this::initPictures);
     }
 
     private void initPictures(Pictures pictures) {
@@ -125,14 +120,14 @@ public class RealEstateListFragment extends Fragment {
 
 
     //    Passe l'id du bien selectionné via le callback à l'activité
-    public void passIdToDetailsFragment(long id) {
+    private void passIdToDetailsFragment(long id) {
         if (mListener != null) {
             mListener.onFragmentInteraction(id);
         }
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;

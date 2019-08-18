@@ -8,9 +8,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.data.entities.Pictures;
 import com.openclassrooms.realestatemanager.data.entities.RealEstate;
-import com.openclassrooms.realestatemanager.ui.controllers.R;
 
 import java.util.List;
 
@@ -48,7 +48,7 @@ public class RealEstateViewHolder extends RecyclerView.ViewHolder {
         }
         mTypeProperty.setText(realEstate.getTypeProperty());
         mNbRoomsBedrooms.setText(mContext.getString(R.string.rooms_and_bedrooms,realEstate.getNbPieces(), realEstate.getNbBedrooms()));
-        mSurface.setText(realEstate.getSurface() + "");
+        mSurface.setText(realEstate.getSurface() + "$");
         mCity.setText(realEstate.getCity());
         mPrice.setText(String.valueOf(realEstate.getPrice()));
     }
