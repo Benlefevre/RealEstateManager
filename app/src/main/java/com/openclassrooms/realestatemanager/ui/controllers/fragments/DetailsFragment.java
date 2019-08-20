@@ -109,14 +109,15 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
         mGoogleMap.getUiSettings().setMapToolbarEnabled(false);
-//        mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-//            @Override
-//            public void onMapClick(LatLng latLng) {
-//
-//            }
-//        });
+        mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+
+            }
+        });
     }
 
+//    TODO voir pour mettre dans le service si possible et obtenir les coordonnées à l'ajout en base puis l'ajouter via un insert en base.
     private void getRealEstatePosition(){
         Geocoder geocoder = new Geocoder(getActivity());
         try {

@@ -17,4 +17,10 @@
     <string name="price">Price</string>
     <string name="rooms_and_bedrooms">%1d rooms and %2d bedrooms</string>
     <string name="realestate_photo">RealEstate Photo</string>
+    <string name="settings">Settings</string>
+    <string name="close_drawer">Close navigation drawer</string>
+    <string name="open_drawer">Open navigation drawer</string>
+    <string name="around_me">Around me</string>
+    <string name="location_rationale">We need this permissions to locate your position and display all real estates around you.</string>
+    <string name="storage_rationale">We need this permissions to access pictures saved in your device.</string>
 </resources>
