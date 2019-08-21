@@ -26,6 +26,11 @@ public class RealEstateDataRepository {
         return mRealEstateDao.getAllRealEstate();
     }
 
+//    Get
+    public LiveData<List<RealEstate>> getRealEstateByZipcode(int zipcode){
+        return mRealEstateDao.getRealEstateByZipcode(zipcode);
+    }
+
 //    Create
     public void createRealEstate(RealEstate realEstate){
         mRealEstateDao.insertRealEstate(realEstate);

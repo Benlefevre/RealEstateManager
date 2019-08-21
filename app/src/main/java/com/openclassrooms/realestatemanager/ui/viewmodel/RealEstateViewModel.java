@@ -34,6 +34,10 @@ public class RealEstateViewModel extends ViewModel {
         return mRealEstateDataRepository.getRealEstate(realEstateId);
     }
 
+    public LiveData<List<RealEstate>> getRealEstateByZipcode(int zipcode){
+        return mRealEstateDataRepository.getRealEstateByZipcode(zipcode);
+    }
+
     public LiveData<List<Pictures>> getPictures(long realEstateId){
         return mPicturesDataRepository.getPictures(realEstateId);
     }
