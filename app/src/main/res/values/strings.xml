@@ -23,4 +23,70 @@
     <string name="around_me">Around me</string>
     <string name="location_rationale">We need this permissions to locate your position and display all real estates around you.</string>
     <string name="storage_rationale">We need this permissions to access pictures saved in your device.</string>
+    <string name="enter_price">Enter the price</string>
+    <string name="enter_the_surface">Enter the surface</string>
+    <string name="add_a_real_estate">Add a real estate</string>
+    <string name="enter_the_number_of_rooms">Enter the number of rooms</string>
+    <string name="enter_the_number_of_bedrooms">Enter the number of bedrooms</string>
+    <string name="enter_the_number_of_bathrooms">Enter the number of bathrooms</string>
+    <string name="enter_the_real_estate_description">Enter the real estate description</string>
+    <string name="enter_the_real_estate_address">Enter the real estate entire address</string>
+    <string name="address">Address</string>
+    <string name="zipcode">Zipcode</string>
+    <string name="enter_the_zipcode">Enter the zipcode</string>
+    <string name="country_code">Country code</string>
+    <string name="enter_the_city">Enter the city</string>
+    <string name="point_of_interest">Point of interest</string>
+    <string name="enter_the_nearest_amenities">Enter the nearest amenities</string>
+    <string name="status">Status</string>
+    <string name="for_sale_since">For sale since :</string>
+    <string name="select_a_date">Select a date</string>
+    <string name="sold_since">Sold since</string>
+    <string name="year_of_the_construction">Year of the construction</string>
+    <string name="real_estate_agent">Real estate agent</string>
+    <string name="enter_the_number_of_floors">Enter the number of floors</string>
+    <string name="co_ownership">Co ownership</string>
+    <string name="add_the_real_estate">Add the real estate</string>
+    <string name="save_the_real_estate">Save the real estate</string>
+    <string name="add_pictures">Add pictures</string>
+    <string name="unknown_date">Unknown date</string>
+    <string name="enter_the_picture_s_caption">Enter the picture\'s caption</string>
+    <string name="save_picture_dialog">Would you save this picture?</string>
+    <string name="cancel">Cancel</string>
+    <string name="camera">From camera</string>
+    <string name="memory">From memory</string>
+    <string name="save_the_picture">Save the picture</string>
+    <string name="a_preview_of_the_chosen_picture">A preview of the chosen picture</string>
+
+
+    <string-array name="typeProperty">
+        <item>Apartment</item>
+        <item>House</item>
+        <item>Loft</item>
+    </string-array>
+
+    <string-array name="countryCode">
+        <item>FR</item>
+        <item>US</item>
+        <item>BE</item>
+        <item>CA</item>
+        <item>LU</item>
+        <item>GB</item>
+    </string-array>
+
+    <string-array name="status">
+        <item>For sale</item>
+        <item>Sold</item>
+    </string-array>
+
+    <string-array name="agent">
+        <item>Benoit Lefèvre</item>
+        <item>Jean Dupont</item>
+    </string-array>
+
+    <string-array name="co_ownership">
+        <item>True</item>
+        <item>False</item>
+    </string-array>
+
 </resources>

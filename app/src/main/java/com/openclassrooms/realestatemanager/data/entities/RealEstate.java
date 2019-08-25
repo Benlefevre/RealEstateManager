@@ -20,10 +20,11 @@ public class RealEstate {
     private String mDescription;
     private String mAddress;
     private int mZipCode;
+    private String mCountryCode;
     private double mLatitude;
     private double mLongitude;
     private String mCity;
-    private String mPointOfInterests;
+    private String mAmenities;
     private String mStatus;
     private Date mInitialSale;
     private Date mFinalSale;
@@ -36,9 +37,9 @@ public class RealEstate {
     public RealEstate() {
     }
 
-    public RealEstate( String typeProperty, int price, int surface, int nbPieces,
+    public RealEstate(String typeProperty, int price, int surface, int nbPieces,
                       int nbBedrooms, int nbBathrooms, String description, String address,
-                      int zipCode, double latitude, double longitude, String city, String pointOfInterests, String status,
+                      int zipCode, String countryCode, double latitude, double longitude, String city, String amenities, String status,
                       Date initialSale, Date finalSale, String realEstateAgent, Date yearConstruction,
                       int floors, boolean coOwnership) {
         mTypeProperty = typeProperty;
@@ -50,10 +51,11 @@ public class RealEstate {
         mDescription = description;
         mAddress = address;
         mZipCode = zipCode;
+        mCountryCode = countryCode;
         mLatitude = latitude;
         mLongitude = longitude;
         mCity = city;
-        mPointOfInterests = pointOfInterests;
+        mAmenities = amenities;
         mStatus = status;
         mInitialSale = initialSale;
         mFinalSale = finalSale;
@@ -105,6 +107,10 @@ public class RealEstate {
         return mZipCode;
     }
 
+    public String getCountryCode() {
+        return mCountryCode;
+    }
+
     public double getLatitude() {
         return mLatitude;
     }
@@ -117,8 +123,8 @@ public class RealEstate {
         return mCity;
     }
 
-    public String getPointOfInterests() {
-        return mPointOfInterests;
+    public String getAmenities() {
+        return mAmenities;
     }
 
     public String getStatus() {
@@ -193,6 +199,10 @@ public class RealEstate {
         mZipCode = zipCode;
     }
 
+    public void setCountryCode(String countryCode) {
+        mCountryCode = countryCode;
+    }
+
     public void setLatitude(double latitude) {
         mLatitude = latitude;
     }
@@ -205,8 +215,8 @@ public class RealEstate {
         mCity = city;
     }
 
-    public void setPointOfInterests(String pointOfInterests) {
-        mPointOfInterests = pointOfInterests;
+    public void setAmenities(String pointOfInterests) {
+        mAmenities = pointOfInterests;
     }
 
     public void setStatus(String status) {
@@ -252,10 +262,11 @@ public class RealEstate {
                 ", mDescription='" + mDescription + '\'' +
                 ", mAddress='" + mAddress + '\'' +
                 ", mZipCode=" + mZipCode +
+                ", mCountryCode='" + mCountryCode + '\'' +
                 ", mLatitude=" + mLatitude +
                 ", mLongitude=" + mLongitude +
                 ", mCity='" + mCity + '\'' +
-                ", mPointOfInterests='" + mPointOfInterests + '\'' +
+                ", mAmenities='" + mAmenities + '\'' +
                 ", mStatus='" + mStatus + '\'' +
                 ", mInitialSale=" + mInitialSale +
                 ", mFinalSale=" + mFinalSale +
@@ -272,17 +283,17 @@ public class RealEstate {
                 new RealEstate("Apartment",159500, 130, 4, 3, 2, "Very nice apartment located on the 6th and last floor of 130m2." +
                         " Located in the heart of town and close to all amenities. It has 3 large bedrooms," +
                         " 2 bathrooms and a large living room with a terrace overlooking a private park.",
-                        "600 E 8th 6F St Kansas City, MO 64106", 64106, 39.104264, -94.576036, "Kansas City","School and shops", "For Sale", date,
+                        "600 E 8th 6F St Kansas City, MO 64106", 64106, "US", 39.104264, -94.576036, "Kansas City","School and shops", "For Sale", date,
                         null, "Lefèvre Benoit", null, 6, true),
                 new RealEstate("House", 515000, 315, 6, 5, 4, "Very nice house of 315m2." +
                         " Located in the heart of town and close to all amenities. It has 5 large bedrooms," +
                         " 4 bathrooms and a large living room with a large garden of 700m2.",
-                        "6124 Ward Pkwy, Kansas City, MO 64106", 64106, 39.0167956, -94.6016936, "Kansas City","School and shops", "For Sale", date,
+                        "6124 Ward Pkwy, Kansas City, MO 64106", 64106, "US", 39.0167956, -94.6016936, "Kansas City","School and shops", "For Sale", date,
                         null, "Lefèvre Benoit", null, 2, false),
                 new RealEstate("Apartment", 999950, 260, 3, 2, 2, "Very nice apartment located on the 31th and last floor of 260m2." +
                         " Located in the heart of town and close to all amenities. It has 2 large bedrooms," +
                         " 2 bathrooms and a large living room with a terrace where you have an amazing view .",
-                        "909 Walnut St Unit 31, Kansas City, MO 64106", 64106, 39.1032208, -94.5815734, "Kansas City","School and shops", "For Sale", date,
+                        "909 Walnut St Unit 31, Kansas City, MO 64106", 64106, "US", 39.1032208, -94.5815734, "Kansas City","School and shops", "For Sale", date,
                         null, "Lefèvre Benoit", null, 31, true),
         };
     }

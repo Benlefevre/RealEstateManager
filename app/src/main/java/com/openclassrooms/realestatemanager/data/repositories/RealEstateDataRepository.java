@@ -27,13 +27,13 @@ public class RealEstateDataRepository {
     }
 
 //    Get
-    public LiveData<List<RealEstate>> getRealEstateByZipcode(int zipcode){
-        return mRealEstateDao.getRealEstateByZipcode(zipcode);
+    public LiveData<List<RealEstate>> getRealEstateByZipcodeAndCountry(int zipcode, String countryCode){
+        return mRealEstateDao.getRealEstateByZipcodeAndCountry(zipcode, countryCode);
     }
 
 //    Create
-    public void createRealEstate(RealEstate realEstate){
-        mRealEstateDao.insertRealEstate(realEstate);
+    public long createRealEstate(RealEstate realEstate){
+        return mRealEstateDao.insertRealEstate(realEstate);
     }
 
 //    Update

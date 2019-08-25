@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -24,8 +25,9 @@ public class RealEstateDaoTest {
 
     private RealEstateDatabase mRealEstateDatabase;
 
-    private static RealEstate realEstateDemo = new RealEstate(1,"apartment",345000,130,4,3,2,"Test description",
-            "testAddress", 75000, "Paris", "School, Supermarket ","For sale",new Date(), null,
+    private static RealEstate realEstateDemo = new RealEstate("apartment",3450000,
+            130,4,3,2,"Test description","Test Address",
+            75000, "FR", 0, 0 ,"Paris","School, Supermarket ","For sale",new Date(), null,
             "Benoit Lefèvre", null, 3, true);
 
     @Rule
@@ -49,8 +51,8 @@ public class RealEstateDaoTest {
     public void insertAndGetRealEstate() throws InterruptedException {
         mRealEstateDatabase.mRealEstateDao().insertRealEstate(realEstateDemo);
 
-        RealEstate realEstate = LiveDataTestUtil.getValue(mRealEstateDatabase.mRealEstateDao().getRealEstate(1));
-        assertEquals(realEstateDemo.getId(),realEstate.getId());
+        List<RealEstate> realEstates = LiveDataTestUtil.getValue(mRealEstateDatabase.mRealEstateDao().getAllRealEstate());
+        RealEstate realEstate = realEstates.get(0);
         assertEquals(realEstateDemo.getTypeProperty(),realEstate.getTypeProperty());
         assertEquals(realEstateDemo.getPrice(), realEstate.getPrice());
         assertEquals(realEstateDemo.getSurface(), realEstate.getSurface());
@@ -61,7 +63,7 @@ public class RealEstateDaoTest {
         assertEquals(realEstateDemo.getAddress(),realEstate.getAddress());
         assertEquals(realEstateDemo.getZipCode(),realEstate.getZipCode());
         assertEquals(realEstateDemo.getCity(),realEstate.getCity());
-        assertEquals(realEstateDemo.getPointOfInterests(),realEstate.getPointOfInterests());
+        assertEquals(realEstateDemo.getAmenities(),realEstate.getAmenities());
         assertEquals(realEstateDemo.getInitialSale(), realEstate.getInitialSale());
         assertEquals(realEstateDemo.getStatus(), realEstate.getStatus());
         assertEquals(realEstateDemo.getRealEstateAgent(),realEstate.getRealEstateAgent());

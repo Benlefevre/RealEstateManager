@@ -19,8 +19,8 @@ public interface RealEstateDao {
     @Query("SELECT * FROM RealEstate WHERE mId = :id")
     LiveData<RealEstate> getRealEstate(long id);
 
-    @Query("SELECT * FROM RealEstate WHERE mZipCode = :zipCode")
-    LiveData<List<RealEstate>> getRealEstateByZipcode(int zipCode);
+    @Query("SELECT * FROM RealEstate WHERE mZipCode = :zipCode AND mCountryCode = :countryCode")
+    LiveData<List<RealEstate>> getRealEstateByZipcodeAndCountry(int zipCode, String countryCode);
 
     @Insert
     long insertRealEstate(RealEstate realEstate);

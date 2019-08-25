@@ -1,11 +1,8 @@
 package com.openclassrooms.realestatemanager.ui.controllers.activities;
 
 import android.Manifest;
-import android.content.ContentValues;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
@@ -20,6 +17,7 @@ import androidx.fragment.app.FragmentManager;
 import com.google.android.material.navigation.NavigationView;
 import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.data.entities.Pictures;
+import com.openclassrooms.realestatemanager.ui.controllers.fragments.AddRealEstateFragment;
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.AgentLocationFragment;
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.DetailsFragment;
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.FullScreenFragment;
@@ -33,16 +31,16 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static com.openclassrooms.realestatemanager.utils.Constants.ACCESS_LOCATION;
+import static com.openclassrooms.realestatemanager.utils.Constants.ADD_REAL_ESTATE_FRAGMENT;
 import static com.openclassrooms.realestatemanager.utils.Constants.AGENT_LOCATION_FRAGMENT;
 import static com.openclassrooms.realestatemanager.utils.Constants.DETAILS_FRAGMENT;
 import static com.openclassrooms.realestatemanager.utils.Constants.ESTATE_LIST_FRAGMENT;
 import static com.openclassrooms.realestatemanager.utils.Constants.FULL_SCREEN_FRAGMENT;
-import static com.openclassrooms.realestatemanager.utils.Constants.IMAGE_CAPTURE_CODE;
-import static com.openclassrooms.realestatemanager.utils.Constants.IMAGE_PICK_CODE;
 import static com.openclassrooms.realestatemanager.utils.Constants.READ_AND_WRITE_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity implements RealEstateListFragment.OnFragmentInteractionListener,
-        DetailsFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener {
+        DetailsFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener,
+        AgentLocationFragment.OnFragmentInteractionListener{
 
     @BindView(R.id.activity_main_toolbar)
     Toolbar mToolbar;
@@ -54,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
     DrawerLayout mDrawer;
 
     private FragmentManager mFragmentManager;
-    private Uri image_uri;
     private int mDisplayedFragment;
     private Boolean mLocationPermissionsGranted;
 
@@ -97,29 +94,6 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
         setSupportActionBar(mToolbar);
     }
 
-    /**
-     * Opens the device's camera to take a picture and fetch the file's path
-     */
-    private void openCamera() {
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE, "New Picture");
-        values.put(MediaStore.Images.Media.DESCRIPTION, "From the camera");
-        image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
-        startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE);
-    }
-
-    /**
-     * Opens an App to pick a picture and fetch the file's path
-     */
-    private void pickImageFromGallery() {
-        Intent intentGallery = new Intent(Intent.ACTION_PICK);
-        intentGallery.setType("image/*");
-        startActivityForResult(intentGallery, IMAGE_PICK_CODE);
-    }
-
     @AfterPermissionGranted(READ_AND_WRITE_EXTERNAL_STORAGE)
     private void getPermissionsExternalStorage() {
         String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
@@ -140,20 +114,6 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
             mLocationPermissionsGranted = true;
         }
     }
-
-//    @OnClick(R.id.photo_btn)
-//    @AfterPermissionGranted(READ_AND_WRITE_EXTERNAL_STORAGE)
-//    public void onViewClicked() {
-//        String[] perms = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-//        if (EasyPermissions.hasPermissions(this, perms)) {
-////                openCamera();
-////            pickImageFromGallery();
-//            getPictures(1);
-//        } else {
-//            EasyPermissions.requestPermissions(this, "We need this permissions to access to the camera and save your pictures.",
-//                    READ_AND_WRITE_EXTERNAL_STORAGE, perms);
-//        }
-//    }
 
 
     @Override
@@ -200,23 +160,19 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
             case R.id.drawer_setting:
                 mDisplayedFragment = 5;
                 break;
+            case R.id.drawer_add:
+                mDisplayedFragment = 6;
+                AddRealEstateFragment addRealEstateFragment = (AddRealEstateFragment) mFragmentManager.findFragmentByTag(ADD_REAL_ESTATE_FRAGMENT);
+                if (addRealEstateFragment == null){
+                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container,AddRealEstateFragment.newInstance(),ADD_REAL_ESTATE_FRAGMENT)
+                            .addToBackStack("Fragment")
+                            .commit();
+                }
+                break;
         }
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
     }
-//
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (resultCode == RESULT_OK && requestCode == IMAGE_CAPTURE_CODE) {
-//            Log.i("info", image_uri.toString());
-//            mImageView.setImageURI(image_uri);
-//        } else if (resultCode == RESULT_OK && requestCode == IMAGE_PICK_CODE) {
-//            Log.i("info", String.valueOf(data.getData()));
-//            mImageView.setImageURI(data.getData());
-//        }
-//    }
-
 
     @Override
     public void onBackPressed() {

@@ -45,7 +45,7 @@ public class FetchAddressIntentService extends IntentService {
             deliverResultToReceiver(RESULT_FAILURE,"no address found");
         }else{
             Address address = addresses.get(0);
-            deliverResultToReceiver(RESULT_SUCCESS, address.getCountryName() + " / " + address.getPostalCode());
+            deliverResultToReceiver(RESULT_SUCCESS, address.getCountryCode() + " / " + address.getPostalCode());
         }
 
     }

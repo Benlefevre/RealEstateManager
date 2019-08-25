@@ -48,7 +48,7 @@ public class RealEstateViewHolder extends RecyclerView.ViewHolder {
         }
         mTypeProperty.setText(realEstate.getTypeProperty());
         mNbRoomsBedrooms.setText(mContext.getString(R.string.rooms_and_bedrooms,realEstate.getNbPieces(), realEstate.getNbBedrooms()));
-        mSurface.setText(realEstate.getSurface() + "$");
+        mSurface.setText(realEstate.getSurface() + "m2");
         mCity.setText(realEstate.getCity());
         mPrice.setText(String.valueOf(realEstate.getPrice()));
     }

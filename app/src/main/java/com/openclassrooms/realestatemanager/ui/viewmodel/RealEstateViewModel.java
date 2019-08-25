@@ -9,7 +9,12 @@ import com.openclassrooms.realestatemanager.data.repositories.RealEstateDataRepo
 import com.openclassrooms.realestatemanager.data.repositories.PicturesDataRepository;
 
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class RealEstateViewModel extends ViewModel {
 
@@ -34,8 +39,8 @@ public class RealEstateViewModel extends ViewModel {
         return mRealEstateDataRepository.getRealEstate(realEstateId);
     }
 
-    public LiveData<List<RealEstate>> getRealEstateByZipcode(int zipcode){
-        return mRealEstateDataRepository.getRealEstateByZipcode(zipcode);
+    public LiveData<List<RealEstate>> getRealEstateByZipcodeAndCountry(int zipcode, String countryCode){
+        return mRealEstateDataRepository.getRealEstateByZipcodeAndCountry(zipcode, countryCode);
     }
 
     public LiveData<List<Pictures>> getPictures(long realEstateId){
@@ -44,5 +49,23 @@ public class RealEstateViewModel extends ViewModel {
 
     public LiveData<Pictures> getOnePicture(long realEstateId){
         return mPicturesDataRepository.getOnePicture(realEstateId);
+    }
+
+    public long createRealEstate(RealEstate realEstate){
+        Callable<Long> insertCallable = () -> mRealEstateDataRepository.createRealEstate(realEstate);
+        long rowId = 0;
+
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
+        Future<Long> future = executorService.submit(insertCallable);
+        try {
+            rowId = future.get();
+        }catch (InterruptedException | ExecutionException e){
+            e.printStackTrace();
+        }
+        return rowId;
+    }
+
+    public void createPictures(Pictures pictures){
+        mExecutor.execute(() -> mPicturesDataRepository.createRealEstatePicture(pictures));
     }
 }

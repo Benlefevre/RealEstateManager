@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.ui.controllers.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -54,6 +56,7 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
     private String mParam1;
     private String mParam2;
 
+    private Activity mActivity;
     private GoogleMap mGoogleMap;
     private Boolean mLocationPermissionsGranted;
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -62,7 +65,7 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
 
     private RealEstateViewModel mRealEstateViewModel;
 
-//    private OnFragmentInteractionListener mListener;
+    private OnFragmentInteractionListener mListener;
 
     class AddressResultReceiver extends ResultReceiver {
 
@@ -106,6 +109,7 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mActivity = getActivity();
         if (getArguments() != null) {
             mLocationPermissionsGranted = getArguments().getBoolean(ARG_PARAM1);
         }
@@ -130,73 +134,73 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
         mRealEstateViewModel = ViewModelProviders.of(this, viewModelFactory).get(RealEstateViewModel.class);
     }
 
-    private void getRealEstateByZipcode(int zipcode) {
-        mRealEstateViewModel.getRealEstateByZipcode(zipcode).observe(getViewLifecycleOwner(), this::addRealEstatesMarker);
+    private void getRealEstateByZipcodeAndCountry(int zipcode, String countryCode) {
+        mRealEstateViewModel.getRealEstateByZipcodeAndCountry(zipcode, countryCode).observe(getViewLifecycleOwner(), this::addRealEstatesMarker);
     }
 
     private void addRealEstatesMarker(List<RealEstate> realEstates) {
         if (mGoogleMap != null) {
             for (RealEstate realEstate : realEstates) {
-                mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(realEstate.getLatitude(), realEstate.getLongitude())).title(realEstate.getAddress()));
+                mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(realEstate.getLatitude(),
+                        realEstate.getLongitude())).title(realEstate.getAddress()).snippet(String.valueOf(realEstate.getId())));
             }
         }
     }
 
 
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-//        mListener = null;
+    private void passRealEstateIdToFragmentDetails(long id) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(id);
+        }
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
-        mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+        mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             @Override
-            public boolean onMarkerClick(Marker marker) {
-                return false;
-//                TODO créer méthode pour ouvrir le fragment détail via le callback dans la main activity
+            public View getInfoWindow(Marker marker) {
+                return null;
             }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                View view = LayoutInflater.from(getContext()).inflate(R.layout.infowindow_item,null);
+                TextView title = view.findViewById(R.id.infowindow_item_txt);
+                title.setText(marker.getTitle());
+                return view;
+            }
+        });
+        mGoogleMap.setOnInfoWindowClickListener(marker -> {
+            long id = Long.parseLong(marker.getSnippet());
+            passRealEstateIdToFragmentDetails(id);
+
+        });
+        mGoogleMap.setOnMarkerClickListener(marker -> {
+            long id = Long.parseLong(marker.getSnippet());
+            if (marker.getTitle().equals(marker.getTag())){
+                marker.setTag(null);
+                passRealEstateIdToFragmentDetails(id);
+            }else{
+                marker.showInfoWindow();
+                marker.setTag(marker.getTitle());
+            }
+            return true;
         });
         getLastKnownLocation();
 
     }
 
-    private void startIntentGeocoderService() {
-        Intent intent = new Intent(getActivity(), FetchAddressIntentService.class);
-        intent.putExtra(Constants.LOCATION_EXTRA, mLastKnownLocation);
-        intent.putExtra(RECEIVER_EXTRA, mResultReceiver);
-        Objects.requireNonNull(getActivity()).startService(intent);
-    }
-
-
     private void getLastKnownLocation() {
         try {
             if (mLocationPermissionsGranted) {
-                mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+                mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mActivity);
                 mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(location -> {
                     if (location != null) {
                         mGoogleMap.setMyLocationEnabled(true);
                         mLastKnownLocation = location;
-                        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom((new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude())), 14));
+                        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom((
+                                new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude())), 14));
                         startIntentGeocoderService();
                     }
                 });
@@ -207,16 +211,40 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
 
     }
 
-    //    TODO préparer une requete pour n'afficher que les biens situés sur le même zipcode
-    private void displayLocation(String address) {
-        String country = address.substring(0, address.indexOf("/")).trim();
-        int zipcode = Integer.parseInt(address.substring(address.lastIndexOf("/") + 1).trim());
-        Objects.requireNonNull(getActivity()).runOnUiThread(() -> getRealEstateByZipcode(zipcode));
+    private void startIntentGeocoderService() {
+        Intent intent = new Intent(getActivity(), FetchAddressIntentService.class);
+        intent.putExtra(Constants.LOCATION_EXTRA, mLastKnownLocation);
+        intent.putExtra(RECEIVER_EXTRA, mResultReceiver);
+        Objects.requireNonNull(getActivity()).startService(intent);
     }
 
+    private void displayLocation(String address) {
+        String countryCode = address.substring(0, address.indexOf("/")).trim();
+        int zipcode = Integer.parseInt(address.substring(address.lastIndexOf("/") + 1).trim());
+        Log.i("info", "displayLocation: " + countryCode + " / " + zipcode);
+        Objects.requireNonNull(getActivity()).runOnUiThread(() -> getRealEstateByZipcodeAndCountry(zipcode, countryCode));
+    }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+
+        void onFragmentInteraction(long id);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.openclassrooms.realestatemanager.data.entities;
 
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
@@ -19,6 +20,11 @@ public class Pictures {
     private long mRealEstateId;
 
     public Pictures(){}
+
+    public Pictures(Uri uri, String description){
+        mUri  = uri;
+        mDescription = description;
+    }
 
     public Pictures(Uri uri,String description , long realEstateId){
         mUri = uri;
@@ -63,6 +69,7 @@ public class Pictures {
         mDescription = description;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Pictures{" +

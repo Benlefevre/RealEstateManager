@@ -87,10 +87,8 @@ public class RealEstateListFragment extends Fragment {
     }
 
     private void initPictures(Pictures pictures) {
-        mPictures.add(pictures);
-        for (Pictures pictures1 : mPictures) {
-            Log.i("info", "initPictures: " + pictures1.toString());
-        }
+        if (pictures != null)
+            mPictures.add(pictures);
         configureRecyclerView();
     }
 

@@ -2,8 +2,12 @@ package com.openclassrooms.realestatemanager.utils;
 
 import android.content.Context;
 import android.net.wifi.WifiManager;
+import android.util.Log;
+
+import com.openclassrooms.realestatemanager.R;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -42,5 +46,26 @@ public class Utils {
     public static Boolean isInternetAvailable(Context context){
         WifiManager wifi = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
         return wifi.isWifiEnabled();
+    }
+
+    public static Date convertStringToDate(String string){
+        if (string == null)
+            return null;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        try {
+            date = simpleDateFormat.parse(string);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+
+    public static String convertDateToString(Date date, Context context){
+        if (date == null)
+            return context.getString(R.string.unknown_date);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        return simpleDateFormat.format(date);
+
     }
 }

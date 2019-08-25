@@ -31,6 +31,7 @@ import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
 import com.openclassrooms.realestatemanager.ui.adapters.DetailsPhotoAdapter;
 import com.openclassrooms.realestatemanager.ui.viewholder.PicturesDetailsViewHolder;
 import com.openclassrooms.realestatemanager.ui.viewmodel.RealEstateViewModel;
+import com.openclassrooms.realestatemanager.utils.Utils;
 
 import java.io.IOException;
 import java.util.List;
@@ -61,7 +62,12 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     RecyclerView mPhotoRecyclerview;
     @BindView(R.id.fragment_details_mapView)
     MapView mMapView;
+    @BindView(R.id.fragment_details_coownership_txt)
+    TextView mCoownershipTxt;
+    @BindView(R.id.fragment_details_construction_txt)
+    TextView mConstructionTxt;
 
+    private Context mContext;
     private GoogleMap mGoogleMap;
 
     private long mRealEstateId;
@@ -85,6 +91,7 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = getContext();
         if (getArguments() != null) {
             mRealEstateId = getArguments().getLong(ARG_PARAM1);
             Log.i("info", "onCreate: " + mRealEstateId);
@@ -109,24 +116,21 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
         mGoogleMap.getUiSettings().setMapToolbarEnabled(false);
-        mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
+        mGoogleMap.setOnMapClickListener(latLng -> {
 
-            }
         });
     }
 
-//    TODO voir pour mettre dans le service si possible et obtenir les coordonnées à l'ajout en base puis l'ajouter via un insert en base.
-    private void getRealEstatePosition(){
+    //    TODO voir pour mettre dans le service si possible et obtenir les coordonnées à l'ajout en base puis l'ajouter via un insert en base.
+    private void getRealEstatePosition() {
         Geocoder geocoder = new Geocoder(getActivity());
         try {
-            List<Address> addresses = geocoder.getFromLocationName(mLocation.getText().toString(),1);
-            for (Address address : addresses){
+            List<Address> addresses = geocoder.getFromLocationName(mLocation.getText().toString(), 1);
+            for (Address address : addresses) {
                 Log.i("info", "getRealEstatePosition: " + address.getLatitude() + "/" + address.getLongitude() +
                         "/" + address.getCountryCode() + address.getCountryName() + address.getPostalCode());
-                LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
-                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
+                LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
                 mGoogleMap.addMarker(new MarkerOptions().position(latLng));
             }
         } catch (IOException e) {
@@ -166,6 +170,8 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         mBathroom.setText(String.valueOf(realEstate.getNbBathrooms()));
         mLocation.setText(String.valueOf(realEstate.getAddress()));
         mFloors.setText(String.valueOf(realEstate.getFloors()));
+        mCoownershipTxt.setText(String.valueOf(realEstate.isCoOwnership()));
+        mConstructionTxt.setText(Utils.convertDateToString(realEstate.getYearConstruction(),mContext));
         getRealEstatePosition();
     }
 
