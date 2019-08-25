@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -27,6 +29,8 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.loader.content.CursorLoader;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -38,6 +42,8 @@ import com.openclassrooms.realestatemanager.data.entities.Pictures;
 import com.openclassrooms.realestatemanager.data.entities.RealEstate;
 import com.openclassrooms.realestatemanager.injections.Injection;
 import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
+import com.openclassrooms.realestatemanager.ui.adapters.DetailsPhotoAdapter;
+import com.openclassrooms.realestatemanager.ui.viewholder.PicturesDetailsViewHolder;
 import com.openclassrooms.realestatemanager.ui.viewmodel.RealEstateViewModel;
 import com.openclassrooms.realestatemanager.utils.Utils;
 
@@ -107,6 +113,8 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
     MaterialButton mValidationBtn;
     @BindView(R.id.fragment_add_pictures_txt)
     TextInputEditText mPicturesTxt;
+    @BindView(R.id.fragment_add_recycler_view)
+    RecyclerView mRecyclerView;
 
 
     private String mParam1;
@@ -121,6 +129,7 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
 
     private long mRowId;
     private List<Pictures> mPicturesList;
+    private DetailsPhotoAdapter mPhotoAdapter;
 
     private Activity mActivity;
 
@@ -166,6 +175,7 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
         View view = inflater.inflate(R.layout.fragment_add_real_estate, container, false);
         ButterKnife.bind(this, view);
         mPicturesList = new ArrayList<>();
+        configureRecyclerView();
         configureSpinner();
         configureViewModel();
         return view;
@@ -252,6 +262,28 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
         }
     }
 
+    private void configureRecyclerView(){
+        mRecyclerView.setVisibility(View.GONE);
+        mPhotoAdapter = new DetailsPhotoAdapter(mPicturesList,2);
+        mPhotoAdapter.setOnClickListener(view -> {
+            PicturesDetailsViewHolder holder = (PicturesDetailsViewHolder) view.getTag();
+            int position = holder.getAdapterPosition();
+            AlertDialog builder = new MaterialAlertDialogBuilder(mActivity)
+                    .setTitle(getString(R.string.delete_picture))
+                    .setMessage(getString(R.string.would_you_delete_picture))
+                    .setNegativeButton(getString(R.string.cancel), (dialogInterface, i) -> dialogInterface.cancel())
+                    .setPositiveButton(getString(R.string.delete), (dialogInterface, i) -> {
+                        mPicturesList.remove(position);
+                        mPhotoAdapter.notifyDataSetChanged();
+                        if (mPicturesList.size() == 0)
+                            mRecyclerView.setVisibility(View.GONE);
+                    })
+                    .show();
+        });
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity,RecyclerView.HORIZONTAL,false));
+        mRecyclerView.setAdapter(mPhotoAdapter);
+    }
+
 
 //    public void onButtonPressed(Uri uri) {
 //        if (mListener != null) {
@@ -324,7 +356,7 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
     }
 
     private void openDialogToFetchPictures() {
-        AlertDialog builder = new MaterialAlertDialogBuilder(mActivity)
+        new MaterialAlertDialogBuilder(mActivity)
                 .setTitle("By which means would you like to add a picture?")
                 .setMessage("You can either take a picture from the camera of this camera or choose a picture stored on the camera's memory")
                 .setNegativeButton(getString(R.string.camera), (dialogInterface, i) -> openCamera())
@@ -338,8 +370,8 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timestamp;
 //        File storageDir = mActivity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),"Camera");
-        File image = File.createTempFile(imageFileName,".jpg",storageDir);
+        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "Camera");
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
 
         currentPhotoPath = image.getAbsolutePath();
         return image;
@@ -351,14 +383,14 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
     private void openCamera() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (cameraIntent.resolveActivity(mActivity.getPackageManager()) != null) {
-            File photoFile  = null;
+            File photoFile = null;
             try {
                 photoFile = createImageFile();
-            }catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (photoFile != null){
-                Uri photoUri = FileProvider.getUriForFile(mActivity, BuildConfig.APPLICATION_ID + ".provider",photoFile);
+            if (photoFile != null) {
+                Uri photoUri = FileProvider.getUriForFile(mActivity, BuildConfig.APPLICATION_ID + ".provider", photoFile);
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
                 startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE);
             }
@@ -369,7 +401,7 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
      * Opens an App to pick a picture and fetch the file's path
      */
     private void pickImageFromGallery() {
-        Intent intentGallery = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent intentGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intentGallery.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivityForResult(intentGallery, IMAGE_PICK_CODE);
     }
@@ -421,6 +453,8 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
                 textInputLayout.setError(null);
                 mPicturesList.add(new Pictures(Uri.parse(uri), editText.getText().toString()));
                 builder.cancel();
+                mRecyclerView.setVisibility(View.VISIBLE);
+                mPhotoAdapter.notifyDataSetChanged();
             }
 
         });
@@ -442,7 +476,7 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
     }
 
     private String getRealPathFromURI(Uri contentUri) {
-        String[] proj = { MediaStore.Images.Media.DATA };
+        String[] proj = {MediaStore.Images.Media.DATA};
         CursorLoader loader = new CursorLoader(mActivity, contentUri, proj, null, null, null);
         Cursor cursor = loader.loadInBackground();
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);

@@ -19,11 +19,17 @@ public class PicturesDetailsViewHolder extends RecyclerView.ViewHolder {
     ImageView mImageView;
     @BindView(R.id.fragment_details_photo_title)
     TextView mImageTitle;
+    @BindView(R.id.fragment_details_delete_btn)
+    ImageView mDeleteBtn;
 
-    public PicturesDetailsViewHolder(@NonNull View itemView) {
+
+    public PicturesDetailsViewHolder(@NonNull View itemView, int origin) {
         super(itemView);
         itemView.setTag(this);
         ButterKnife.bind(this,itemView);
+        mDeleteBtn.setTag(this);
+        if (origin == 1)
+            mDeleteBtn.setVisibility(View.GONE);
     }
 
     public void bindPhotoInImgView(Pictures pictures){

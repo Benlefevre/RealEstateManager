@@ -17,11 +17,13 @@ import java.util.List;
 public class DetailsPhotoAdapter extends RecyclerView.Adapter<PicturesDetailsViewHolder> {
 
     private List<Pictures> mPictures;
+    private int mOrigin;
 
     private View.OnClickListener mClickListener;
 
-    public DetailsPhotoAdapter(List<Pictures> pictures) {
+    public DetailsPhotoAdapter(List<Pictures> pictures, int origin) {
         mPictures = pictures;
+        mOrigin = origin;
     }
 
     @NonNull
@@ -29,8 +31,11 @@ public class DetailsPhotoAdapter extends RecyclerView.Adapter<PicturesDetailsVie
     public PicturesDetailsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.pictures_details_item, parent, false);
-        PicturesDetailsViewHolder picturesDetailsViewHolder = new PicturesDetailsViewHolder(view);
+        PicturesDetailsViewHolder picturesDetailsViewHolder = new PicturesDetailsViewHolder(view,mOrigin);
+        if (mOrigin == 1)
         picturesDetailsViewHolder.itemView.setOnClickListener(view1 -> mClickListener.onClick(view1));
+        else
+            picturesDetailsViewHolder.itemView.findViewById(R.id.fragment_details_delete_btn).setOnClickListener(view1 -> mClickListener.onClick(view1));
         return picturesDetailsViewHolder;
     }
 

@@ -57,6 +57,10 @@
     <string name="memory">From memory</string>
     <string name="save_the_picture">Save the picture</string>
     <string name="a_preview_of_the_chosen_picture">A preview of the chosen picture</string>
+    <string name="delete_picture">Delete this picture?</string>
+    <string name="delete">Delete</string>
+    <string name="would_you_delete_picture">Would you remove this picture to the list of pictures?</string>
+    <string name="an_close_icon_to_delete_picture">An close icon to delete picture</string>
 
 
     <string-array name="typeProperty">

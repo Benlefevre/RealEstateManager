@@ -5,7 +5,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,7 +93,6 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         mContext = getContext();
         if (getArguments() != null) {
             mRealEstateId = getArguments().getLong(ARG_PARAM1);
-            Log.i("info", "onCreate: " + mRealEstateId);
         }
     }
 
@@ -127,8 +125,6 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         try {
             List<Address> addresses = geocoder.getFromLocationName(mLocation.getText().toString(), 1);
             for (Address address : addresses) {
-                Log.i("info", "getRealEstatePosition: " + address.getLatitude() + "/" + address.getLongitude() +
-                        "/" + address.getCountryCode() + address.getCountryName() + address.getPostalCode());
                 LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
                 mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
                 mGoogleMap.addMarker(new MarkerOptions().position(latLng));
@@ -151,7 +147,7 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void configureRecyclerViewWithPhotos(List<Pictures> pictures) {
-        DetailsPhotoAdapter detailsPhotoAdapter = new DetailsPhotoAdapter(pictures);
+        DetailsPhotoAdapter detailsPhotoAdapter = new DetailsPhotoAdapter(pictures,1);
         detailsPhotoAdapter.setOnClickListener(view -> {
             PicturesDetailsViewHolder holder = (PicturesDetailsViewHolder) view.getTag();
             int position = holder.getAdapterPosition();

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -221,7 +220,6 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
     private void displayLocation(String address) {
         String countryCode = address.substring(0, address.indexOf("/")).trim();
         int zipcode = Integer.parseInt(address.substring(address.lastIndexOf("/") + 1).trim());
-        Log.i("info", "displayLocation: " + countryCode + " / " + zipcode);
         Objects.requireNonNull(getActivity()).runOnUiThread(() -> getRealEstateByZipcodeAndCountry(zipcode, countryCode));
     }
 
