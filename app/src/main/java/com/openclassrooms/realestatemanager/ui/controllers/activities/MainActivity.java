@@ -34,6 +34,7 @@ import static com.openclassrooms.realestatemanager.utils.Constants.ACCESS_LOCATI
 import static com.openclassrooms.realestatemanager.utils.Constants.ADD_REAL_ESTATE_FRAGMENT;
 import static com.openclassrooms.realestatemanager.utils.Constants.AGENT_LOCATION_FRAGMENT;
 import static com.openclassrooms.realestatemanager.utils.Constants.DETAILS_FRAGMENT;
+import static com.openclassrooms.realestatemanager.utils.Constants.EDIT_REAL_ESTATE_FRAGMENT;
 import static com.openclassrooms.realestatemanager.utils.Constants.ESTATE_LIST_FRAGMENT;
 import static com.openclassrooms.realestatemanager.utils.Constants.FULL_SCREEN_FRAGMENT;
 import static com.openclassrooms.realestatemanager.utils.Constants.READ_AND_WRITE_EXTERNAL_STORAGE;
@@ -142,6 +143,17 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                     .addToBackStack("Fragment")
                     .commit();
         }
+    }
+
+    @Override
+    public void onFragmentInteractionEdit(long id) {
+        AddRealEstateFragment editRealEstateFragment = (AddRealEstateFragment) mFragmentManager.findFragmentByTag(EDIT_REAL_ESTATE_FRAGMENT);
+        if (editRealEstateFragment == null){
+            mFragmentManager.beginTransaction().replace(R.id.activity_main_container, AddRealEstateFragment.newInstance(id),EDIT_REAL_ESTATE_FRAGMENT)
+                    .addToBackStack("Fragment")
+                    .commit();
+        }
+
     }
 
     @Override

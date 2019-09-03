@@ -4,21 +4,20 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -54,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -69,8 +69,11 @@ import static com.openclassrooms.realestatemanager.utils.Constants.IMAGE_PICK_CO
 
 public class AddRealEstateFragment extends Fragment implements AdapterView.OnItemClickListener {
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String REAL_ESTATE_ID = "realEstateId";
+
+/*--------------------------------------------------------------------------------------------------
+                                        VIEWS
+ _________________________________________________________________________________________________*/
     @BindView(R.id.fragment_add_type_property_spinner)
     AppCompatAutoCompleteTextView mTypePropertySpinner;
     @BindView(R.id.fragment_add_price_txt)
@@ -116,17 +119,30 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
     @BindView(R.id.fragment_add_recycler_view)
     RecyclerView mRecyclerView;
 
-
-    private String mParam1;
-    private String mParam2;
+    private RealEstate mRealEstate;
     private String mTypePropertyInput;
     private String mCountryCodeInput;
     private String mStatusInput;
     private String mAgentInput;
     private String mCoOwnershipInput;
-    private Uri image_uri;
-    private String currentPhotoPath;
+    private int price = 0;
+    private int surface = 0;
+    private int nbRooms = 0;
+    private int nbBedrooms = 0;
+    private int nbBathrooms = 0;
+    private String description = null;
+    private String address = null;
+    private int zipCode = 0;
+    private String city = null;
+    private String amenities = null;
+    private Date initialDate = null;
+    private Date finalDate = null;
+    private Date yearConstruction = null;
+    private int floors = 0;
 
+
+    private String currentPhotoPath;
+    private long mRealEstateId;
     private long mRowId;
     private List<Pictures> mPicturesList;
     private DetailsPhotoAdapter mPhotoAdapter;
@@ -137,23 +153,23 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
 
 //    private OnFragmentInteractionListener mListener;
 
+//    TODO régler problème date
+
     public AddRealEstateFragment() {
         // Required empty public constructor
     }
 
-
-//    public static AddRealEstateFragment newInstance(String param1, String param2) {
-//        AddRealEstateFragment fragment = new AddRealEstateFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
-
     public static AddRealEstateFragment newInstance() {
         AddRealEstateFragment fragment = new AddRealEstateFragment();
+//        Bundle args = new Bundle();
+//        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static AddRealEstateFragment newInstance(long realEstateId) {
+        AddRealEstateFragment fragment = new AddRealEstateFragment();
         Bundle args = new Bundle();
+        args.putLong(REAL_ESTATE_ID, realEstateId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -163,8 +179,7 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         mActivity = getActivity();
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mRealEstateId = getArguments().getLong(REAL_ESTATE_ID);
         }
     }
 
@@ -174,57 +189,153 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_add_real_estate, container, false);
         ButterKnife.bind(this, view);
-        mPicturesList = new ArrayList<>();
-        configureRecyclerView();
-        configureSpinner();
         configureViewModel();
+        mPicturesList = new ArrayList<>();
+        configureSpinner();
+        configureRecyclerView();
+        if (mRealEstateId != 0)
+            fetchDetailsAndPicturesAccordingToRealEstateId(mRealEstateId);
         return view;
     }
 
-    private void configureSpinner() {
-        ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(mActivity, R.array.typeProperty, R.layout.dropdown_item_spinner);
-        mTypePropertySpinner.setAdapter(typeAdapter);
-        mTypePropertySpinner.setOnItemClickListener(this);
-
-        ArrayAdapter<CharSequence> countryAdapter = ArrayAdapter.createFromResource(mActivity, R.array.countryCode, R.layout.dropdown_item_spinner);
-        mCountryCodeSpinner.setAdapter(countryAdapter);
-        mCountryCodeSpinner.setOnItemClickListener(this);
-
-        ArrayAdapter<CharSequence> statusAdapter = ArrayAdapter.createFromResource(mActivity, R.array.status, R.layout.dropdown_item_spinner);
-        mStatusSpinner.setAdapter(statusAdapter);
-        mStatusSpinner.setOnItemClickListener(this);
-
-        ArrayAdapter<CharSequence> agentAdapter = ArrayAdapter.createFromResource(mActivity, R.array.agent, R.layout.dropdown_item_spinner);
-        mAgentSpinner.setAdapter(agentAdapter);
-        mAgentSpinner.setOnItemClickListener(this);
-
-        ArrayAdapter<CharSequence> coOwnershipAdapter = ArrayAdapter.createFromResource(mActivity, R.array.co_ownership, R.layout.dropdown_item_spinner);
-        mCoOwnershipSpinner.setAdapter(coOwnershipAdapter);
-        mCoOwnershipSpinner.setOnItemClickListener(this);
-    }
-
-
     //    Configuring ViewModel
+
     private void configureViewModel() {
         ViewModelFactory viewModelFactory = Injection.providerViewModelFactory(getActivity());
         mRealEstateViewModel = ViewModelProviders.of(this, viewModelFactory).get(RealEstateViewModel.class);
     }
 
+    private void fetchDetailsAndPicturesAccordingToRealEstateId(long realEstateId) {
+        mRealEstateViewModel.getRealEstate(realEstateId).observe(getViewLifecycleOwner(), this::updateUiAfterFetchRealEstate);
+        mRealEstateViewModel.getPictures(realEstateId).observe(getViewLifecycleOwner(), this::bindPicturesIntoRecyclerViewAfterFetch);
+    }
+
+    private void bindPicturesIntoRecyclerViewAfterFetch(List<Pictures> pictures) {
+        for (Pictures pictures1 : pictures) {
+            if (!mPicturesList.contains(pictures1))
+                mPicturesList.add(pictures1);
+        }
+        mRecyclerView.setVisibility(View.VISIBLE);
+        mPhotoAdapter.notifyDataSetChanged();
+    }
+
+    private void updateUiAfterFetchRealEstate(RealEstate realEstate){
+        mRealEstate = realEstate;
+        mTypePropertySpinner.setText(mRealEstate.getTypeProperty(),false);
+        mTypePropertyInput = mTypePropertySpinner.getText().toString();
+        mCoOwnershipSpinner.setText(String.valueOf(mRealEstate.isCoOwnership()),false);
+        mCoOwnershipInput = mCoOwnershipSpinner.getText().toString();
+        mStatusSpinner.setText(mRealEstate.getStatus(),false);
+        mStatusInput = mStatusSpinner.getText().toString();
+        mAgentSpinner.setText(mRealEstate.getRealEstateAgent(),false);
+        mAgentInput = mAgentSpinner.getText().toString();
+        mCountryCodeSpinner.setText(mRealEstate.getCountryCode(),false);
+        mDescriptionTxt.setText(mRealEstate.getDescription());
+        mAddAddressTxt.setText(mRealEstate.getAddress());
+        mCityTxt.setText(mRealEstate.getCity());
+        mAmenitiesTxt.setText(mRealEstate.getAmenities());
+        mFloorsTxt.setText(String.valueOf(mRealEstate.getFloors()));
+        if (mRealEstate.getPrice() != 0)
+            mPriceTxt.setText(String.valueOf(mRealEstate.getPrice()));
+        if (mRealEstate.getSurface() != 0)
+            mSurfaceTxt.setText(String.valueOf(mRealEstate.getSurface()));
+        if (mRealEstate.getNbRooms() != 0)
+            mRoomsTxt.setText(String.valueOf(mRealEstate.getNbRooms()));
+        if (mRealEstate.getNbBedrooms() != 0)
+            mBedroomsTxt.setText(String.valueOf(mRealEstate.getNbBedrooms()));
+        if (mRealEstate.getNbBathrooms() != 0)
+            mBathroomsTxt.setText(String.valueOf(mRealEstate.getNbBathrooms()));
+        if (mRealEstate.getZipCode() != 0)
+            mZipcodeTxt.setText(String.valueOf(mRealEstate.getZipCode()));
+        if (mRealEstate.getInitialSale() != null)
+            mInitialSaleTxt.setText(Utils.convertDateToString(mRealEstate.getInitialSale(),mActivity));
+        if (mRealEstate.getFinalSale() != null)
+            mFinalSaleTxt.setText(Utils.convertDateToString(mRealEstate.getFinalSale(),mActivity));
+        if (mRealEstate.getYearConstruction() != null)
+            mYearConstructionTxt.setText(Utils.convertDateToString(mRealEstate.getYearConstruction(),mActivity));
+    }
+
+    private void configureSpinner() {
+        ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(mActivity, R.array.typeProperty,
+                R.layout.dropdown_item_spinner);
+        mTypePropertySpinner.setAdapter(typeAdapter);
+        mTypePropertySpinner.setOnItemClickListener(this);
+
+        ArrayAdapter<CharSequence> countryAdapter = ArrayAdapter.createFromResource(mActivity, R.array.countryCode,
+                R.layout.dropdown_item_spinner);
+        mCountryCodeSpinner.setAdapter(countryAdapter);
+        mCountryCodeSpinner.setOnItemClickListener(this);
+
+        ArrayAdapter<CharSequence> statusAdapter = ArrayAdapter.createFromResource(mActivity, R.array.status,
+                R.layout.dropdown_item_spinner);
+        mStatusSpinner.setAdapter(statusAdapter);
+        mStatusSpinner.setOnItemClickListener(this);
+
+        ArrayAdapter<CharSequence> agentAdapter = ArrayAdapter.createFromResource(mActivity, R.array.agent,
+                R.layout.dropdown_item_spinner);
+        mAgentSpinner.setAdapter(agentAdapter);
+        mAgentSpinner.setOnItemClickListener(this);
+
+        ArrayAdapter<CharSequence> coOwnershipAdapter = ArrayAdapter.createFromResource(mActivity, R.array.co_ownership,
+                R.layout.dropdown_item_spinner);
+        mCoOwnershipSpinner.setAdapter(coOwnershipAdapter);
+        mCoOwnershipSpinner.setOnItemClickListener(this);
+    }
+
+    private void configureRecyclerView() {
+        mRecyclerView.setVisibility(View.GONE);
+        mPhotoAdapter = new DetailsPhotoAdapter(mPicturesList, 2);
+        mPhotoAdapter.setOnClickListener(view -> {
+            PicturesDetailsViewHolder holder = (PicturesDetailsViewHolder) view.getTag();
+            int position = holder.getAdapterPosition();
+            AlertDialog builder = new MaterialAlertDialogBuilder(mActivity)
+                    .setTitle(getString(R.string.delete_picture))
+                    .setMessage(getString(R.string.would_you_delete_picture))
+                    .setNegativeButton(getString(R.string.cancel), (dialogInterface, i) -> dialogInterface.cancel())
+                    .setPositiveButton(getString(R.string.delete), (dialogInterface, i) -> {
+                        if (mRealEstateId == 0)
+                            mPicturesList.remove(position);
+                        else {
+                            mRealEstateViewModel.deletePicture(mPicturesList.get(position));
+                            mPicturesList.remove(position);
+                        }
+                        mPhotoAdapter.notifyDataSetChanged();
+                        if (mPicturesList.size() == 0)
+                            mRecyclerView.setVisibility(View.GONE);
+                    })
+                    .show();
+        });
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity, RecyclerView.HORIZONTAL, false));
+        mRecyclerView.setAdapter(mPhotoAdapter);
+    }
+
+    private void updateRealEstateWithNewValues(){
+        getTheUserInput();
+        updateCurrentRealEstate(mTypePropertyInput, price, surface, nbRooms, nbBedrooms, nbBathrooms,
+                description,address,zipCode,mCountryCodeInput,city,amenities,mStatusInput,initialDate,
+                finalDate,mAgentInput,yearConstruction,floors,Boolean.valueOf(mCoOwnershipInput));
+        savePictureInDb(mRealEstateId);
+        mRealEstateViewModel.updateRealEstate(mRealEstate);
+    }
+
     private void createNewRealEstateFromInformations() {
-        int price = 0;
-        int surface = 0;
-        int nbRooms = 0;
-        int nbBedrooms = 0;
-        int nbBathrooms = 0;
-        String description = null;
-        String address = null;
-        int zipCode = 0;
-        String city = null;
-        String amenities = null;
-        Date initialDate;
-        Date finalDate;
-        Date yearConstruction;
-        int floors = 0;
+        getTheUserInput();
+        mRowId = mRealEstateViewModel.createRealEstate(new RealEstate(mTypePropertyInput, price, surface, nbRooms,
+                nbBedrooms, nbBathrooms, description, address, zipCode, mCountryCodeInput, 0, 0, city, amenities,
+                mStatusInput, initialDate, finalDate, mAgentInput, yearConstruction, floors, Boolean.valueOf(mCoOwnershipInput)));
+        savePictureInDb(mRowId);
+        if (mAddAddressTxt.getText() != null && mAddAddressTxt.getText().length() != 0)
+            mRealEstateViewModel.getRealEstate(mRowId).observe(getViewLifecycleOwner(), this::getLocation);
+    }
+
+    private void savePictureInDb(long realEstateId){
+        for (Pictures pictures : mPicturesList){
+            pictures.setRealEstateId(realEstateId);
+            mRealEstateViewModel.createPictures(pictures);
+        }
+    }
+
+    private void getTheUserInput(){
         if (mPriceTxt.getText() != null && mPriceTxt.getText().length() != 0)
             price = Integer.parseInt(mPriceTxt.getText().toString());
         if (mSurfaceTxt.getText() != null && mSurfaceTxt.getText().length() != 0)
@@ -247,65 +358,12 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
             amenities = mAmenitiesTxt.getText().toString();
         if (mFloorsTxt.getText() != null && mFloorsTxt.getText().length() != 0)
             floors = Integer.parseInt(mFloorsTxt.getText().toString());
-
-        initialDate = Utils.convertStringToDate(mInitialSaleTxt.getText().toString());
-        finalDate = Utils.convertStringToDate(mFinalSaleTxt.getText().toString());
-        yearConstruction = Utils.convertStringToDate(mYearConstructionTxt.getText().toString());
-
-        mRowId = mRealEstateViewModel.createRealEstate(new RealEstate(mTypePropertyInput, price, surface, nbRooms,
-                nbBedrooms, nbBathrooms, description, address, zipCode, mCountryCodeInput, 0, 0, city, amenities,
-                mStatusInput, initialDate, finalDate, mAgentInput, yearConstruction, floors, Boolean.valueOf(mCoOwnershipInput)));
-
-        for (Pictures pictures : mPicturesList) {
-            pictures.setRealEstateId(mRowId);
-            mRealEstateViewModel.createPictures(pictures);
-        }
-    }
-
-    private void configureRecyclerView(){
-        mRecyclerView.setVisibility(View.GONE);
-        mPhotoAdapter = new DetailsPhotoAdapter(mPicturesList,2);
-        mPhotoAdapter.setOnClickListener(view -> {
-            PicturesDetailsViewHolder holder = (PicturesDetailsViewHolder) view.getTag();
-            int position = holder.getAdapterPosition();
-            AlertDialog builder = new MaterialAlertDialogBuilder(mActivity)
-                    .setTitle(getString(R.string.delete_picture))
-                    .setMessage(getString(R.string.would_you_delete_picture))
-                    .setNegativeButton(getString(R.string.cancel), (dialogInterface, i) -> dialogInterface.cancel())
-                    .setPositiveButton(getString(R.string.delete), (dialogInterface, i) -> {
-                        mPicturesList.remove(position);
-                        mPhotoAdapter.notifyDataSetChanged();
-                        if (mPicturesList.size() == 0)
-                            mRecyclerView.setVisibility(View.GONE);
-                    })
-                    .show();
-        });
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity,RecyclerView.HORIZONTAL,false));
-        mRecyclerView.setAdapter(mPhotoAdapter);
-    }
-
-
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-//        mListener = null;
+        if (mInitialSaleTxt.getText() != null && mInitialSaleTxt.getText().length() != 0)
+            initialDate = Utils.convertStringToDate(Objects.requireNonNull(mInitialSaleTxt.getText()).toString());
+        if (mFinalSaleTxt.getText() != null && mFinalSaleTxt.getText().length() != 0)
+            finalDate = Utils.convertStringToDate(Objects.requireNonNull(mFinalSaleTxt.getText()).toString());
+        if (mYearConstructionTxt.getText() != null && mYearConstructionTxt.getText().length() != 0)
+            yearConstruction = Utils.convertStringToDate(Objects.requireNonNull(mYearConstructionTxt.getText()).toString());
     }
 
     @Override
@@ -313,7 +371,7 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
         if (adapterView.getAdapter() == mTypePropertySpinner.getAdapter()) {
             mTypePropertyInput = adapterView.getItemAtPosition(i).toString();
         } else if (adapterView.getAdapter() == mCountryCodeSpinner.getAdapter()) {
-            mCountryCodeInput = adapterView.getItemAtPosition(i).toString();
+            mCountryCodeInput = getCountryCodeAccordingToCountry(adapterView.getItemAtPosition(i).toString());
         } else if (adapterView.getAdapter() == mStatusSpinner.getAdapter()) {
             mStatusInput = adapterView.getItemAtPosition(i).toString();
         } else if (adapterView.getAdapter() == mAgentSpinner.getAdapter()) {
@@ -321,6 +379,92 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
         } else if (adapterView.getAdapter() == mCoOwnershipSpinner.getAdapter()) {
             mCoOwnershipInput = adapterView.getItemAtPosition(i).toString();
         }
+    }
+
+    private void updateCurrentRealEstate(String typePropertyInput, int price, int surface, int nbRooms,
+                                         int nbBedrooms, int nbBathrooms, String description, String address,
+                                         int zipCode, String countryCodeInput, String city, String amenities,
+                                         String statusInput, Date initialDate, Date finalDate, String agentInput,
+                                         Date yearConstruction, int floors, Boolean coownership) {
+        mRealEstate.setTypeProperty(typePropertyInput);
+        mRealEstate.setPrice(price);
+        mRealEstate.setSurface(surface);
+        mRealEstate.setNbRooms(nbRooms);
+        mRealEstate.setNbBedrooms(nbBedrooms);
+        mRealEstate.setNbBathrooms(nbBathrooms);
+        mRealEstate.setDescription(description);
+        mRealEstate.setAddress(address);
+        mRealEstate.setZipCode(zipCode);
+        mRealEstate.setCountryCode(countryCodeInput);
+        mRealEstate.setCity(city);
+        mRealEstate.setAmenities(amenities);
+        mRealEstate.setStatus(statusInput);
+        mRealEstate.setInitialSale(initialDate);
+        mRealEstate.setFinalSale(finalDate);
+        mRealEstate.setRealEstateAgent(agentInput);
+        mRealEstate.setYearConstruction(yearConstruction);
+        mRealEstate.setFloors(floors);
+        mRealEstate.setCoOwnership(coownership);
+    }
+
+    private String getCountryCodeAccordingToCountry(String country) {
+        switch (country) {
+            case "FRANCE":
+                return "FR";
+            case "UNITED STATE":
+                return "US";
+            case "BELGIUM":
+                return "BE";
+            case "CANADA":
+                return "CA";
+            case "LUXEMBOURG":
+                return "LU";
+            case "GREAT BRITAIN":
+                return "GB";
+            default:
+                return null;
+        }
+    }
+
+//    TODO ajouter controle acces réseau
+    private void getLocation(RealEstate realEstate) {
+        Geocoder geocoder = new Geocoder(getActivity());
+        try {
+            List<Address> addresses = geocoder.getFromLocationName(realEstate.getAddress(), 1);
+            for (Address address : addresses) {
+                double latitude = address.getLatitude();
+                double longitude = address.getLongitude();
+                realEstate.setLatitude(latitude);
+                realEstate.setLongitude(longitude);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mRealEstateViewModel.updateRealEstate(realEstate);
+    }
+
+    private void displayDatePickerAndUpdateUi(View view) {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(mActivity, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                switch (view.getId()) {
+                    case R.id.fragment_add_initial_sale_txt:
+                        mInitialSaleTxt.setText(day + "-" + month + "-" + year);
+                        break;
+                    case R.id.fragment_add_final_sale_txt:
+                        mFinalSaleTxt.setText(day + "-" + month + "-" + year);
+                        break;
+                    case R.id.fragment_add_year_construction_txt:
+                        mYearConstructionTxt.setText(day + "-" + month + "-" + year);
+                        break;
+                }
+            }
+        }, year, month, day);
+        datePickerDialog.show();
     }
 
     @OnClick({R.id.fragment_add_year_construction_txt, R.id.fragment_add_initial_sale_txt,
@@ -337,7 +481,10 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
                 displayDatePickerAndUpdateUi(view);
                 break;
             case R.id.fragment_add_validation_btn:
-                createNewRealEstateFromInformations();
+                if (mRealEstateId == 0)
+                    createNewRealEstateFromInformations();
+                else
+                    updateRealEstateWithNewValues();
                 break;
             case R.id.fragment_add_pictures_txt:
                 getCameraPermissions();
@@ -368,9 +515,8 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
 
     private File createImageFile() throws IOException {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timestamp;
-//        File storageDir = mActivity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "Camera");
+        String imageFileName = "JPEG_" + timestamp + "_";
+        File storageDir = mActivity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(imageFileName, ".jpg", storageDir);
 
         currentPhotoPath = image.getAbsolutePath();
@@ -406,31 +552,7 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
         startActivityForResult(intentGallery, IMAGE_PICK_CODE);
     }
 
-    private void displayDatePickerAndUpdateUi(View view) {
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        DatePickerDialog datePickerDialog = new DatePickerDialog(mActivity, new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                switch (view.getId()) {
-                    case R.id.fragment_add_initial_sale_txt:
-                        mInitialSaleTxt.setText(year + "-" + month + "-" + day);
-                        break;
-                    case R.id.fragment_add_final_sale_txt:
-                        mFinalSaleTxt.setText(year + "-" + month + "-" + day);
-                        break;
-                    case R.id.fragment_add_year_construction_txt:
-                        mYearConstructionTxt.setText(year + "-" + month + "-" + day);
-                        break;
-                }
-            }
-        }, year, month, day);
-        datePickerDialog.show();
-    }
-
-    private void savePicture(String uri) {
+    private void savePictureCaption(String uri) {
         View customDialog = mActivity.getLayoutInflater().inflate(R.layout.dialog_pictures_validation, null);
         ImageView imageView = customDialog.findViewById(R.id.dialog_picture_preview_img);
         imageView.setImageURI(Uri.parse(uri));
@@ -465,13 +587,11 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == IMAGE_CAPTURE_CODE) {
-            Log.i("info", currentPhotoPath);
-            savePicture(currentPhotoPath);
+            savePictureCaption(currentPhotoPath);
         } else if (resultCode == RESULT_OK && requestCode == IMAGE_PICK_CODE && data != null) {
-            Log.i("info", String.valueOf(data.getData()));
             Uri uri = data.getData();
             String path = getRealPathFromURI(uri);
-            savePicture(path);
+            savePictureCaption(path);
         }
     }
 
@@ -484,6 +604,29 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
         String result = cursor.getString(column_index);
         cursor.close();
         return result;
+    }
+
+    //    public void onButtonPressed(Uri uri) {
+//        if (mListener != null) {
+//            mListener.onFragmentInteraction(uri);
+//        }
+//    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+//        if (context instanceof OnFragmentInteractionListener) {
+//            mListener = (OnFragmentInteractionListener) context;
+//        } else {
+//            throw new RuntimeException(context.toString()
+//                    + " must implement OnFragmentInteractionListener");
+//        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+//        mListener = null;
     }
 
 //    public interface OnFragmentInteractionListener {

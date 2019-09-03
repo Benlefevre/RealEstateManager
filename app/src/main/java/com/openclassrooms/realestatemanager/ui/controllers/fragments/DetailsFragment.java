@@ -1,11 +1,12 @@
 package com.openclassrooms.realestatemanager.ui.controllers.fragments;
 
 import android.content.Context;
-import android.location.Address;
-import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -32,7 +33,6 @@ import com.openclassrooms.realestatemanager.ui.viewholder.PicturesDetailsViewHol
 import com.openclassrooms.realestatemanager.ui.viewmodel.RealEstateViewModel;
 import com.openclassrooms.realestatemanager.utils.Utils;
 
-import java.io.IOException;
 import java.util.List;
 
 import butterknife.BindView;
@@ -72,6 +72,9 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     private long mRealEstateId;
     private RealEstateViewModel mRealEstateViewModel;
 
+    private double mLatitude;
+    private double mLongitude;
+
     private OnFragmentInteractionListener mListener;
 
 
@@ -101,6 +104,7 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_details, container, false);
+        setHasOptionsMenu(true);
         ButterKnife.bind(this, view);
         configureViewModel();
         getRealEstateDetails(mRealEstateId);
@@ -109,6 +113,23 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         return view;
     }
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_details_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.fragment_details_edit:
+                passRealEstateIdToAddFragment(mRealEstateId);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -119,19 +140,10 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
-    //    TODO voir pour mettre dans le service si possible et obtenir les coordonnées à l'ajout en base puis l'ajouter via un insert en base.
-    private void getRealEstatePosition() {
-        Geocoder geocoder = new Geocoder(getActivity());
-        try {
-            List<Address> addresses = geocoder.getFromLocationName(mLocation.getText().toString(), 1);
-            for (Address address : addresses) {
-                LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
-                mGoogleMap.addMarker(new MarkerOptions().position(latLng));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void addRealEstatePositionOnMap() {
+        LatLng latLng = new LatLng(mLatitude, mLongitude);
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+        mGoogleMap.addMarker(new MarkerOptions().position(latLng));
     }
 
 
@@ -147,7 +159,7 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void configureRecyclerViewWithPhotos(List<Pictures> pictures) {
-        DetailsPhotoAdapter detailsPhotoAdapter = new DetailsPhotoAdapter(pictures,1);
+        DetailsPhotoAdapter detailsPhotoAdapter = new DetailsPhotoAdapter(pictures, 1);
         detailsPhotoAdapter.setOnClickListener(view -> {
             PicturesDetailsViewHolder holder = (PicturesDetailsViewHolder) view.getTag();
             int position = holder.getAdapterPosition();
@@ -161,20 +173,28 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     private void initDetails(RealEstate realEstate) {
         mDescription.setText(realEstate.getDescription());
         mSurface.setText(String.valueOf(realEstate.getSurface()));
-        mRooms.setText(String.valueOf(realEstate.getNbPieces()));
+        mRooms.setText(String.valueOf(realEstate.getNbRooms()));
         mBedrooms.setText(String.valueOf(realEstate.getNbBedrooms()));
         mBathroom.setText(String.valueOf(realEstate.getNbBathrooms()));
         mLocation.setText(String.valueOf(realEstate.getAddress()));
         mFloors.setText(String.valueOf(realEstate.getFloors()));
         mCoownershipTxt.setText(String.valueOf(realEstate.isCoOwnership()));
-        mConstructionTxt.setText(Utils.convertDateToString(realEstate.getYearConstruction(),mContext));
-        getRealEstatePosition();
+        mConstructionTxt.setText(Utils.convertDateToString(realEstate.getYearConstruction(), mContext));
+        mLatitude = realEstate.getLatitude();
+        mLongitude = realEstate.getLongitude();
+        addRealEstatePositionOnMap();
     }
 
 
     private void passPicturesAndUriToFullScreenFragment(List<Pictures> pictures, Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(pictures, uri);
+        }
+    }
+
+    private void passRealEstateIdToAddFragment(long realEstateId){
+        if (mListener != null){
+            mListener.onFragmentInteractionEdit(realEstateId);
         }
     }
 
@@ -197,5 +217,6 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(List<Pictures> pictures, Uri uri);
+        void onFragmentInteractionEdit(long id);
     }
 }

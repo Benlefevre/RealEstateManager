@@ -51,7 +51,7 @@ public class Utils {
     public static Date convertStringToDate(String string){
         if (string == null)
             return null;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
         Date date = new Date();
         try {
             date = simpleDateFormat.parse(string);

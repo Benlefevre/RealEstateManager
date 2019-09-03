@@ -68,4 +68,14 @@ public class RealEstateViewModel extends ViewModel {
     public void createPictures(Pictures pictures){
         mExecutor.execute(() -> mPicturesDataRepository.createRealEstatePicture(pictures));
     }
+
+    public void updateRealEstate(RealEstate realEstate){
+        mExecutor.execute(() -> mRealEstateDataRepository.updateRealEstate(realEstate));
+    }
+
+    public void deletePicture(Pictures pictures){
+        mExecutor.execute(() -> mPicturesDataRepository.deletePicture(pictures));
+    }
+
+
 }

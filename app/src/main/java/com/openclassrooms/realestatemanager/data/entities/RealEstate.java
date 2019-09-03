@@ -14,7 +14,7 @@ public class RealEstate {
     private String mTypeProperty;
     private int mPrice;
     private int mSurface;
-    private int mNbPieces;
+    private int mNbRooms;
     private int mNbBedrooms;
     private int mNbBathrooms;
     private String mDescription;
@@ -37,7 +37,7 @@ public class RealEstate {
     public RealEstate() {
     }
 
-    public RealEstate(String typeProperty, int price, int surface, int nbPieces,
+    public RealEstate(String typeProperty, int price, int surface, int nbRooms,
                       int nbBedrooms, int nbBathrooms, String description, String address,
                       int zipCode, String countryCode, double latitude, double longitude, String city, String amenities, String status,
                       Date initialSale, Date finalSale, String realEstateAgent, Date yearConstruction,
@@ -45,7 +45,7 @@ public class RealEstate {
         mTypeProperty = typeProperty;
         mPrice = price;
         mSurface = surface;
-        mNbPieces = nbPieces;
+        mNbRooms = nbRooms;
         mNbBedrooms = nbBedrooms;
         mNbBathrooms = nbBathrooms;
         mDescription = description;
@@ -83,8 +83,8 @@ public class RealEstate {
         return mSurface;
     }
 
-    public int getNbPieces() {
-        return mNbPieces;
+    public int getNbRooms() {
+        return mNbRooms;
     }
 
     public int getNbBedrooms() {
@@ -175,8 +175,8 @@ public class RealEstate {
         mSurface = surface;
     }
 
-    public void setNbPieces(int nbPieces) {
-        mNbPieces = nbPieces;
+    public void setNbRooms(int nbRooms) {
+        mNbRooms = nbRooms;
     }
 
     public void setNbBedrooms(int nbBedrooms) {
@@ -256,7 +256,7 @@ public class RealEstate {
                 ", mTypeProperty='" + mTypeProperty + '\'' +
                 ", mPrice=" + mPrice +
                 ", mSurface=" + mSurface +
-                ", mNbPieces=" + mNbPieces +
+                ", mNbRooms=" + mNbRooms +
                 ", mNbBedrooms=" + mNbBedrooms +
                 ", mNbBathrooms=" + mNbBathrooms +
                 ", mDescription='" + mDescription + '\'' +
@@ -284,17 +284,17 @@ public class RealEstate {
                         " Located in the heart of town and close to all amenities. It has 3 large bedrooms," +
                         " 2 bathrooms and a large living room with a terrace overlooking a private park.",
                         "600 E 8th 6F St Kansas City, MO 64106", 64106, "US", 39.104264, -94.576036, "Kansas City","School and shops", "For Sale", date,
-                        null, "Lefèvre Benoit", null, 6, true),
+                        null, "Lefèvre Benoit", new Date(619653600000L), 6, true),
                 new RealEstate("House", 515000, 315, 6, 5, 4, "Very nice house of 315m2." +
                         " Located in the heart of town and close to all amenities. It has 5 large bedrooms," +
                         " 4 bathrooms and a large living room with a large garden of 700m2.",
                         "6124 Ward Pkwy, Kansas City, MO 64106", 64106, "US", 39.0167956, -94.6016936, "Kansas City","School and shops", "For Sale", date,
-                        null, "Lefèvre Benoit", null, 2, false),
+                        null, "Lefèvre Benoit", new Date(734652000000L), 2, false),
                 new RealEstate("Apartment", 999950, 260, 3, 2, 2, "Very nice apartment located on the 31th and last floor of 260m2." +
                         " Located in the heart of town and close to all amenities. It has 2 large bedrooms," +
                         " 2 bathrooms and a large living room with a terrace where you have an amazing view .",
                         "909 Walnut St Unit 31, Kansas City, MO 64106", 64106, "US", 39.1032208, -94.5815734, "Kansas City","School and shops", "For Sale", date,
-                        null, "Lefèvre Benoit", null, 31, true),
+                        null, "Lefèvre Benoit", new Date(213318000000L), 31, true),
         };
     }
 }

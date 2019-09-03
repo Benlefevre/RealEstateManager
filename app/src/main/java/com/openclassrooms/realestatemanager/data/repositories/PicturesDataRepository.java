@@ -29,4 +29,9 @@ public class PicturesDataRepository {
     public void createRealEstatePicture(Pictures pictures){
         mPicturesDao.insertPicture(pictures);
     }
+
+//    Delete
+    public void deletePicture(Pictures pictures){
+        mPicturesDao.deletePicture(pictures);
+    }
 }
