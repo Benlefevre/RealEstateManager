@@ -22,6 +22,7 @@ import com.openclassrooms.realestatemanager.ui.controllers.fragments.AgentLocati
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.DetailsFragment;
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.FullScreenFragment;
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.RealEstateListFragment;
+import com.openclassrooms.realestatemanager.ui.controllers.fragments.SettingsFragment;
 
 import java.util.List;
 
@@ -38,10 +39,12 @@ import static com.openclassrooms.realestatemanager.utils.Constants.EDIT_REAL_EST
 import static com.openclassrooms.realestatemanager.utils.Constants.ESTATE_LIST_FRAGMENT;
 import static com.openclassrooms.realestatemanager.utils.Constants.FULL_SCREEN_FRAGMENT;
 import static com.openclassrooms.realestatemanager.utils.Constants.READ_AND_WRITE_EXTERNAL_STORAGE;
+import static com.openclassrooms.realestatemanager.utils.Constants.SEARCH_FRAGMENT;
+import static com.openclassrooms.realestatemanager.utils.Constants.SETTING_FRAGMENT;
 
 public class MainActivity extends AppCompatActivity implements RealEstateListFragment.OnFragmentInteractionListener,
         DetailsFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener,
-        AgentLocationFragment.OnFragmentInteractionListener{
+        AgentLocationFragment.OnFragmentInteractionListener {
 
     @BindView(R.id.activity_main_toolbar)
     Toolbar mToolbar;
@@ -55,6 +58,9 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
     private FragmentManager mFragmentManager;
     private int mDisplayedFragment;
     private Boolean mLocationPermissionsGranted;
+    private long mId;
+    private List<Pictures> mPicturesList;
+    private Uri mUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +72,8 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
         configureDrawer();
         configureNavigationView();
         mFragmentManager = getSupportFragmentManager();
-        displayMainFragment();
+        displayFragmentAccordingToTheDirection(ESTATE_LIST_FRAGMENT);
+//        displayMainFragment();
     }
 
     private void displayMainFragment() {
@@ -79,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
         }
     }
 
-    private void configureNavigationView(){
+    private void configureNavigationView() {
         mNavView.setNavigationItemSelectedListener(this);
     }
 
@@ -105,13 +112,13 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
     }
 
     @AfterPermissionGranted(ACCESS_LOCATION)
-    private void getPermissionsAccessLocation(){
+    private void getPermissionsAccessLocation() {
         String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-        if(!EasyPermissions.hasPermissions(this,perms)){
+        if (!EasyPermissions.hasPermissions(this, perms)) {
             mLocationPermissionsGranted = false;
             EasyPermissions.requestPermissions(this, getString(R.string.location_rationale),
                     ACCESS_LOCATION, perms);
-        }else{
+        } else {
             mLocationPermissionsGranted = true;
         }
     }
@@ -124,71 +131,132 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
     }
 
     @Override
-    public void onFragmentInteraction(long id) {
-        mDisplayedFragment = 2;
-        DetailsFragment detailsFragment = (DetailsFragment) mFragmentManager.findFragmentByTag(DETAILS_FRAGMENT);
-        if (detailsFragment == null) {
-            mFragmentManager.beginTransaction().replace(R.id.activity_main_container, DetailsFragment.newInstance(id), DETAILS_FRAGMENT)
-                    .addToBackStack("Fragment")
-                    .commit();
+    public void onFragmentInteraction(String destination) {
+        if (destination.equals(ADD_REAL_ESTATE_FRAGMENT)) {
+            displayFragmentAccordingToTheDirection(ADD_REAL_ESTATE_FRAGMENT);
+        } else if (destination.equals(SEARCH_FRAGMENT)) {
+            displayFragmentAccordingToTheDirection(SEARCH_FRAGMENT);
         }
+    }
+
+    @Override
+    public void onFragmentInteraction(long id) {
+        mId = id;
+        displayFragmentAccordingToTheDirection(DETAILS_FRAGMENT);
     }
 
     @Override
     public void onFragmentInteraction(List<Pictures> pictures, Uri uri) {
-        mDisplayedFragment = 3;
-        FullScreenFragment fullScreenFragment = (FullScreenFragment) mFragmentManager.findFragmentByTag(FULL_SCREEN_FRAGMENT);
-        if (fullScreenFragment == null) {
-            mFragmentManager.beginTransaction().replace(R.id.activity_main_container, FullScreenFragment.newInstance(pictures, uri), FULL_SCREEN_FRAGMENT)
-                    .addToBackStack("Fragment")
-                    .commit();
-        }
+        mPicturesList = pictures;
+        mUri = uri;
+        displayFragmentAccordingToTheDirection(FULL_SCREEN_FRAGMENT);
     }
 
     @Override
     public void onFragmentInteractionEdit(long id) {
-        AddRealEstateFragment editRealEstateFragment = (AddRealEstateFragment) mFragmentManager.findFragmentByTag(EDIT_REAL_ESTATE_FRAGMENT);
-        if (editRealEstateFragment == null){
-            mFragmentManager.beginTransaction().replace(R.id.activity_main_container, AddRealEstateFragment.newInstance(id),EDIT_REAL_ESTATE_FRAGMENT)
-                    .addToBackStack("Fragment")
-                    .commit();
-        }
+        mId = id;
+        displayFragmentAccordingToTheDirection(EDIT_REAL_ESTATE_FRAGMENT);
 
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
+            case R.id.drawer_add:
+                displayFragmentAccordingToTheDirection(ADD_REAL_ESTATE_FRAGMENT);
+                break;
+            case R.id.drawer_list:
+                displayFragmentAccordingToTheDirection(ESTATE_LIST_FRAGMENT);
+                break;
             case R.id.drawer_localisation:
-                mDisplayedFragment = 4;
-                getPermissionsAccessLocation();
-                AgentLocationFragment agentLocationFragment = (AgentLocationFragment) mFragmentManager.findFragmentByTag(AGENT_LOCATION_FRAGMENT);
-                if (agentLocationFragment == null){
-                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, AgentLocationFragment.newInstance(mLocationPermissionsGranted),AGENT_LOCATION_FRAGMENT)
-                            .addToBackStack("Fragment")
-                            .commit();
-                }
+                displayFragmentAccordingToTheDirection(AGENT_LOCATION_FRAGMENT);
+                break;
+            case R.id.drawer_search:
+                displayFragmentAccordingToTheDirection(SEARCH_FRAGMENT);
                 break;
             case R.id.drawer_setting:
-                mDisplayedFragment = 5;
-                break;
-            case R.id.drawer_add:
-                mDisplayedFragment = 6;
-                AddRealEstateFragment addRealEstateFragment = (AddRealEstateFragment) mFragmentManager.findFragmentByTag(ADD_REAL_ESTATE_FRAGMENT);
-                if (addRealEstateFragment == null){
-                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container,AddRealEstateFragment.newInstance(),ADD_REAL_ESTATE_FRAGMENT)
-                            .addToBackStack("Fragment")
-                            .commit();
-                }
+                displayFragmentAccordingToTheDirection(SETTING_FRAGMENT);
                 break;
         }
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
+    private void displayFragmentAccordingToTheDirection(String direction) {
+        switch (direction) {
+            case ESTATE_LIST_FRAGMENT:
+                mDisplayedFragment = 1;
+                RealEstateListFragment realEstateListFragment = (RealEstateListFragment) mFragmentManager.findFragmentByTag(ESTATE_LIST_FRAGMENT);
+                if (realEstateListFragment == null) {
+                    mFragmentManager.beginTransaction().add(R.id.activity_main_container,
+                            RealEstateListFragment.newInstance(), ESTATE_LIST_FRAGMENT)
+                            .commit();
+                }
+                break;
+            case DETAILS_FRAGMENT:
+                mDisplayedFragment = 2;
+                DetailsFragment detailsFragment = (DetailsFragment) mFragmentManager.findFragmentByTag(DETAILS_FRAGMENT);
+                if (detailsFragment == null) {
+                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, DetailsFragment.newInstance(mId), DETAILS_FRAGMENT)
+                            .addToBackStack("Fragment")
+                            .commit();
+                }
+                break;
+            case FULL_SCREEN_FRAGMENT:
+                mDisplayedFragment = 3;
+                FullScreenFragment fullScreenFragment = (FullScreenFragment) mFragmentManager.findFragmentByTag(FULL_SCREEN_FRAGMENT);
+                if (fullScreenFragment == null) {
+                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, FullScreenFragment.newInstance(mPicturesList, mUri), FULL_SCREEN_FRAGMENT)
+                            .addToBackStack("Fragment")
+                            .commit();
+                }
+                break;
+            case AGENT_LOCATION_FRAGMENT:
+                mDisplayedFragment = 4;
+                getPermissionsAccessLocation();
+                AgentLocationFragment agentLocationFragment = (AgentLocationFragment) mFragmentManager.findFragmentByTag(AGENT_LOCATION_FRAGMENT);
+                if (agentLocationFragment == null) {
+                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, AgentLocationFragment.newInstance(mLocationPermissionsGranted), AGENT_LOCATION_FRAGMENT)
+                            .addToBackStack("Fragment")
+                            .commit();
+                }
+                break;
+            case SETTING_FRAGMENT:
+                mDisplayedFragment = 5;
+                SettingsFragment settingsFragment = (SettingsFragment) mFragmentManager.findFragmentByTag(SETTING_FRAGMENT);
+                if (settingsFragment == null) {
+                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, new SettingsFragment(), SETTING_FRAGMENT)
+                            .addToBackStack("Fragment")
+                            .commit();
+                }
+                break;
+            case ADD_REAL_ESTATE_FRAGMENT:
+                mDisplayedFragment = 6;
+                AddRealEstateFragment addRealEstateFragment = (AddRealEstateFragment) mFragmentManager.findFragmentByTag(ADD_REAL_ESTATE_FRAGMENT);
+                if (addRealEstateFragment == null) {
+                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, AddRealEstateFragment.newInstance(), ADD_REAL_ESTATE_FRAGMENT)
+                            .addToBackStack("Fragment")
+                            .commit();
+                }
+                break;
+            case EDIT_REAL_ESTATE_FRAGMENT:
+                mDisplayedFragment = 7;
+                AddRealEstateFragment editRealEstateFragment = (AddRealEstateFragment) mFragmentManager.findFragmentByTag(EDIT_REAL_ESTATE_FRAGMENT);
+                if (editRealEstateFragment == null) {
+                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, AddRealEstateFragment.newInstance(mId), EDIT_REAL_ESTATE_FRAGMENT)
+                            .addToBackStack("Fragment")
+                            .commit();
+                }
+                break;
+            case SEARCH_FRAGMENT:
+                mDisplayedFragment = 8;
+                break;
+        }
+    }
+
     @Override
     public void onBackPressed() {
-        if(mDrawer.isDrawerOpen(GravityCompat.START))
+        if (mDrawer.isDrawerOpen(GravityCompat.START))
             mDrawer.closeDrawer(GravityCompat.START);
         else
             super.onBackPressed();

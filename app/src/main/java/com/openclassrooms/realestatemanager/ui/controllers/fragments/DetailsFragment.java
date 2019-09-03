@@ -124,12 +124,10 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.fragment_details_edit:
-                passRealEstateIdToAddFragment(mRealEstateId);
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.fragment_details_edit) {
+            passRealEstateIdToAddFragment(mRealEstateId);
+        } else {
+            return super.onOptionsItemSelected(item);
         }
         return true;
     }

@@ -67,6 +67,15 @@
     <string name="update_failed">The real estate update failed</string>
     <string name="save_success">The real estate save is successful</string>
     <string name="save_failed">The real estate save failed</string>
+    <string name="hour_format">%1$d-%2$d-%3$d</string>
+    <string name="search_a_real_estate">Search a real estate</string>
+    <string name="area_unit">Unit of area</string>
+    <string name="choose_unit_area">Choose your measurement unit of the real estate\'s area</string>
+    <string name="currency">Currency</string>
+    <string name="choose_currency">Choose the currency for the real estate\'s price</string>
+    <string name="units_preferences">Measurement units</string>
+    <string name="date_format">Date format</string>
+    <string name="real_estate_list">Real estate list</string>
 
 
     <string-array name="typeProperty">
@@ -99,4 +108,33 @@
         <item>False</item>
     </string-array>
 
+    <string-array name="unit_area">
+        <item>Square foot</item>
+        <item>Square meter</item>
+    </string-array>
+
+    <string-array name="area_values">
+        <item>sq ft</item>
+        <item>m²</item>
+    </string-array>
+
+    <string-array name="currency_entries">
+        <item>Dollars</item>
+        <item>Euros</item>
+    </string-array>
+
+    <string-array name="currency_values">
+        <item>$</item>
+        <item>€</item>
+    </string-array>
+
+    <string-array name="date_entries">
+        <item>yyyy-mm-dd</item>
+        <item>dd-mm-yyyy</item>
+    </string-array>
+
+    <string-array name="date_values">
+        <item>us</item>
+        <item>fr</item>
+    </string-array>
 </resources>

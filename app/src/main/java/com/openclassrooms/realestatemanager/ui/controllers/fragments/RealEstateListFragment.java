@@ -3,6 +3,9 @@ package com.openclassrooms.realestatemanager.ui.controllers.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -20,6 +23,7 @@ import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
 import com.openclassrooms.realestatemanager.ui.adapters.RealEstateAdapter;
 import com.openclassrooms.realestatemanager.ui.viewholder.RealEstateViewHolder;
 import com.openclassrooms.realestatemanager.ui.viewmodel.RealEstateViewModel;
+import com.openclassrooms.realestatemanager.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +69,7 @@ public class RealEstateListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_list, container, false);
+        setHasOptionsMenu(true);
         mUnbinder = ButterKnife.bind(this, view);
         mPictures = new ArrayList<>();
         mRealEstates = new ArrayList<>();
@@ -74,7 +79,28 @@ public class RealEstateListFragment extends Fragment {
         return view;
     }
 
-//    Configuring ViewModel
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_list_menu,menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.fragment_list_add_btn:
+                mListener.onFragmentInteraction(Constants.ADD_REAL_ESTATE_FRAGMENT);
+                break;
+            case R.id.fragment_list_search_btn:
+                mListener.onFragmentInteraction(Constants.SEARCH_FRAGMENT);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
+    }
+
+    //    Configuring ViewModel
     private void configureViewModel() {
         ViewModelFactory viewModelFactory = Injection.providerViewModelFactory(getActivity());
         mRealEstateViewModel = ViewModelProviders.of(this, viewModelFactory).get(RealEstateViewModel.class);
@@ -142,6 +168,7 @@ public class RealEstateListFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(long id);
+        void onFragmentInteraction(String destination);
     }
 
     @Override
