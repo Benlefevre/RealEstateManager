@@ -2,12 +2,10 @@ package com.openclassrooms.realestatemanager.ui.controllers.fragments;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.ResultReceiver;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,77 +28,44 @@ import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.data.entities.RealEstate;
 import com.openclassrooms.realestatemanager.injections.Injection;
 import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
-import com.openclassrooms.realestatemanager.service.FetchAddressIntentService;
 import com.openclassrooms.realestatemanager.ui.viewmodel.RealEstateViewModel;
-import com.openclassrooms.realestatemanager.utils.Constants;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static com.openclassrooms.realestatemanager.utils.Constants.RECEIVER_EXTRA;
-import static com.openclassrooms.realestatemanager.utils.Constants.RESULT_EXTRA;
+import butterknife.Unbinder;
 
 public class AgentLocationFragment extends Fragment implements OnMapReadyCallback {
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String LOCATION_PERMISSIONS = "param1";
 
     @BindView(R.id.fragment_agent_location_mapview)
     MapView mMapview;
 
-
-    private String mParam1;
-    private String mParam2;
+    private Unbinder mUnbinder;
 
     private Activity mActivity;
     private GoogleMap mGoogleMap;
     private Boolean mLocationPermissionsGranted;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private Location mLastKnownLocation;
-    private AddressResultReceiver mResultReceiver;
+    private int mZipcode;
+    private String mCountryCode;
 
     private RealEstateViewModel mRealEstateViewModel;
 
     private OnFragmentInteractionListener mListener;
 
-    class AddressResultReceiver extends ResultReceiver {
-
-        AddressResultReceiver(Handler handler) {
-            super(handler);
-        }
-
-        @Override
-        protected void onReceiveResult(int resultCode, Bundle resultData) {
-            if (resultData == null)
-                return;
-            String addressOutput = resultData.getString(RESULT_EXTRA);
-            if (addressOutput == null)
-                addressOutput = "";
-            displayLocation(addressOutput);
-
-        }
-    }
-
     public AgentLocationFragment() {
         // Required empty public constructor
     }
 
-//    public static AgentLocationFragment newInstance(String param1, String param2) {
-//        AgentLocationFragment fragment = new AgentLocationFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
-
     public static AgentLocationFragment newInstance(Boolean locationPermissionsGranted) {
         AgentLocationFragment fragment = new AgentLocationFragment();
         Bundle args = new Bundle();
-        args.putBoolean(ARG_PARAM1, locationPermissionsGranted);
+        args.putBoolean(LOCATION_PERMISSIONS, locationPermissionsGranted);
         fragment.setArguments(args);
         return fragment;
     }
@@ -110,7 +75,7 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         mActivity = getActivity();
         if (getArguments() != null) {
-            mLocationPermissionsGranted = getArguments().getBoolean(ARG_PARAM1);
+            mLocationPermissionsGranted = getArguments().getBoolean(LOCATION_PERMISSIONS);
         }
     }
 
@@ -119,10 +84,9 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_agent_location, container, false);
-        ButterKnife.bind(this, view);
+        mUnbinder = ButterKnife.bind(this, view);
         mMapview.onCreate(savedInstanceState);
         mMapview.getMapAsync(this);
-        mResultReceiver = new AddressResultReceiver(null);
         configureViewModel();
         return view;
     }
@@ -133,8 +97,8 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
         mRealEstateViewModel = ViewModelProviders.of(this, viewModelFactory).get(RealEstateViewModel.class);
     }
 
-    private void getRealEstateByZipcodeAndCountry(int zipcode, String countryCode) {
-        mRealEstateViewModel.getRealEstateByZipcodeAndCountry(zipcode, countryCode).observe(getViewLifecycleOwner(), this::addRealEstatesMarker);
+    private void getRealEstateByZipCodeAndCountry(int zipCode, String countryCode) {
+        mRealEstateViewModel.getRealEstateByZipcodeAndCountry(zipCode, countryCode).observe(getViewLifecycleOwner(), this::addRealEstatesMarker);
     }
 
     private void addRealEstatesMarker(List<RealEstate> realEstates) {
@@ -145,7 +109,6 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
             }
         }
     }
-
 
     private void passRealEstateIdToFragmentDetails(long id) {
         if (mListener != null) {
@@ -198,33 +161,33 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
                     if (location != null) {
                         mGoogleMap.setMyLocationEnabled(true);
                         mLastKnownLocation = location;
+                        getTheCountryCodeAndZipCode(mLastKnownLocation);
                         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom((
                                 new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude())), 14));
-                        startIntentGeocoderService();
                     }
                 });
             }
         } catch (SecurityException e) {
-            Log.e("Exception : $%s", e.getMessage());
+            e.printStackTrace();
         }
 
     }
 
-    private void startIntentGeocoderService() {
-        Intent intent = new Intent(getActivity(), FetchAddressIntentService.class);
-        intent.putExtra(Constants.LOCATION_EXTRA, mLastKnownLocation);
-        intent.putExtra(RECEIVER_EXTRA, mResultReceiver);
-        Objects.requireNonNull(getActivity()).startService(intent);
-    }
-
-    private void displayLocation(String address) {
-        String countryCode = address.substring(0, address.indexOf("/")).trim();
-        int zipcode = Integer.parseInt(address.substring(address.lastIndexOf("/") + 1).trim());
-        Objects.requireNonNull(getActivity()).runOnUiThread(() -> getRealEstateByZipcodeAndCountry(zipcode, countryCode));
+    private void getTheCountryCodeAndZipCode(Location location){
+        Geocoder geocoder = new Geocoder(getContext());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
+            for (Address address : addresses){
+                mZipcode = Integer.parseInt(address.getPostalCode().trim());
+                mCountryCode = address.getCountryCode().trim();
+                getRealEstateByZipCodeAndCountry(mZipcode, mCountryCode);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public interface OnFragmentInteractionListener {
-
         void onFragmentInteraction(long id);
     }
 
@@ -279,6 +242,7 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
     public void onDestroy() {
         super.onDestroy();
         mMapview.onDestroy();
+        mUnbinder.unbind();
     }
 
 }

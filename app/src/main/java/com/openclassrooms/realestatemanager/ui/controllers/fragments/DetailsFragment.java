@@ -37,6 +37,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 
 public class DetailsFragment extends Fragment implements OnMapReadyCallback {
@@ -65,6 +66,8 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     TextView mCoownershipTxt;
     @BindView(R.id.fragment_details_construction_txt)
     TextView mConstructionTxt;
+
+    private Unbinder mUnbinder;
 
     private Context mContext;
     private GoogleMap mGoogleMap;
@@ -105,7 +108,7 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_details, container, false);
         setHasOptionsMenu(true);
-        ButterKnife.bind(this, view);
+        mUnbinder = ButterKnife.bind(this, view);
         configureViewModel();
         getRealEstateDetails(mRealEstateId);
         mMapView.onCreate(savedInstanceState);
@@ -136,7 +139,6 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         mGoogleMap = googleMap;
         mGoogleMap.getUiSettings().setMapToolbarEnabled(false);
         mGoogleMap.setOnMapClickListener(latLng -> {
-
         });
     }
 
@@ -218,5 +220,12 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(List<Pictures> pictures, Uri uri);
         void onFragmentInteractionEdit(long id);
+    }
+
+    @Override
+    public void onDestroyView() {
+        mPhotoRecyclerview.setAdapter(null);
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 }

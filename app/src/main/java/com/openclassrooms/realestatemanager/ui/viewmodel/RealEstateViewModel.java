@@ -22,6 +22,7 @@ public class RealEstateViewModel extends ViewModel {
     private final RealEstateDataRepository mRealEstateDataRepository;
     private final PicturesDataRepository mPicturesDataRepository;
     private final Executor mExecutor;
+    private ExecutorService mExecutorService;
 
 
     public RealEstateViewModel(RealEstateDataRepository realEstateDataRepository, Executor executor,
@@ -55,8 +56,8 @@ public class RealEstateViewModel extends ViewModel {
         Callable<Long> insertCallable = () -> mRealEstateDataRepository.createRealEstate(realEstate);
         long rowId = 0;
 
-        ExecutorService executorService = Executors.newFixedThreadPool(1);
-        Future<Long> future = executorService.submit(insertCallable);
+        mExecutorService = Executors.newFixedThreadPool(1);
+        Future<Long> future = mExecutorService.submit(insertCallable);
         try {
             rowId = future.get();
         }catch (InterruptedException | ExecutionException e){
@@ -65,12 +66,32 @@ public class RealEstateViewModel extends ViewModel {
         return rowId;
     }
 
-    public void createPictures(Pictures pictures){
-        mExecutor.execute(() -> mPicturesDataRepository.createRealEstatePicture(pictures));
+    public long createPictures(Pictures pictures){
+        Callable<Long> insertCallable = () -> mPicturesDataRepository.createRealEstatePicture(pictures);
+        long rowId = 0;
+
+        mExecutorService = Executors.newFixedThreadPool(1);
+        Future<Long> future = mExecutorService.submit(insertCallable);
+        try {
+            rowId = future.get();
+        }catch (InterruptedException | ExecutionException e){
+            e.printStackTrace();
+        }
+        return rowId;
     }
 
-    public void updateRealEstate(RealEstate realEstate){
-        mExecutor.execute(() -> mRealEstateDataRepository.updateRealEstate(realEstate));
+    public int updateRealEstate(RealEstate realEstate){
+        Callable<Integer> insertCallable = () -> mRealEstateDataRepository.updateRealEstate(realEstate);
+        int nbRows = 0;
+
+        mExecutorService = Executors.newFixedThreadPool(1);
+        Future<Integer> future = mExecutorService.submit(insertCallable);
+        try {
+            nbRows = future.get();
+        }catch (InterruptedException | ExecutionException e){
+            e.printStackTrace();
+        }
+        return nbRows;
     }
 
     public void deletePicture(Pictures pictures){

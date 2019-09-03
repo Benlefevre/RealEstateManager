@@ -26,8 +26,8 @@ public class PicturesDataRepository {
     }
 
 //    Create
-    public void createRealEstatePicture(Pictures pictures){
-        mPicturesDao.insertPicture(pictures);
+    public long createRealEstatePicture(Pictures pictures){
+        return mPicturesDao.insertPicture(pictures);
     }
 
 //    Delete

@@ -37,7 +37,7 @@ public class RealEstateDataRepository {
     }
 
 //    Update
-    public void updateRealEstate(RealEstate realEstate){
-        mRealEstateDao.updateRealEstate(realEstate);
+    public int updateRealEstate(RealEstate realEstate){
+        return mRealEstateDao.updateRealEstate(realEstate);
     }
 }

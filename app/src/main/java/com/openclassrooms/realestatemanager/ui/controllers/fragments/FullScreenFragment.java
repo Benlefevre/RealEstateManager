@@ -20,12 +20,15 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 
 public class FullScreenFragment extends Fragment {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private Unbinder mUnbinder;
 
     @BindView(R.id.fragment_fullscreen_viewpager)
     ViewPager mViewPager;
@@ -73,7 +76,7 @@ public class FullScreenFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_full_screen_photo, container, false);
-        ButterKnife.bind(this, view);
+        mUnbinder = ButterKnife.bind(this, view);
         configureViewPager();
         return view;
     }
@@ -81,5 +84,12 @@ public class FullScreenFragment extends Fragment {
     private void configureViewPager() {
         FullScreenViewPagerAdapter adapter = new FullScreenViewPagerAdapter(getActivity(),mUriList);
         mViewPager.setAdapter(adapter);
+    }
+
+    @Override
+    public void onDestroyView() {
+        mViewPager.setAdapter(null);
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 }

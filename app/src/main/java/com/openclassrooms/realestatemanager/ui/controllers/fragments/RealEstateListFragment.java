@@ -26,6 +26,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 
 public class RealEstateListFragment extends Fragment {
@@ -33,6 +34,9 @@ public class RealEstateListFragment extends Fragment {
     @BindView(R.id.fragment_list_recycler_view)
     RecyclerView mRecyclerView;
 
+    private Unbinder mUnbinder;
+
+    private RealEstateAdapter mEstateAdapter;
     private RealEstateViewModel mRealEstateViewModel;
     private List<RealEstate> mRealEstates;
     private List<Pictures> mPictures;
@@ -61,26 +65,27 @@ public class RealEstateListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_list, container, false);
-        ButterKnife.bind(this, view);
+        mUnbinder = ButterKnife.bind(this, view);
         mPictures = new ArrayList<>();
+        mRealEstates = new ArrayList<>();
+        configureRecyclerView();
         configureViewModel();
         getAllRealEstate();
         return view;
     }
 
-
-    //    Configuring ViewModel
+//    Configuring ViewModel
     private void configureViewModel() {
         ViewModelFactory viewModelFactory = Injection.providerViewModelFactory(getActivity());
         mRealEstateViewModel = ViewModelProviders.of(this, viewModelFactory).get(RealEstateViewModel.class);
     }
 
-    //    Récupération de l'ensemble des biens
+//    Récupération de l'ensemble des biens
     private void getAllRealEstate() {
         mRealEstateViewModel.getAllRealEstate().observe(getViewLifecycleOwner(), this::initList);
     }
 
-    //    Récupération d'une photo pour la liste
+//    Récupération d'une photo pour la liste
     private void getOnePicture(long realEstateId) {
         mRealEstateViewModel.getOnePicture(realEstateId).observe(getViewLifecycleOwner(), this::initPictures);
     }
@@ -88,32 +93,28 @@ public class RealEstateListFragment extends Fragment {
     private void initPictures(Pictures pictures) {
         if (pictures != null)
             mPictures.add(pictures);
-        configureRecyclerView();
+        mEstateAdapter.notifyDataSetChanged();
     }
 
 
     private void initList(List<RealEstate> realEstates) {
-        mRealEstates = realEstates;
+        mRealEstates.addAll(realEstates);
         for (RealEstate realEstate : mRealEstates) {
             getOnePicture(realEstate.getId());
         }
     }
 
-
     private void configureRecyclerView() {
-        RealEstateAdapter realEstateAdapter = new RealEstateAdapter(mRealEstates, mPictures);
-        realEstateAdapter.setOnItemClickListener(view -> {
+        mEstateAdapter = new RealEstateAdapter(mRealEstates, mPictures);
+        mEstateAdapter.setOnItemClickListener(view -> {
             RealEstateViewHolder holder = (RealEstateViewHolder) view.getTag();
             int position = holder.getAdapterPosition();
             long id = mRealEstates.get(position).getId();
             passIdToDetailsFragment(id);
         });
-        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
-        mRecyclerView.setAdapter(realEstateAdapter);
-        realEstateAdapter.notifyDataSetChanged();
+        mRecyclerView.setAdapter(mEstateAdapter);
     }
-
 
     //    Passe l'id du bien selectionné via le callback à l'activité
     private void passIdToDetailsFragment(long id) {
@@ -141,5 +142,13 @@ public class RealEstateListFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(long id);
+    }
+
+    @Override
+    public void onDestroyView() {
+        mRecyclerView.setAdapter(null);
+        mEstateAdapter.setOnItemClickListener(null);
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 }

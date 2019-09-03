@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.openclassrooms.realestatemanager.BuildConfig;
@@ -58,6 +59,7 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -119,6 +121,8 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
     @BindView(R.id.fragment_add_recycler_view)
     RecyclerView mRecyclerView;
 
+    private Unbinder mUnbinder;
+
     private RealEstate mRealEstate;
     private String mTypePropertyInput;
     private String mCountryCodeInput;
@@ -139,6 +143,8 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
     private Date finalDate = null;
     private Date yearConstruction = null;
     private int floors = 0;
+    private double mLatitude = 0;
+    private double mLongitude = 0;
 
 
     private String currentPhotoPath;
@@ -188,7 +194,7 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_add_real_estate, container, false);
-        ButterKnife.bind(this, view);
+        mUnbinder = ButterKnife.bind(this, view);
         configureViewModel();
         mPicturesList = new ArrayList<>();
         configureSpinner();
@@ -315,17 +321,26 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
                 description,address,zipCode,mCountryCodeInput,city,amenities,mStatusInput,initialDate,
                 finalDate,mAgentInput,yearConstruction,floors,Boolean.valueOf(mCoOwnershipInput));
         savePictureInDb(mRealEstateId);
-        mRealEstateViewModel.updateRealEstate(mRealEstate);
+        int nbRows = mRealEstateViewModel.updateRealEstate(mRealEstate);
+        if (nbRows == 1){
+            Snackbar.make(mActivity.findViewById(R.id.activity_main_container),getString(R.string.update_success),Snackbar.LENGTH_LONG).show();
+            Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
+        }else
+            Snackbar.make(mActivity.findViewById(R.id.activity_main_container),getString(R.string.update_failed),Snackbar.LENGTH_LONG).show();
     }
 
-    private void createNewRealEstateFromInformations() {
+    private void createNewRealEstateFromInputValues() {
         getTheUserInput();
         mRowId = mRealEstateViewModel.createRealEstate(new RealEstate(mTypePropertyInput, price, surface, nbRooms,
-                nbBedrooms, nbBathrooms, description, address, zipCode, mCountryCodeInput, 0, 0, city, amenities,
+                nbBedrooms, nbBathrooms, description, address, zipCode, mCountryCodeInput, mLatitude, mLongitude, city, amenities,
                 mStatusInput, initialDate, finalDate, mAgentInput, yearConstruction, floors, Boolean.valueOf(mCoOwnershipInput)));
-        savePictureInDb(mRowId);
-        if (mAddAddressTxt.getText() != null && mAddAddressTxt.getText().length() != 0)
-            mRealEstateViewModel.getRealEstate(mRowId).observe(getViewLifecycleOwner(), this::getLocation);
+        if (mRowId != -1L){
+            savePictureInDb(mRowId);
+            Snackbar.make(mActivity.findViewById(R.id.activity_main_container),getString(R.string.save_success),
+                    Snackbar.LENGTH_LONG).show();
+            Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
+        }else
+            Snackbar.make(mActivity.findViewById(R.id.activity_main_container),getString(R.string.save_failed),Snackbar.LENGTH_LONG).show();
     }
 
     private void savePictureInDb(long realEstateId){
@@ -348,8 +363,10 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
             nbBathrooms = Integer.parseInt(mBathroomsTxt.getText().toString());
         if (mDescriptionTxt.getText() != null && mDescriptionTxt.getText().length() != 0)
             description = mDescriptionTxt.getText().toString();
-        if (mAddAddressTxt.getText() != null && mAddAddressTxt.getText().length() != 0)
+        if (mAddAddressTxt.getText() != null && mAddAddressTxt.getText().length() != 0){
             address = mAddAddressTxt.getText().toString();
+            getLocation(address);
+        }
         if (mZipcodeTxt.getText() != null && mZipcodeTxt.getText().length() != 0)
             zipCode = Integer.parseInt(mZipcodeTxt.getText().toString());
         if (mCityTxt.getText() != null && mCityTxt.getText().length() != 0)
@@ -427,20 +444,17 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
     }
 
 //    TODO ajouter controle acces réseau
-    private void getLocation(RealEstate realEstate) {
-        Geocoder geocoder = new Geocoder(getActivity());
+    private void getLocation(String address){
+        Geocoder geocoder = new Geocoder(mActivity);
         try {
-            List<Address> addresses = geocoder.getFromLocationName(realEstate.getAddress(), 1);
-            for (Address address : addresses) {
-                double latitude = address.getLatitude();
-                double longitude = address.getLongitude();
-                realEstate.setLatitude(latitude);
-                realEstate.setLongitude(longitude);
+            List<Address> addresses = geocoder.getFromLocationName(address, 1);
+            for (Address address1 : addresses){
+                mLatitude = address1.getLatitude();
+                mLongitude = address1.getLongitude();
             }
-        } catch (IOException e) {
+        } catch (IOException e){
             e.printStackTrace();
         }
-        mRealEstateViewModel.updateRealEstate(realEstate);
     }
 
     private void displayDatePickerAndUpdateUi(View view) {
@@ -482,7 +496,7 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
                 break;
             case R.id.fragment_add_validation_btn:
                 if (mRealEstateId == 0)
-                    createNewRealEstateFromInformations();
+                    createNewRealEstateFromInputValues();
                 else
                     updateRealEstateWithNewValues();
                 break;
@@ -629,7 +643,13 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
 //        mListener = null;
     }
 
-//    public interface OnFragmentInteractionListener {
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
+    }
+
+    //    public interface OnFragmentInteractionListener {
 //        void onFragmentInteraction(Uri uri);
 //    }
 }
