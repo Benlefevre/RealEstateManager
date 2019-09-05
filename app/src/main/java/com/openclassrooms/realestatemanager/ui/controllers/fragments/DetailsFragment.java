@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.ui.controllers.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,8 +13,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,6 +36,7 @@ import com.openclassrooms.realestatemanager.ui.viewholder.PicturesDetailsViewHol
 import com.openclassrooms.realestatemanager.ui.viewmodel.RealEstateViewModel;
 import com.openclassrooms.realestatemanager.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -68,12 +72,15 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     TextView mConstructionTxt;
 
     private Unbinder mUnbinder;
-
+    private SharedPreferences mPreferences;
     private Context mContext;
     private GoogleMap mGoogleMap;
 
     private long mRealEstateId;
     private RealEstateViewModel mRealEstateViewModel;
+
+    private DetailsPhotoAdapter mPhotoAdapter;
+    private List<Pictures> mPicturesList;
 
     private double mLatitude;
     private double mLongitude;
@@ -96,10 +103,10 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mContext = getContext();
         if (getArguments() != null) {
             mRealEstateId = getArguments().getLong(ARG_PARAM1);
         }
+        configureViewModel();
     }
 
     @Override
@@ -109,11 +116,18 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         View view = inflater.inflate(R.layout.fragment_details, container, false);
         setHasOptionsMenu(true);
         mUnbinder = ButterKnife.bind(this, view);
-        configureViewModel();
+        configureRecyclerView();
         getRealEstateDetails(mRealEstateId);
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mContext = getContext();
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(this);
-        return view;
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
     }
 
     @Override
@@ -155,24 +169,30 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
 
     private void getRealEstateDetails(long realEstateId) {
         mRealEstateViewModel.getRealEstate(realEstateId).observe(getViewLifecycleOwner(), this::initDetails);
-        mRealEstateViewModel.getPictures(realEstateId).observe(getViewLifecycleOwner(), this::configureRecyclerViewWithPhotos);
+        mRealEstateViewModel.getPictures(realEstateId).observe(getViewLifecycleOwner(), this::bindPhotoInRecyclerView);
     }
 
-    private void configureRecyclerViewWithPhotos(List<Pictures> pictures) {
-        DetailsPhotoAdapter detailsPhotoAdapter = new DetailsPhotoAdapter(pictures, 1);
-        detailsPhotoAdapter.setOnClickListener(view -> {
+    private void bindPhotoInRecyclerView(List<Pictures> pictures) {
+        mPicturesList.addAll(pictures);
+        mPhotoAdapter.notifyDataSetChanged();
+    }
+
+    private void configureRecyclerView(){
+        mPicturesList = new ArrayList<>();
+        mPhotoAdapter = new DetailsPhotoAdapter(mPicturesList, 1);
+        mPhotoAdapter.setOnClickListener(view -> {
             PicturesDetailsViewHolder holder = (PicturesDetailsViewHolder) view.getTag();
             int position = holder.getAdapterPosition();
-            Uri uri = pictures.get(position).getUri();
-            passPicturesAndUriToFullScreenFragment(pictures, uri);
+            Uri uri = mPicturesList.get(position).getUri();
+            passPicturesAndUriToFullScreenFragment(mPicturesList, uri);
         });
         mPhotoRecyclerview.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        mPhotoRecyclerview.setAdapter(detailsPhotoAdapter);
+        mPhotoRecyclerview.setAdapter(mPhotoAdapter);
     }
 
     private void initDetails(RealEstate realEstate) {
         mDescription.setText(realEstate.getDescription());
-        mSurface.setText(String.valueOf(realEstate.getSurface()));
+        mSurface.setText(Utils.displayAreaUnitAccordingToPreferences(mContext,realEstate.getSurface()));
         mRooms.setText(String.valueOf(realEstate.getNbRooms()));
         mBedrooms.setText(String.valueOf(realEstate.getNbBedrooms()));
         mBathroom.setText(String.valueOf(realEstate.getNbBathrooms()));

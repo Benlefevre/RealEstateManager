@@ -58,7 +58,6 @@ public class FullScreenFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (getArguments() != null) {
             mUriList = new ArrayList<>();
             Uri uri = Uri.parse(getArguments().getString(ARG_PARAM2));

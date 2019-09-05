@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -73,7 +74,6 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActivity = getActivity();
         if (getArguments() != null) {
             mLocationPermissionsGranted = getArguments().getBoolean(LOCATION_PERMISSIONS);
         }
@@ -85,10 +85,16 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_agent_location, container, false);
         mUnbinder = ButterKnife.bind(this, view);
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mActivity = getActivity();
         mMapview.onCreate(savedInstanceState);
         mMapview.getMapAsync(this);
         configureViewModel();
-        return view;
     }
 
     //    Configuring ViewModel

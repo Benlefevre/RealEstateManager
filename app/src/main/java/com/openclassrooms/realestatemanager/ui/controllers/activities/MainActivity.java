@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager.ui.controllers.activities;
 import android.Manifest;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
@@ -73,17 +74,6 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
         configureNavigationView();
         mFragmentManager = getSupportFragmentManager();
         displayFragmentAccordingToTheDirection(ESTATE_LIST_FRAGMENT);
-//        displayMainFragment();
-    }
-
-    private void displayMainFragment() {
-        mDisplayedFragment = 1;
-        RealEstateListFragment realEstateListFragment = (RealEstateListFragment) mFragmentManager.findFragmentByTag(ESTATE_LIST_FRAGMENT);
-        if (realEstateListFragment == null) {
-            mFragmentManager.beginTransaction().add(R.id.activity_main_container,
-                    RealEstateListFragment.newInstance(), ESTATE_LIST_FRAGMENT)
-                    .commit();
-        }
     }
 
     private void configureNavigationView() {
@@ -188,9 +178,13 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                 mDisplayedFragment = 1;
                 RealEstateListFragment realEstateListFragment = (RealEstateListFragment) mFragmentManager.findFragmentByTag(ESTATE_LIST_FRAGMENT);
                 if (realEstateListFragment == null) {
-                    mFragmentManager.beginTransaction().add(R.id.activity_main_container,
+                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container,
                             RealEstateListFragment.newInstance(), ESTATE_LIST_FRAGMENT)
                             .commit();
+                } else {
+                    mFragmentManager.popBackStackImmediate("Fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, realEstateListFragment).commit();
+                    Log.i("test", "displayFragmentAccordingToTheDirection: 1");
                 }
                 break;
             case DETAILS_FRAGMENT:
@@ -200,7 +194,8 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                     mFragmentManager.beginTransaction().replace(R.id.activity_main_container, DetailsFragment.newInstance(mId), DETAILS_FRAGMENT)
                             .addToBackStack("Fragment")
                             .commit();
-                }
+                }else
+                    Log.i("test", "displayFragmentAccordingToTheDirection: 2");
                 break;
             case FULL_SCREEN_FRAGMENT:
                 mDisplayedFragment = 3;
@@ -214,29 +209,40 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
             case AGENT_LOCATION_FRAGMENT:
                 mDisplayedFragment = 4;
                 getPermissionsAccessLocation();
+                mFragmentManager.popBackStack();
                 AgentLocationFragment agentLocationFragment = (AgentLocationFragment) mFragmentManager.findFragmentByTag(AGENT_LOCATION_FRAGMENT);
                 if (agentLocationFragment == null) {
                     mFragmentManager.beginTransaction().replace(R.id.activity_main_container, AgentLocationFragment.newInstance(mLocationPermissionsGranted), AGENT_LOCATION_FRAGMENT)
+                            .addToBackStack("Fragment")
+                            .commit();
+                } else {
+                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, agentLocationFragment)
                             .addToBackStack("Fragment")
                             .commit();
                 }
                 break;
             case SETTING_FRAGMENT:
                 mDisplayedFragment = 5;
+                mFragmentManager.popBackStack();
                 SettingsFragment settingsFragment = (SettingsFragment) mFragmentManager.findFragmentByTag(SETTING_FRAGMENT);
                 if (settingsFragment == null) {
                     mFragmentManager.beginTransaction().replace(R.id.activity_main_container, new SettingsFragment(), SETTING_FRAGMENT)
                             .addToBackStack("Fragment")
                             .commit();
+                } else {
+                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, settingsFragment).commit();
                 }
                 break;
             case ADD_REAL_ESTATE_FRAGMENT:
                 mDisplayedFragment = 6;
+                mFragmentManager.popBackStack();
                 AddRealEstateFragment addRealEstateFragment = (AddRealEstateFragment) mFragmentManager.findFragmentByTag(ADD_REAL_ESTATE_FRAGMENT);
                 if (addRealEstateFragment == null) {
                     mFragmentManager.beginTransaction().replace(R.id.activity_main_container, AddRealEstateFragment.newInstance(), ADD_REAL_ESTATE_FRAGMENT)
                             .addToBackStack("Fragment")
                             .commit();
+                } else {
+                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, addRealEstateFragment).commit();
                 }
                 break;
             case EDIT_REAL_ESTATE_FRAGMENT:
@@ -246,6 +252,8 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                     mFragmentManager.beginTransaction().replace(R.id.activity_main_container, AddRealEstateFragment.newInstance(mId), EDIT_REAL_ESTATE_FRAGMENT)
                             .addToBackStack("Fragment")
                             .commit();
+                } else {
+                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, editRealEstateFragment).commit();
                 }
                 break;
             case SEARCH_FRAGMENT:

@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -178,10 +177,11 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActivity = getActivity();
         if (getArguments() != null) {
             mRealEstateId = getArguments().getLong(REAL_ESTATE_ID);
         }
+        configureViewModel();
+        mPicturesList = new ArrayList<>();
     }
 
     @Override
@@ -190,13 +190,17 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_add_real_estate, container, false);
         mUnbinder = ButterKnife.bind(this, view);
-        configureViewModel();
-        mPicturesList = new ArrayList<>();
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mActivity = getActivity();
         configureSpinner();
         configureRecyclerView();
         if (mRealEstateId != 0)
             fetchDetailsAndPicturesAccordingToRealEstateId(mRealEstateId);
-        return view;
     }
 
     //    Configuring ViewModel
@@ -350,9 +354,9 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
 
     private void getTheUserInput() {
         if (mPriceTxt.getText() != null && mPriceTxt.getText().length() != 0)
-            price = Integer.parseInt(mPriceTxt.getText().toString());
+            price = Utils.convertPriceAccordingToPreferences(mActivity,mPriceTxt.getText().toString());
         if (mSurfaceTxt.getText() != null && mSurfaceTxt.getText().length() != 0)
-            surface = Integer.parseInt(mSurfaceTxt.getText().toString());
+            surface = Utils.convertAreaAccordingToPreferences(mActivity,mSurfaceTxt.getText().toString());
         if (mRoomsTxt.getText() != null && mRoomsTxt.getText().length() != 0)
             nbRooms = Integer.parseInt(mRoomsTxt.getText().toString());
         if (mBedroomsTxt.getText() != null && mBedroomsTxt.getText().length() != 0)
