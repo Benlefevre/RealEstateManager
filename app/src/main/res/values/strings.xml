@@ -38,7 +38,7 @@
     <string name="enter_the_city">Enter the city</string>
     <string name="point_of_interest">Point of interest</string>
     <string name="enter_the_nearest_amenities">Enter the nearest amenities</string>
-    <string name="status">Status</string>
+    <string name="sold">Status</string>
     <string name="for_sale_since">For sale since :</string>
     <string name="select_a_date">Select a date</string>
     <string name="sold_since">Sold since</string>
@@ -76,12 +76,44 @@
     <string name="units_preferences">Measurement units</string>
     <string name="date_format">Date format</string>
     <string name="real_estate_list">Real estate list</string>
+    <string name="apartment">Apartment</string>
+    <string name="loft">Loft</string>
+    <string name="villa">Villa</string>
+    <string name="house">House</string>
+    <string name="manor">Manor</string>
+    <string name="min_price">Min. price</string>
+    <string name="max_price">Max. price</string>
+    <string name="min_surface">Min. surface</string>
+    <string name="max_surface">Max surface</string>
+    <string name="property_details">Property details</string>
+    <string name="min_rooms">Min_rooms</string>
+    <string name="max_rooms">Max rooms</string>
+    <string name="min_bedrooms">Min. bedrooms</string>
+    <string name="max_bedrooms">Max. bedrooms</string>
+    <string name="min_bathrooms">Min. bathrooms</string>
+    <string name="max_bathrooms">Max. bathrooms</string>
+    <string name="minimal_floors">Minimal floors</string>
+    <string name="at_least_one_photo">1 photo</string>
+    <string name="at_least_3_photos">3 photos</string>
+    <string name="at_least_5_photos">5 photos</string>
+    <string name="no_photo">No photo</string>
+    <string name="minimum_number_of_photos">Minimum number of photos</string>
+    <string name="amenities">Amenities</string>
+    <string name="school">School</string>
+    <string name="shops">Shops</string>
+    <string name="public_transport">Public transport</string>
+    <string name="garden">Garden</string>
+    <string name="is_co_ownership">Is co_ownership?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 
     <string-array name="typeProperty">
         <item>Apartment</item>
         <item>House</item>
         <item>Loft</item>
+        <item>Villa</item>
+        <item>Manor</item>
     </string-array>
 
     <string-array name="countryCode">
@@ -91,11 +123,6 @@
         <item>CANADA</item>
         <item>LUXEMBOURG</item>
         <item>GREAT BRITAIN</item>
-    </string-array>
-
-    <string-array name="status">
-        <item>For sale</item>
-        <item>Sold</item>
     </string-array>
 
     <string-array name="agent">

@@ -16,19 +16,22 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif-medium"
             android:text="@string/description"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_details_recyclerview" />
+            app:layout_constraintTop_toBottomOf="@+id/divider3" />
 
         <TextView
             android:id="@+id/fragment_details_desc_txt"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:text="@string/real_estate_s_description"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/fragment_details_description"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fragment_details_description" />
 
         <TextView
@@ -36,21 +39,24 @@
             style="@style/TextAppearance.MaterialComponents.Subtitle2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:drawableStart="@drawable/ic_area"
             android:drawablePadding="8dp"
             android:text="@string/surface"
-            app:layout_constraintStart_toStartOf="@+id/fragment_details_desc_txt"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_details_desc_txt" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_details_details_txt" />
 
         <TextView
             android:id="@+id/fragment_details_surface_txt"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:paddingStart="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:paddingStart="32dp"
             android:text="@string/surface"
-            app:layout_constraintStart_toStartOf="@+id/fragment_details_surface"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fragment_details_surface" />
 
         <TextView
@@ -58,21 +64,24 @@
             style="@style/TextAppearance.MaterialComponents.Subtitle2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:drawableStart="@drawable/ic_plan"
             android:drawablePadding="8dp"
             android:text="@string/number_of_rooms"
-            app:layout_constraintStart_toStartOf="@+id/fragment_details_surface_txt"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_details_surface_txt" />
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_details_details_txt" />
 
         <TextView
             android:id="@+id/fragment_details_rooms_txt"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:paddingStart="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:paddingStart="32dp"
             android:text="@string/number_of_rooms"
-            app:layout_constraintStart_toStartOf="@+id/fragment_details_rooms"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/fragment_details_rooms" />
 
         <TextView
@@ -80,21 +89,24 @@
             style="@style/TextAppearance.MaterialComponents.Subtitle2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:drawableStart="@drawable/ic_bedroom"
             android:drawablePadding="8dp"
             android:text="@string/number_of_bedrooms"
-            app:layout_constraintStart_toStartOf="@+id/fragment_details_rooms_txt"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_details_rooms_txt" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_details_surface_txt" />
 
         <TextView
             android:id="@+id/fragment_details_bedrooms_txt"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:paddingStart="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:paddingStart="32dp"
             android:text="@string/number_of_bedrooms"
-            app:layout_constraintStart_toStartOf="@+id/fragment_details_bedrooms"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fragment_details_bedrooms" />
 
         <TextView
@@ -102,67 +114,74 @@
             style="@style/TextAppearance.MaterialComponents.Subtitle2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:drawableStart="@drawable/ic_bathroom"
             android:drawablePadding="8dp"
             android:text="@string/number_of_bathrooms"
-            app:layout_constraintStart_toStartOf="@+id/fragment_details_bedrooms_txt"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_details_bedrooms_txt" />
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_details_rooms_txt" />
 
         <TextView
             android:id="@+id/fragment_details_bathroom_txt"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:paddingStart="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:paddingStart="32dp"
             android:text="@string/number_of_bathrooms"
-            app:layout_constraintStart_toStartOf="@+id/fragment_details_bathroom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/fragment_details_bathroom" />
 
         <TextView
-            android:id="@+id/fragment_details_location"
+            android:id="@+id/fragment_details_address"
             style="@style/TextAppearance.MaterialComponents.Subtitle2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:drawableStart="@drawable/ic_location"
             android:drawablePadding="8dp"
-            android:text="@string/location"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_details_desc_txt" />
+            android:text="@string/address"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
         <TextView
             android:id="@+id/fragment_details_location_txt"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:text="@string/location"
+            android:paddingStart="32dp"
+            android:text="@string/address"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/fragment_details_location"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_details_location" />
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/fragment_details_address"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_details_address" />
 
         <TextView
             android:id="@+id/fragment_details_floors"
             style="@style/TextAppearance.MaterialComponents.Subtitle2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:drawableStart="@drawable/ic_floors"
             android:drawablePadding="8dp"
             android:text="@string/number_of_floors"
-            app:layout_constraintStart_toStartOf="@+id/fragment_details_bathroom_txt"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_details_bathroom_txt" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_details_bedrooms_txt" />
 
         <TextView
             android:id="@+id/fragment_details_floors_txt"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:paddingStart="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:paddingStart="32dp"
             android:text="@string/number_of_floors"
-            app:layout_constraintStart_toStartOf="@+id/fragment_details_floors"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fragment_details_floors" />
 
         <TextView
@@ -171,43 +190,47 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:drawableStart="@drawable/ic_coowner"
             android:drawablePadding="8dp"
             android:text="@string/co_ownership"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_details_floors_txt" />
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_details_bathroom_txt" />
 
         <TextView
             android:id="@+id/fragment_details_coownership_txt"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:paddingStart="32dp"
             android:text="@string/co_ownership"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/fragment_details_coownership" />
 
         <TextView
             android:id="@+id/fragment_deatils_year_construction"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             style="@style/TextAppearance.MaterialComponents.Subtitle2"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:drawableStart="@drawable/ic_construction"
-            android:drawablePadding="8dp"
-            android:text="@string/year_of_the_construction"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_details_coownership_txt" />
-
-        <TextView
-            android:id="@+id/fragment_details_construction_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:drawableStart="@drawable/ic_construction"
+            android:drawablePadding="8dp"
             android:text="@string/year_of_the_construction"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_details_floors_txt" />
+
+        <TextView
+            android:id="@+id/fragment_details_construction_txt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:paddingStart="32dp"
+            android:text="@string/year_of_the_construction"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fragment_deatils_year_construction" />
 
@@ -222,6 +245,7 @@
             android:id="@+id/fragment_details_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="150dp"
+            android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -230,16 +254,82 @@
             android:id="@+id/fragment_details_mapView"
             android:layout_width="0dp"
             android:layout_height="180dp"
-            android:layout_marginStart="4dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="4dp"
-            app:layout_constraintBottom_toBottomOf="@+id/fragment_details_floors_txt"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fragment_details_location_txt"
             map:cameraZoom="13"
             map:liteMode="true"
             map:mapType="normal" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@color/colorSecondaryVariant"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_details_desc_txt" />
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@color/colorSecondaryVariant"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_details_construction_txt"
+            map:layout_constraintEnd_toEndOf="parent"
+            map:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/fragment_details_details_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/property_details"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/location"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider2" />
+
+        <View
+            android:id="@+id/divider3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@color/colorSecondaryVariant"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_details_recyclerview" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

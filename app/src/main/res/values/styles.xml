@@ -18,13 +18,30 @@
         <item name="colorError">@color/colorError</item>
         <item name="colorOnError">@color/colorOnError</item>
         <item name="android:textViewStyle">@style/TextAppearance.MaterialComponents.Body2</item>
-        <item name="android:statusBarColor">@color/colorPrimaryVariant</item>
-        <item name="android:navigationBarColor">@color/colorPrimaryVariant</item>
+<!--        <item name="android:statusBarColor">@color/colorPrimaryVariant</item>-->
     </style>
 
     <style name="ToolbarTheme" parent="AppTheme">
         <item name="android:textColorPrimary">@color/colorOnPrimary</item>
         <item name="colorControlNormal">@android:color/white</item>
+    </style>
+
+    <style name="CustomChip" parent="@style/Widget.MaterialComponents.Chip.Filter">
+        <item name="chipBackgroundColor">@color/backgroud_color_chip</item>
+        <item name="android:textColor">@color/text_color_chip</item>
+        <item name="checkedIcon">@drawable/ic_check</item>
+        <item name="rippleColor">@color/colorSecondary</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipStrokeColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="CustomChipChoice" parent="@style/Widget.MaterialComponents.Chip.Choice">
+        <item name="chipBackgroundColor">@color/backgroud_color_chip</item>
+        <item name="android:textColor">@color/text_color_chip</item>
+        <item name="checkedIcon">@drawable/ic_check</item>
+        <item name="rippleColor">@color/colorSecondary</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipStrokeColor">@color/colorPrimary</item>
     </style>
 
 </resources>

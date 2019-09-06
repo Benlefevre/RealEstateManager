@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.ui.controllers.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,6 +30,7 @@ import com.openclassrooms.realestatemanager.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,6 +48,7 @@ public class RealEstateListFragment extends Fragment {
     private RealEstateViewModel mRealEstateViewModel;
     private List<RealEstate> mRealEstates;
     private List<Pictures> mPictures;
+    private Activity mActivity;
 
 
     private OnFragmentInteractionListener mListener;
@@ -77,6 +82,14 @@ public class RealEstateListFragment extends Fragment {
         configureViewModel();
         getAllRealEstate();
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mActivity = getActivity();
+        Toolbar toolbar = Objects.requireNonNull(mActivity).findViewById(R.id.activity_main_toolbar);
+        toolbar.setTitle("Real Estate Manager");
     }
 
     @Override

@@ -31,7 +31,9 @@ public class Utils {
         return (int) Math.round(dollars * 0.9045);
     }
 
-
+    /**
+     * Converts a price expressed in Euros in Dollars.
+     */
     public static int convertEurosToDollars(int euros) {
         return (int) Math.round(euros * 1.1059);
     }
@@ -54,6 +56,9 @@ public class Utils {
         return Objects.requireNonNull(wifi).isWifiEnabled();
     }
 
+    /**
+     * Verifies if the device has a network access and return a boolean.
+     */
     public static boolean isNetworkAccessEnabled(Context context){
         ConnectivityManager cm =
                 (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -65,6 +70,9 @@ public class Utils {
                 activeNetwork.isConnectedOrConnecting();
     }
 
+    /**
+     * Converts a given string in a date with defined format.
+     */
     public static Date convertStringToDate(String string) {
         if (string == null)
             return null;
@@ -78,6 +86,9 @@ public class Utils {
         return date;
     }
 
+    /**
+     * Converts a date in a string. Needs a context to retrieve a string resource.
+     */
     public static String convertDateToString(Date date, Context context) {
         if (date == null)
             return context.getString(R.string.unknown_date);
@@ -86,14 +97,24 @@ public class Utils {
 
     }
 
+    /**
+     * Converts a surface expressed in Sq ft into m²
+     */
     public static int convertSquareFeetIntoSquareMeters(int surface) {
         return (int) Math.round(surface / 10.764);
     }
 
+    /**
+     * Converts an area expressed in m² into Sq ft
+     */
     public static int convertSquareMetersIntoSquareFeet(int surface) {
         return (int) Math.round(surface * 10.764);
     }
 
+    /**
+     * Returns a surface with a suffix according to the user's preferences.
+     * Converts the surface if needed.
+     */
     public static String displayAreaUnitAccordingToPreferences(Context context, int surface) {
         if (context == null)
             return null;
@@ -107,6 +128,10 @@ public class Utils {
         return surfaceText;
     }
 
+    /**
+     * Converts a surface in Sq ft according to user's preferences. Needed to save surface in db with
+     * only one measurement unit.
+     */
     public static int convertAreaAccordingToPreferences(Context context, String surfaceText) {
         if (context == null)
             return 0;
@@ -120,6 +145,25 @@ public class Utils {
         return surface;
     }
 
+    /**
+     * Converts a surface with the correct measurement unit according to the user's preferences. Needed
+     * to display the surface when user need to edit the real estate.
+     */
+    public static int convertAreaAccordingToPreferencesToEdit(Context context, int surface){
+        if (context == null)
+            return 0;
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String area = preferences.getString("area", "sq ft");
+        if (!area.equals("sq ft"))
+            return convertSquareFeetIntoSquareMeters(surface);
+        else
+            return surface;
+    }
+
+    /**
+     * Returns a price with a suffix according to the user's preferences.
+     * Converts the price if needed.
+     */
     public static String displayCurrencyAccordingToPreferences(Context context, int price){
         if (context == null)
             return null;
@@ -133,6 +177,10 @@ public class Utils {
         return priceText;
     }
 
+    /**
+     * Converts a price in Dollars according to user's preferences. Needed to save surface in db with
+     * only one currency.
+     */
     public static int convertPriceAccordingToPreferences(Context context, String priceText){
         if (context == null)
             return 0;
@@ -144,6 +192,21 @@ public class Utils {
         else
             price = Integer.parseInt(priceText);
         return price;
+    }
+
+    /**
+     * Converts a price with the correct currency according to the user's preferences. Needed
+     * to display the price when user need to edit the real estate.
+     */
+    public static int convertPriceAccordingToPreferenceToEdit(Context context, int price){
+        if (context == null)
+            return 0;
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String currency = preferences.getString("currency", "$");
+        if (!currency.equals("$"))
+            return convertDollarToEuro(price);
+        else
+            return price;
     }
 
 

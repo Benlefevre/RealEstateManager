@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.ui.controllers.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.PreferenceManager;
@@ -38,6 +40,7 @@ import com.openclassrooms.realestatemanager.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -73,7 +76,7 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
 
     private Unbinder mUnbinder;
     private SharedPreferences mPreferences;
-    private Context mContext;
+    private Activity mActivity;
     private GoogleMap mGoogleMap;
 
     private long mRealEstateId;
@@ -124,10 +127,12 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mContext = getContext();
+        mActivity = getActivity();
+        Toolbar toolbar = Objects.requireNonNull(mActivity).findViewById(R.id.activity_main_toolbar);
+        toolbar.setTitle("Details");
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(this);
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(mActivity);
     }
 
     @Override
@@ -156,7 +161,7 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
 
     private void addRealEstatePositionOnMap() {
         LatLng latLng = new LatLng(mLatitude, mLongitude);
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
         mGoogleMap.addMarker(new MarkerOptions().position(latLng));
     }
 
@@ -186,20 +191,20 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
             Uri uri = mPicturesList.get(position).getUri();
             passPicturesAndUriToFullScreenFragment(mPicturesList, uri);
         });
-        mPhotoRecyclerview.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        mPhotoRecyclerview.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
         mPhotoRecyclerview.setAdapter(mPhotoAdapter);
     }
 
     private void initDetails(RealEstate realEstate) {
         mDescription.setText(realEstate.getDescription());
-        mSurface.setText(Utils.displayAreaUnitAccordingToPreferences(mContext,realEstate.getSurface()));
+        mSurface.setText(Utils.displayAreaUnitAccordingToPreferences(mActivity,realEstate.getSurface()));
         mRooms.setText(String.valueOf(realEstate.getNbRooms()));
         mBedrooms.setText(String.valueOf(realEstate.getNbBedrooms()));
         mBathroom.setText(String.valueOf(realEstate.getNbBathrooms()));
         mLocation.setText(String.valueOf(realEstate.getAddress()));
         mFloors.setText(String.valueOf(realEstate.getFloors()));
         mCoownershipTxt.setText(String.valueOf(realEstate.isCoOwnership()));
-        mConstructionTxt.setText(Utils.convertDateToString(realEstate.getYearConstruction(), mContext));
+        mConstructionTxt.setText(Utils.convertDateToString(realEstate.getYearConstruction(), mActivity));
         mLatitude = realEstate.getLatitude();
         mLongitude = realEstate.getLongitude();
         addRealEstatePositionOnMap();

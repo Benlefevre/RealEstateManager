@@ -65,7 +65,7 @@ public class RealEstateDaoTest {
         assertEquals(realEstateDemo.getCity(),realEstate.getCity());
         assertEquals(realEstateDemo.getAmenities(),realEstate.getAmenities());
         assertEquals(realEstateDemo.getInitialSale(), realEstate.getInitialSale());
-        assertEquals(realEstateDemo.getStatus(), realEstate.getStatus());
+        assertEquals(realEstateDemo.isSold(), realEstate.isSold());
         assertEquals(realEstateDemo.getRealEstateAgent(),realEstate.getRealEstateAgent());
         assertEquals(realEstateDemo.getFloors(),realEstate.getFloors());
         assertEquals(realEstateDemo.isCoOwnership(),realEstate.isCoOwnership());

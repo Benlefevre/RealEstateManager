@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -92,6 +93,9 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mActivity = getActivity();
+        assert mActivity != null;
+        Toolbar toolbar = mActivity.findViewById(R.id.activity_main_toolbar);
+        toolbar.setTitle("Around me");
         mMapview.onCreate(savedInstanceState);
         mMapview.getMapAsync(this);
         configureViewModel();

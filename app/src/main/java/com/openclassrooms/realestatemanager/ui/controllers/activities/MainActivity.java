@@ -1,10 +1,13 @@
 package com.openclassrooms.realestatemanager.ui.controllers.activities;
 
 import android.Manifest;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -15,7 +18,9 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.data.entities.Pictures;
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.AddRealEstateFragment;
@@ -23,7 +28,9 @@ import com.openclassrooms.realestatemanager.ui.controllers.fragments.AgentLocati
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.DetailsFragment;
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.FullScreenFragment;
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.RealEstateListFragment;
+import com.openclassrooms.realestatemanager.ui.controllers.fragments.SearchFragment;
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.SettingsFragment;
+import com.openclassrooms.realestatemanager.utils.Utils;
 
 import java.util.List;
 
@@ -62,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
     private long mId;
     private List<Pictures> mPicturesList;
     private Uri mUri;
+    private boolean isNetworkEnabled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
         configureNavigationView();
         mFragmentManager = getSupportFragmentManager();
         displayFragmentAccordingToTheDirection(ESTATE_LIST_FRAGMENT);
+        verifyIfNetworkAccessEnabled();
     }
 
     private void configureNavigationView() {
@@ -88,7 +97,6 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
     }
 
     private void configureToolbar() {
-        mToolbar.setTitle("Real Estate Manager");
         setSupportActionBar(mToolbar);
     }
 
@@ -110,6 +118,20 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                     ACCESS_LOCATION, perms);
         } else {
             mLocationPermissionsGranted = true;
+        }
+    }
+
+    private void verifyIfNetworkAccessEnabled() {
+        isNetworkEnabled = Utils.isNetworkAccessEnabled(this);
+        if (!isNetworkEnabled) {
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("A network access is needed")
+                    .setMessage("The application need a network access to locate your position and to display map")
+                    .setPositiveButton("Go to setting", (dialogInterface, i) -> {
+                        startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
+                    })
+                    .setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.cancel())
+                    .show();
         }
     }
 
@@ -194,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                     mFragmentManager.beginTransaction().replace(R.id.activity_main_container, DetailsFragment.newInstance(mId), DETAILS_FRAGMENT)
                             .addToBackStack("Fragment")
                             .commit();
-                }else
+                } else
                     Log.i("test", "displayFragmentAccordingToTheDirection: 2");
                 break;
             case FULL_SCREEN_FRAGMENT:
@@ -207,18 +229,28 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                 }
                 break;
             case AGENT_LOCATION_FRAGMENT:
-                mDisplayedFragment = 4;
-                getPermissionsAccessLocation();
-                mFragmentManager.popBackStack();
-                AgentLocationFragment agentLocationFragment = (AgentLocationFragment) mFragmentManager.findFragmentByTag(AGENT_LOCATION_FRAGMENT);
-                if (agentLocationFragment == null) {
-                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, AgentLocationFragment.newInstance(mLocationPermissionsGranted), AGENT_LOCATION_FRAGMENT)
-                            .addToBackStack("Fragment")
-                            .commit();
-                } else {
-                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, agentLocationFragment)
-                            .addToBackStack("Fragment")
-                            .commit();
+                isNetworkEnabled = Utils.isNetworkAccessEnabled(this);
+                if (isNetworkEnabled) {
+                    mDisplayedFragment = 4;
+                    getPermissionsAccessLocation();
+                    mFragmentManager.popBackStack();
+                    AgentLocationFragment agentLocationFragment = (AgentLocationFragment) mFragmentManager.findFragmentByTag(AGENT_LOCATION_FRAGMENT);
+                    if (agentLocationFragment == null) {
+                        mFragmentManager.beginTransaction().replace(R.id.activity_main_container, AgentLocationFragment.newInstance(mLocationPermissionsGranted), AGENT_LOCATION_FRAGMENT)
+                                .addToBackStack("Fragment")
+                                .commit();
+                    } else {
+                        mFragmentManager.beginTransaction().replace(R.id.activity_main_container, agentLocationFragment)
+                                .addToBackStack("Fragment")
+                                .commit();
+                    }
+                }else {
+                    Snackbar snackbar = Snackbar.make(mDrawer, "Please enabled network access", Snackbar.LENGTH_LONG);
+                    snackbar.setAction("Go to settings", view -> {
+                        startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+                    });
+                    snackbar.setActionTextColor(getResources().getColor(R.color.colorSecondary));
+                    snackbar.show();
                 }
                 break;
             case SETTING_FRAGMENT:
@@ -258,6 +290,14 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                 break;
             case SEARCH_FRAGMENT:
                 mDisplayedFragment = 8;
+                mFragmentManager.popBackStack();
+                SearchFragment searchFragment = (SearchFragment) mFragmentManager.findFragmentByTag(SEARCH_FRAGMENT);
+                if (searchFragment == null){
+                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, SearchFragment.newInstance(),SEARCH_FRAGMENT)
+                            .addToBackStack("Fragment")
+                            .commit();
+                }else
+                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, searchFragment, SEARCH_FRAGMENT).commit();
                 break;
         }
     }

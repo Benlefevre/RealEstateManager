@@ -1,6 +1,5 @@
 package com.openclassrooms.realestatemanager.data.entities;
 
-import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -25,7 +24,7 @@ public class RealEstate {
     private double mLongitude;
     private String mCity;
     private String mAmenities;
-    private String mStatus;
+    private boolean mSold;
     private Date mInitialSale;
     private Date mFinalSale;
     private String mRealEstateAgent;
@@ -39,7 +38,7 @@ public class RealEstate {
 
     public RealEstate(String typeProperty, int price, int surface, int nbRooms,
                       int nbBedrooms, int nbBathrooms, String description, String address,
-                      int zipCode, String countryCode, double latitude, double longitude, String city, String amenities, String status,
+                      int zipCode, String countryCode, double latitude, double longitude, String city, String amenities, boolean status,
                       Date initialSale, Date finalSale, String realEstateAgent, Date yearConstruction,
                       int floors, boolean coOwnership) {
         mTypeProperty = typeProperty;
@@ -56,7 +55,7 @@ public class RealEstate {
         mLongitude = longitude;
         mCity = city;
         mAmenities = amenities;
-        mStatus = status;
+        mSold = status;
         mInitialSale = initialSale;
         mFinalSale = finalSale;
         mRealEstateAgent = realEstateAgent;
@@ -127,8 +126,8 @@ public class RealEstate {
         return mAmenities;
     }
 
-    public String getStatus() {
-        return mStatus;
+    public boolean isSold() {
+        return mSold;
     }
 
     public Date getInitialSale() {
@@ -219,8 +218,8 @@ public class RealEstate {
         mAmenities = pointOfInterests;
     }
 
-    public void setStatus(String status) {
-        mStatus = status;
+    public void setSold(boolean sold) {
+        mSold = sold;
     }
 
     public void setInitialSale(Date initialSale) {
@@ -248,7 +247,6 @@ public class RealEstate {
     }
 
 
-    @NonNull
     @Override
     public String toString() {
         return "RealEstate{" +
@@ -267,7 +265,7 @@ public class RealEstate {
                 ", mLongitude=" + mLongitude +
                 ", mCity='" + mCity + '\'' +
                 ", mAmenities='" + mAmenities + '\'' +
-                ", mStatus='" + mStatus + '\'' +
+                ", mSold=" + mSold +
                 ", mInitialSale=" + mInitialSale +
                 ", mFinalSale=" + mFinalSale +
                 ", mRealEstateAgent='" + mRealEstateAgent + '\'' +
@@ -283,17 +281,17 @@ public class RealEstate {
                 new RealEstate("Apartment",160000, 1399, 4, 3, 2, "Very nice apartment located on the 6th and last floor of 130m2." +
                         " Located in the heart of town and close to all amenities. It has 3 large bedrooms," +
                         " 2 bathrooms and a large living room with a terrace overlooking a private park.",
-                        "600 E 8th 6F St Kansas City, MO 64106", 64106, "US", 39.104264, -94.576036, "Kansas City","School and shops", "For Sale", date,
+                        "600 E 8th 6F St Kansas City, MO 64106", 64106, "US", 39.104264, -94.576036, "Kansas City","School and shops", false, date,
                         null, "Lefèvre Benoit", new Date(619653600000L), 6, true),
                 new RealEstate("House", 515000, 3390, 6, 5, 4, "Very nice house of 315m2." +
                         " Located in the heart of town and close to all amenities. It has 5 large bedrooms," +
                         " 4 bathrooms and a large living room with a large garden of 700m2.",
-                        "6124 Ward Pkwy, Kansas City, MO 64106", 64106, "US", 39.0167956, -94.6016936, "Kansas City","School and shops", "For Sale", date,
+                        "6124 Ward Pkwy, Kansas City, MO 64106", 64106, "US", 39.0167956, -94.6016936, "Kansas City","School and shops", false, date,
                         null, "Lefèvre Benoit", new Date(734652000000L), 2, false),
                 new RealEstate("Apartment", 999950, 2799, 3, 2, 2, "Very nice apartment located on the 31th and last floor of 260m2." +
                         " Located in the heart of town and close to all amenities. It has 2 large bedrooms," +
                         " 2 bathrooms and a large living room with a terrace where you have an amazing view .",
-                        "909 Walnut St Unit 31, Kansas City, MO 64106", 64106, "US", 39.1032208, -94.5815734, "Kansas City","School and shops", "For Sale", date,
+                        "909 Walnut St Unit 31, Kansas City, MO 64106", 64106, "US", 39.1032208, -94.5815734, "Kansas City","School and shops", false, date,
                         null, "Lefèvre Benoit", new Date(213318000000L), 31, true),
         };
     }

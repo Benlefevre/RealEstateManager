@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -78,6 +80,13 @@ public class FullScreenFragment extends Fragment {
         mUnbinder = ButterKnife.bind(this, view);
         configureViewPager();
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Toolbar toolbar = Objects.requireNonNull(getActivity()).findViewById(R.id.activity_main_toolbar);
+        toolbar.setTitle("Details pictures");
     }
 
     private void configureViewPager() {

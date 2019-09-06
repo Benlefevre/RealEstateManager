@@ -37,7 +37,7 @@ public class FullScreenViewPagerAdapter extends PagerAdapter {
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         ImageView imageView = new ImageView(mContext);
         imageView.setImageURI(mUriList.get(position));
-        imageView.setScaleType(ImageView.ScaleType.CENTER);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         container.addView(imageView);
         return imageView;
     }
