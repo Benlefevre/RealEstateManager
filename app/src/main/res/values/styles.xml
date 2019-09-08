@@ -33,6 +33,7 @@
         <item name="rippleColor">@color/colorSecondary</item>
         <item name="chipStrokeWidth">1dp</item>
         <item name="chipStrokeColor">@color/colorPrimary</item>
+        <item name="android:textAlignment">center</item>
     </style>
 
     <style name="CustomChipChoice" parent="@style/Widget.MaterialComponents.Chip.Choice">
@@ -42,6 +43,7 @@
         <item name="rippleColor">@color/colorSecondary</item>
         <item name="chipStrokeWidth">1dp</item>
         <item name="chipStrokeColor">@color/colorPrimary</item>
+        <item name="android:textAlignment">center</item>
     </style>
 
 </resources>

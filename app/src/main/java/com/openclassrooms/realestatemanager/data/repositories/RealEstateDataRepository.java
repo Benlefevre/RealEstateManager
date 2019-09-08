@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.data.repositories;
 
 import androidx.lifecycle.LiveData;
+import androidx.sqlite.db.SupportSQLiteQuery;
 
 import com.openclassrooms.realestatemanager.data.dao.RealEstateDao;
 import com.openclassrooms.realestatemanager.data.entities.RealEstate;
@@ -15,7 +16,6 @@ public class RealEstateDataRepository {
         mRealEstateDao = realEstateDao;
     }
 
-
 //    Get
     public LiveData<RealEstate> getRealEstate(long realEstateId){
         return mRealEstateDao.getRealEstate(realEstateId);
@@ -29,6 +29,11 @@ public class RealEstateDataRepository {
 //    Get
     public LiveData<List<RealEstate>> getRealEstateByZipcodeAndCountry(int zipcode, String countryCode){
         return mRealEstateDao.getRealEstateByZipcodeAndCountry(zipcode, countryCode);
+    }
+
+//    Get
+    public LiveData<List<RealEstate>> getRealEstateAccordingUserSearch(SupportSQLiteQuery query){
+        return mRealEstateDao.getRealEstateAccordingUserSearch(query);
     }
 
 //    Create

@@ -2,11 +2,12 @@ package com.openclassrooms.realestatemanager.ui.viewmodel;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
+import androidx.sqlite.db.SupportSQLiteQuery;
 
-import com.openclassrooms.realestatemanager.data.entities.RealEstate;
 import com.openclassrooms.realestatemanager.data.entities.Pictures;
-import com.openclassrooms.realestatemanager.data.repositories.RealEstateDataRepository;
+import com.openclassrooms.realestatemanager.data.entities.RealEstate;
 import com.openclassrooms.realestatemanager.data.repositories.PicturesDataRepository;
+import com.openclassrooms.realestatemanager.data.repositories.RealEstateDataRepository;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -42,6 +43,10 @@ public class RealEstateViewModel extends ViewModel {
 
     public LiveData<List<RealEstate>> getRealEstateByZipcodeAndCountry(int zipcode, String countryCode){
         return mRealEstateDataRepository.getRealEstateByZipcodeAndCountry(zipcode, countryCode);
+    }
+
+    public LiveData<List<RealEstate>> getRealEstateAccordingUserSearch(SupportSQLiteQuery query){
+        return mRealEstateDataRepository.getRealEstateAccordingUserSearch(query);
     }
 
     public LiveData<List<Pictures>> getPictures(long realEstateId){
@@ -97,6 +102,7 @@ public class RealEstateViewModel extends ViewModel {
     public void deletePicture(Pictures pictures){
         mExecutor.execute(() -> mPicturesDataRepository.deletePicture(pictures));
     }
+
 
 
 }

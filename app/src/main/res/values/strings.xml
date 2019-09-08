@@ -106,6 +106,15 @@
     <string name="is_co_ownership">Is co_ownership?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="_1">1</string>
+    <string name="_2">2</string>
+    <string name="_3">3</string>
+    <string name="_4">4</string>
+    <string name="_5">5+</string>
+    <string name="surface_sqft">Surface in Sq ft</string>
+    <string name="surface_m2">Surface in m²</string>
+    <string name="price_dollars">Price in Dollars</string>
+    <string name="price_euros">Price in Euros</string>
 
 
     <string-array name="typeProperty">
