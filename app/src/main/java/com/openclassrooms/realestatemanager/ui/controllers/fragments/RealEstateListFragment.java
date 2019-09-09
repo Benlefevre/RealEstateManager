@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,6 +40,8 @@ import butterknife.Unbinder;
 
 public class RealEstateListFragment extends Fragment {
 
+    private static final String ORIGIN = "origin";
+
     @BindView(R.id.fragment_list_recycler_view)
     RecyclerView mRecyclerView;
 
@@ -49,6 +52,7 @@ public class RealEstateListFragment extends Fragment {
     private List<RealEstate> mRealEstates;
     private List<Pictures> mPictures;
     private Activity mActivity;
+    private String mOrigin;
 
 
     private OnFragmentInteractionListener mListener;
@@ -57,9 +61,10 @@ public class RealEstateListFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static RealEstateListFragment newInstance() {
+    public static RealEstateListFragment newInstance(String origin) {
         RealEstateListFragment fragment = new RealEstateListFragment();
         Bundle args = new Bundle();
+        args.putString(ORIGIN, origin);
         fragment.setArguments(args);
         return fragment;
     }
@@ -67,6 +72,9 @@ public class RealEstateListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mOrigin = getArguments().getString(ORIGIN);
+        }
     }
 
     @Override
@@ -79,8 +87,6 @@ public class RealEstateListFragment extends Fragment {
         mPictures = new ArrayList<>();
         mRealEstates = new ArrayList<>();
         configureRecyclerView();
-        configureViewModel();
-        getAllRealEstate();
         return view;
     }
 
@@ -88,19 +94,24 @@ public class RealEstateListFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mActivity = getActivity();
+        configureViewModel();
+        if (mOrigin.equals(Constants.SEARCH_FRAGMENT))
+            getSearchedRealEstate();
+        else
+            getAllRealEstate();
         Toolbar toolbar = Objects.requireNonNull(mActivity).findViewById(R.id.activity_main_toolbar);
         toolbar.setTitle("Real Estate Manager");
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.fragment_list_menu,menu);
+        inflater.inflate(R.menu.fragment_list_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.fragment_list_add_btn:
                 mListener.onFragmentInteraction(Constants.ADD_REAL_ESTATE_FRAGMENT);
                 break;
@@ -116,15 +127,19 @@ public class RealEstateListFragment extends Fragment {
     //    Configuring ViewModel
     private void configureViewModel() {
         ViewModelFactory viewModelFactory = Injection.providerViewModelFactory(getActivity());
-        mRealEstateViewModel = ViewModelProviders.of(this, viewModelFactory).get(RealEstateViewModel.class);
+        mRealEstateViewModel = ViewModelProviders.of((FragmentActivity) mActivity, viewModelFactory).get(RealEstateViewModel.class);
     }
 
-//    Récupération de l'ensemble des biens
+    //    Récupération de l'ensemble des biens
     private void getAllRealEstate() {
         mRealEstateViewModel.getAllRealEstate().observe(getViewLifecycleOwner(), this::initList);
     }
 
-//    Récupération d'une photo pour la liste
+    private void getSearchedRealEstate() {
+        mRealEstateViewModel.getSelected().observe(getViewLifecycleOwner(), this::initList);
+    }
+
+    //    Récupération d'une photo pour la liste
     private void getOnePicture(long realEstateId) {
         mRealEstateViewModel.getOnePicture(realEstateId).observe(getViewLifecycleOwner(), this::initPictures);
     }
@@ -151,7 +166,7 @@ public class RealEstateListFragment extends Fragment {
             long id = mRealEstates.get(position).getId();
             passIdToDetailsFragment(id);
         });
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
         mRecyclerView.setAdapter(mEstateAdapter);
     }
 
@@ -181,6 +196,7 @@ public class RealEstateListFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(long id);
+
         void onFragmentInteraction(String destination);
     }
 

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.PreferenceManager;
@@ -24,12 +26,14 @@ import androidx.sqlite.db.SimpleSQLiteQuery;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.data.entities.RealEstate;
 import com.openclassrooms.realestatemanager.injections.Injection;
 import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
 import com.openclassrooms.realestatemanager.ui.viewmodel.RealEstateViewModel;
+import com.openclassrooms.realestatemanager.utils.Constants;
 import com.openclassrooms.realestatemanager.utils.Converters;
 import com.openclassrooms.realestatemanager.utils.Utils;
 
@@ -121,7 +125,7 @@ public class SearchFragment extends Fragment {
     private long mForSaleDate;
     private long mSoldDate;
 
-//    private OnFragmentInteractionListener mListener;
+    private OnFragmentInteractionListener mListener;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -138,9 +142,6 @@ public class SearchFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
-        }
     }
 
     @Override
@@ -152,46 +153,39 @@ public class SearchFragment extends Fragment {
         return view;
     }
 
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
-
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mActivity = getActivity();
         Toolbar toolbar = Objects.requireNonNull(mActivity).findViewById(R.id.activity_main_toolbar);
-        toolbar.setTitle("Search real estate");
+        toolbar.setTitle("Search a real estate");
         configureTextViewAccordingToPreference();
         configureViewModel();
     }
 
     private void configureViewModel() {
         ViewModelFactory viewModelFactory = Injection.providerViewModelFactory(getActivity());
-        mRealEstateViewModel = ViewModelProviders.of(this, viewModelFactory).get(RealEstateViewModel.class);
+        mRealEstateViewModel = ViewModelProviders.of((FragmentActivity) mActivity, viewModelFactory).get(RealEstateViewModel.class);
     }
 
     private void getUserInput() {
-        if (mZipcodeTxt.getText() != null && mZipcodeTxt.getText().length() != 0)
+        if (!TextUtils.isEmpty(mZipcodeTxt.getText()))
             mZipcodeInput = Integer.parseInt(mZipcodeTxt.getText().toString().trim());
-        if (mCityTxt.getText() != null && mCityTxt.getText().length() != 0)
+        if (!TextUtils.isEmpty(mCityTxt.getText()))
             mCityInput = mCityTxt.getText().toString().trim();
-        if (mMinSurfaceTxt.getText() != null && mMinSurfaceTxt.getText().length() != 0)
+        if (!TextUtils.isEmpty(mMinSurfaceTxt.getText()))
             mMinSurfaceInput = Utils.convertAreaAccordingToPreferences(mActivity, mMinSurfaceTxt.getText().toString().trim());
-        if (mMaxSurfaceTxt.getText() != null && mMaxSurfaceTxt.getText().length() != 0)
+        if (!TextUtils.isEmpty(mMaxSurfaceTxt.getText()))
             mMaxSurfaceInput = Utils.convertAreaAccordingToPreferences(mActivity, mMaxSurfaceTxt.getText().toString().trim());
-        if (mMinPriceTxt.getText() != null && mMinPriceTxt.getText().length() != 0)
+        if (!TextUtils.isEmpty(mMinPriceTxt.getText()))
             mMinPriceInput = Utils.convertPriceAccordingToPreferences(mActivity, mMinPriceTxt.getText().toString().trim());
-        if (mMaxPriceTxt.getText() != null && mMaxPriceTxt.getText().length() != 0)
+        if (!TextUtils.isEmpty(mMaxPriceTxt.getText()))
             mMaxPriceInput = Utils.convertPriceAccordingToPreferences(mActivity, mMaxPriceTxt.getText().toString().trim());
-        if (mMinFloorsTxt.getText() != null && mMinFloorsTxt.getText().length() != 0)
+        if (!TextUtils.isEmpty(mMinFloorsTxt.getText()))
             mFloorsInput = Integer.parseInt(mMinFloorsTxt.getText().toString().trim());
-        if (mForSaleTxt.getText() != null && mForSaleTxt.getText().length() != 0)
+        if (!TextUtils.isEmpty(mForSaleTxt.getText()))
             mForSaleDate = Converters.dateToTimestamp(Utils.convertStringToDate(mForSaleTxt.getText().toString().trim()));
-        if (mSoldTxt.getText() != null && mSoldTxt.getText().length() != 0)
+        if (!TextUtils.isEmpty(mSoldTxt.getText()))
             mSoldDate = Converters.dateToTimestamp(Utils.convertStringToDate(mSoldTxt.getText().toString().trim()));
 
         getUserPhotoChoice();
@@ -200,33 +194,9 @@ public class SearchFragment extends Fragment {
         getUserBathroomsChoice();
         getUserCoownerChoice();
         getUserTypeChoice();
-        getUserAmenitiesChoice();
+        mAmenitiesInput = Utils.getUserAmenitiesChoice(mChipSchool, mChipShop, mChipTransport, mChipGarden);
 
-    }
 
-    private void getUserAmenitiesChoice() {
-        mAmenitiesInput = "(";
-        if (mChipSchool.isChecked()) {
-            if (!mAmenitiesInput.equals("("))
-                mAmenitiesInput += ", ";
-            mAmenitiesInput += "'%School%'";
-        }
-        if (mChipShop.isChecked()) {
-            if (!mAmenitiesInput.equals("("))
-                mAmenitiesInput += ", ";
-            mAmenitiesInput += "'%Shops%'";
-        }
-        if (mChipTransport.isChecked()) {
-            if (!mAmenitiesInput.equals("("))
-                mAmenitiesInput += ", ";
-            mAmenitiesInput += "'%Public transport%'";
-        }
-        if (mChipGarden.isChecked()) {
-            if (!mAmenitiesInput.equals("("))
-                mAmenitiesInput += ", ";
-            mAmenitiesInput += "'%Garden%'";
-        }
-        mAmenitiesInput += ")";
     }
 
     private void getUserTypeChoice() {
@@ -386,7 +356,7 @@ public class SearchFragment extends Fragment {
                     mForSaleTxt.setText(getString(R.string.hour_format, day1, month1 + 1, year1));
                     break;
                 case R.id.fragment_search_sold_txt:
-                    mSoldTxt.setText(getString(R.string.hour_format, day1, month1 +1 , year1));
+                    mSoldTxt.setText(getString(R.string.hour_format, day1, month1 + 1, year1));
                     break;
             }
         }, year, month, day);
@@ -405,24 +375,30 @@ public class SearchFragment extends Fragment {
 
     private void fetchRealEstateAccordingToUserInput() {
         mQuery = "SELECT * FROM RealEstate WHERE mId > 0";
-        if (mZipcodeTxt.getText() != null && mZipcodeTxt.getText().length() != 0)
+        if (!TextUtils.isEmpty(mZipcodeTxt.getText()))
             mQuery += " AND mZipCode = " + mZipcodeInput;
-        if (mCityTxt.getText() != null && mCityTxt.getText().length() != 0)
+        if (!TextUtils.isEmpty(mCityTxt.getText()))
             mQuery += " AND RealEstate.mCity LIKE " + "'%" + mCityInput + "%'";
-        if (mMinSurfaceTxt.getText() != null && mMinSurfaceTxt.getText().length() != 0)
+        if (!TextUtils.isEmpty(mMinSurfaceTxt.getText()))
             mQuery += " AND RealEstate.mSurface >= " + mMinSurfaceInput;
-        if (mMaxSurfaceTxt.getText() != null && mMaxSurfaceTxt.getText().length() != 0)
+        if (!TextUtils.isEmpty(mMaxSurfaceTxt.getText()))
             mQuery += " AND RealEstate.mSurface <= " + mMaxSurfaceInput;
-        if (mMinPriceTxt.getText() != null && mMinPriceTxt.getText().length() != 0)
+        if (!TextUtils.isEmpty(mMinPriceTxt.getText()))
             mQuery += " AND RealEstate.mPrice >= " + mMinPriceInput;
-        if (mMaxPriceTxt.getText() != null && mMaxPriceTxt.getText().length() != 0)
+        if (!TextUtils.isEmpty(mMaxPriceTxt.getText()))
             mQuery += " AND RealEstate.mPrice <= " + mMaxPriceInput;
-        if (mMinFloorsTxt.getText() != null && mMinFloorsTxt.getText().length() != 0)
+        if (!TextUtils.isEmpty(mMinFloorsTxt.getText()))
             mQuery += " AND RealEstate.mFloors >= " + mFloorsInput;
         if (!mTypeInput.equals("()"))
             mQuery += " AND RealEstate.mTypeProperty IN " + mTypeInput;
-        if (!mAmenitiesInput.equals("()"))
-            mQuery += " AND RealEstate.mAmenities LIKE " + mAmenitiesInput;
+        if (mAmenitiesInput.contains("School"))
+            mQuery += " AND RealEstate.mAmenities LIKE '%School%'";
+        if (mAmenitiesInput.contains("Shops"))
+            mQuery += " AND RealEstate.mAmenities LIKE '%Shops%'";
+        if (mAmenitiesInput.contains("Public transport"))
+            mQuery += " AND RealEstate.mAmenities LIKE '%Public transport%'";
+        if (mAmenitiesInput.contains("Garden"))
+            mQuery += " AND RealEstate.mAmenities LIKE '%Garden%'";
         if (mChipRoomsInput != 0)
             mQuery += " AND RealEstate.mNbRooms >= " + mChipRoomsInput;
         if (mChipBedroomsInput != 0)
@@ -442,12 +418,13 @@ public class SearchFragment extends Fragment {
 
         Log.i("test", "fetchRealEstateAccordingToUserInput: " + mQuery);
 
-        mRealEstateViewModel.getRealEstateAccordingUserSearch(new SimpleSQLiteQuery(mQuery)).observe(getViewLifecycleOwner(), new Observer<List<RealEstate>>() {
-            @Override
-            public void onChanged(List<RealEstate> realEstates) {
-                Log.i("test", "onChanged: " + realEstates.size());
-                for (RealEstate realEstate : realEstates) {
-                    Log.i("test", "onChanged: " + realEstate.getCity() + realEstate.getId());
+        mRealEstateViewModel.getRealEstateAccordingUserSearch(new SimpleSQLiteQuery(mQuery)).observe(getViewLifecycleOwner(), realEstates -> {
+            if (realEstates.isEmpty())
+                Snackbar.make(mActivity.findViewById(R.id.activity_main_container), "Sorry, there is no results", Snackbar.LENGTH_SHORT).show();
+            else {
+                mRealEstateViewModel.select(realEstates);
+                if (mListener != null) {
+                    mListener.passSearchedRealEstate();
                 }
             }
         });
@@ -457,18 +434,18 @@ public class SearchFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-//        mListener = null;
+        mListener = null;
     }
 
     @Override
@@ -493,8 +470,7 @@ public class SearchFragment extends Fragment {
         }
     }
 
-
-//    public interface OnFragmentInteractionListener {
-//        void onFragmentInteraction(Uri uri);
-//    }
+    public interface OnFragmentInteractionListener {
+        void passSearchedRealEstate();
+    }
 }

@@ -8,6 +8,7 @@ import android.net.wifi.WifiManager;
 
 import androidx.preference.PreferenceManager;
 
+import com.google.android.material.chip.Chip;
 import com.openclassrooms.realestatemanager.R;
 
 import java.text.DateFormat;
@@ -43,7 +44,7 @@ public class Utils {
      * NOTE : NE PAS SUPPRIMER, A MONTRER DURANT LA SOUTENANCE
      */
     public static String getTodayDate() {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd",Locale.getDefault());
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
         return dateFormat.format(new Date());
     }
 
@@ -59,7 +60,7 @@ public class Utils {
     /**
      * Verifies if the device has a network access and return a boolean.
      */
-    public static boolean isNetworkAccessEnabled(Context context){
+    public static boolean isNetworkAccessEnabled(Context context) {
         ConnectivityManager cm =
                 (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = null;
@@ -76,7 +77,7 @@ public class Utils {
     public static Date convertStringToDate(String string) {
         if (string == null)
             return null;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         Date date = new Date();
         try {
             date = simpleDateFormat.parse(string);
@@ -92,7 +93,7 @@ public class Utils {
     public static String convertDateToString(Date date, Context context) {
         if (date == null)
             return context.getString(R.string.unknown_date);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         return simpleDateFormat.format(date);
 
     }
@@ -149,7 +150,7 @@ public class Utils {
      * Converts a surface with the correct measurement unit according to the user's preferences. Needed
      * to display the surface when user need to edit the real estate.
      */
-    public static int convertAreaAccordingToPreferencesToEdit(Context context, int surface){
+    public static int convertAreaAccordingToPreferencesToEdit(Context context, int surface) {
         if (context == null)
             return 0;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -164,16 +165,16 @@ public class Utils {
      * Returns a price with a suffix according to the user's preferences.
      * Converts the price if needed.
      */
-    public static String displayCurrencyAccordingToPreferences(Context context, int price){
+    public static String displayCurrencyAccordingToPreferences(Context context, int price) {
         if (context == null)
             return null;
         String priceText;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String currency = preferences.getString("currency","$");
+        String currency = preferences.getString("currency", "$");
         if (!currency.equals("$"))
             priceText = convertDollarToEuro(price) + "€";
         else
-            priceText = String.format(Locale.US,"%,d",price) + "$";
+            priceText = String.format(Locale.US, "%,d", price) + "$";
         return priceText;
     }
 
@@ -181,12 +182,12 @@ public class Utils {
      * Converts a price in Dollars according to user's preferences. Needed to save surface in db with
      * only one currency.
      */
-    public static int convertPriceAccordingToPreferences(Context context, String priceText){
+    public static int convertPriceAccordingToPreferences(Context context, String priceText) {
         if (context == null)
             return 0;
         int price;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String currency = preferences.getString("currency","$");
+        String currency = preferences.getString("currency", "$");
         if (!currency.equals("$"))
             price = convertEurosToDollars(Integer.parseInt(priceText));
         else
@@ -198,7 +199,7 @@ public class Utils {
      * Converts a price with the correct currency according to the user's preferences. Needed
      * to display the price when user need to edit the real estate.
      */
-    public static int convertPriceAccordingToPreferenceToEdit(Context context, int price){
+    public static int convertPriceAccordingToPreferenceToEdit(Context context, int price) {
         if (context == null)
             return 0;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -209,4 +210,28 @@ public class Utils {
             return price;
     }
 
+    public static String getUserAmenitiesChoice(Chip chipSchool, Chip chipShop, Chip chipTransport,
+                                                Chip chipGarden) {
+        String amenitiesInput = "(";
+        if (chipSchool.isChecked()) {
+            amenitiesInput +="'School'";
+        }
+        if (chipShop.isChecked()) {
+            if (!amenitiesInput.equals("("))
+                amenitiesInput += ", ";
+            amenitiesInput += "'Shops'";
+        }
+        if (chipTransport.isChecked()) {
+            if (!amenitiesInput.equals("("))
+                amenitiesInput += ", ";
+            amenitiesInput += "'Public transport'";
+        }
+        if (chipGarden.isChecked()) {
+            if (!amenitiesInput.equals("("))
+                amenitiesInput += ", ";
+            amenitiesInput += "'Garden'";
+        }
+        amenitiesInput += ")";
+        return amenitiesInput;
+    }
 }

@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.ui.viewmodel;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.sqlite.db.SupportSQLiteQuery;
 
@@ -25,6 +26,7 @@ public class RealEstateViewModel extends ViewModel {
     private final Executor mExecutor;
     private ExecutorService mExecutorService;
 
+    private MutableLiveData<List<RealEstate>> mRealEstateList = new MutableLiveData<>();
 
     public RealEstateViewModel(RealEstateDataRepository realEstateDataRepository, Executor executor,
                                PicturesDataRepository picturesDataRepository){
@@ -101,6 +103,14 @@ public class RealEstateViewModel extends ViewModel {
 
     public void deletePicture(Pictures pictures){
         mExecutor.execute(() -> mPicturesDataRepository.deletePicture(pictures));
+    }
+
+    public void select(List<RealEstate> realEstates){
+        mRealEstateList.setValue(realEstates);
+    }
+
+    public LiveData<List<RealEstate>> getSelected(){
+        return mRealEstateList;
     }
 
 

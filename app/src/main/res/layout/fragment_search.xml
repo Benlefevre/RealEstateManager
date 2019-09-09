@@ -301,45 +301,14 @@
 
         </com.google.android.material.chip.ChipGroup>
 
-        <com.google.android.material.chip.ChipGroup
+        <include
             android:id="@+id/chipGroupAmenities"
+            layout="@layout/chip_group_amenities"
+            android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/search_amenities_txt"
-            app:singleLine="false">
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_school"
-                style="@style/CustomChip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/school" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_shop"
-                style="@style/CustomChip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/shops" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_transport"
-                style="@style/CustomChip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/public_transport" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_garden"
-                style="@style/CustomChip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/garden" />
-        </com.google.android.material.chip.ChipGroup>
+            app:layout_constraintTop_toBottomOf="@+id/search_amenities_txt"/>
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipGroup_coowner"
@@ -371,7 +340,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/min_price_layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            style="@style/customTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -390,7 +359,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/max_price_layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            style="@style/customTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -409,7 +378,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/min_surface_layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            style="@style/customTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -428,7 +397,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/max_surface_layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            style="@style/customTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -598,7 +567,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/min_floors_layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            style="@style/customTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -618,7 +587,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/for_sale_layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            style="@style/customTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -638,7 +607,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/sold_layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            style="@style/customTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -658,7 +627,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/zipcode_layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            style="@style/customTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -677,7 +646,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/city_layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            style="@style/customTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"

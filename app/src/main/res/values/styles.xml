@@ -21,9 +21,16 @@
 <!--        <item name="android:statusBarColor">@color/colorPrimaryVariant</item>-->
     </style>
 
+
     <style name="ToolbarTheme" parent="AppTheme">
         <item name="android:textColorPrimary">@color/colorOnPrimary</item>
         <item name="colorControlNormal">@android:color/white</item>
+    </style>
+
+    <style name="customTextInputLayout" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="errorTextColor">@color/colorSecondary</item>
+        <item name="errorIconTint">@color/colorSecondary</item>
+        <item name="android:textAppearance">@style/TextAppearance.MaterialComponents.Body2</item>
     </style>
 
     <style name="CustomChip" parent="@style/Widget.MaterialComponents.Chip.Filter">
@@ -34,6 +41,7 @@
         <item name="chipStrokeWidth">1dp</item>
         <item name="chipStrokeColor">@color/colorStroke</item>
         <item name="android:textAlignment">center</item>
+        <item name="android:textAppearance">@style/TextAppearance.MaterialComponents.Body2</item>
     </style>
 
     <style name="CustomChipChoice" parent="@style/Widget.MaterialComponents.Chip.Choice">
@@ -44,6 +52,7 @@
         <item name="chipStrokeWidth">1dp</item>
         <item name="chipStrokeColor">@color/colorStroke</item>
         <item name="android:textAlignment">center</item>
+        <item name="android:textAppearance">@style/TextAppearance.MaterialComponents.Body2</item>
     </style>
 
 </resources>

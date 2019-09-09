@@ -248,6 +248,7 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onDestroyView() {
         mPhotoRecyclerview.setAdapter(null);
+        mPhotoAdapter.setOnClickListener(null);
         super.onDestroyView();
         mUnbinder.unbind();
     }
