@@ -179,7 +179,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:background="@color/colorSecondaryVariant"
+            android:background="?android:attr/listDivider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/chipGroupPhoto" />
@@ -191,7 +191,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:background="@color/colorSecondaryVariant"
+            android:background="?android:attr/listDivider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/chipGroupAmenities" />
@@ -203,7 +203,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:background="@color/colorSecondaryVariant"
+            android:background="?android:attr/listDivider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/zipcode_layout" />
@@ -339,8 +339,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/garden" />
-
-
         </com.google.android.material.chip.ChipGroup>
 
         <com.google.android.material.chip.ChipGroup
@@ -498,48 +496,6 @@
 
         </com.google.android.material.chip.ChipGroup>
 
-<!--        <com.google.android.material.textfield.TextInputLayout-->
-<!--            android:id="@+id/min_rooms_layout"-->
-<!--            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="8dp"-->
-<!--            android:layout_marginEnd="8dp"-->
-<!--            android:hint="@string/min_rooms"-->
-<!--            app:layout_constraintEnd_toStartOf="@+id/guideline4"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/textView9">-->
-
-<!--            <com.google.android.material.textfield.TextInputEditText-->
-<!--                android:id="@+id/fragment_search_min_rooms_txt"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:inputType="number" />-->
-
-<!--        </com.google.android.material.textfield.TextInputLayout>-->
-
-
-<!--        <com.google.android.material.textfield.TextInputLayout-->
-<!--            android:id="@+id/max_rooms_layout"-->
-<!--            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="8dp"-->
-<!--            android:layout_marginEnd="8dp"-->
-<!--            android:hint="@string/max_rooms"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="@+id/guideline4"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/textView9">-->
-
-<!--            <com.google.android.material.textfield.TextInputEditText-->
-<!--                android:id="@+id/fragment_search_max_rooms_txt"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:inputType="number" />-->
-
-<!--        </com.google.android.material.textfield.TextInputLayout>-->
-
-
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipGroup_bedrooms"
             android:layout_width="match_parent"
@@ -590,45 +546,6 @@
 
         </com.google.android.material.chip.ChipGroup>
 
-<!--        <com.google.android.material.textfield.TextInputLayout-->
-<!--            android:id="@+id/min_bedrooms_layout"-->
-<!--            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="8dp"-->
-<!--            android:layout_marginEnd="8dp"-->
-<!--            android:hint="@string/min_bedrooms"-->
-<!--            app:layout_constraintEnd_toStartOf="@+id/guideline4"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/textView10">-->
-
-<!--            <com.google.android.material.textfield.TextInputEditText-->
-<!--                android:id="@+id/fragment_search_min_bedrooms_txt"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:inputType="number" />-->
-<!--        </com.google.android.material.textfield.TextInputLayout>-->
-
-<!--        <com.google.android.material.textfield.TextInputLayout-->
-<!--            android:id="@+id/max_bedrooms_layout"-->
-<!--            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="8dp"-->
-<!--            android:layout_marginEnd="8dp"-->
-<!--            android:hint="@string/max_bedrooms"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="@+id/guideline4"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/textView10">-->
-
-<!--            <com.google.android.material.textfield.TextInputEditText-->
-<!--                android:id="@+id/fragment_search_max_bedrooms_txt"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:inputType="number" />-->
-
-<!--        </com.google.android.material.textfield.TextInputLayout>-->
-
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipGroup_bathrooms"
             android:layout_width="match_parent"
@@ -678,45 +595,6 @@
                 android:text="@string/_5" />
 
         </com.google.android.material.chip.ChipGroup>
-
-<!--        <com.google.android.material.textfield.TextInputLayout-->
-<!--            android:id="@+id/min_bathrooms_layout"-->
-<!--            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="8dp"-->
-<!--            android:layout_marginEnd="8dp"-->
-<!--            android:hint="@string/min_bathrooms"-->
-<!--            app:layout_constraintEnd_toStartOf="@+id/guideline4"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/textView11">-->
-
-<!--            <com.google.android.material.textfield.TextInputEditText-->
-<!--                android:id="@+id/fragment_search_min_bathrooms_txt"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:inputType="number" />-->
-<!--        </com.google.android.material.textfield.TextInputLayout>-->
-
-<!--        <com.google.android.material.textfield.TextInputLayout-->
-<!--            android:id="@+id/max_bathrooms_layout"-->
-<!--            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="8dp"-->
-<!--            android:layout_marginEnd="8dp"-->
-<!--            android:hint="@string/max_bathrooms"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="@+id/guideline4"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/textView11">-->
-
-<!--            <com.google.android.material.textfield.TextInputEditText-->
-<!--                android:id="@+id/fragment_search_max_bathrooms_txt"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:inputType="number" />-->
-
-<!--        </com.google.android.material.textfield.TextInputLayout>-->
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/min_floors_layout"
@@ -825,9 +703,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/chipGroup_coowner" />
-
-
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

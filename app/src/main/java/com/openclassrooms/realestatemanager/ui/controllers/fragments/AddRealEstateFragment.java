@@ -57,6 +57,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -121,9 +122,9 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
     TextInputEditText mPicturesTxt;
     @BindView(R.id.fragment_add_recycler_view)
     RecyclerView mRecyclerView;
-    @BindView(R.id.layoutPrice)
+    @BindView(R.id.layout_price)
     TextInputLayout mLayoutPrice;
-    @BindView(R.id.layoutSurface)
+    @BindView(R.id.layout_surface)
     TextInputLayout mLayoutSurface;
 
     private Unbinder mUnbinder;
@@ -150,6 +151,7 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
     private int floors = 0;
     private double mLatitude = 0;
     private double mLongitude = 0;
+    private int mNbPictures;
 
     private String currentPhotoPath;
     private long mRealEstateId;
@@ -223,6 +225,7 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
     }
 
     private void bindPicturesIntoRecyclerViewAfterFetch(List<Pictures> pictures) {
+        mPicturesList.clear();
         for (Pictures pictures1 : pictures) {
             if (!mPicturesList.contains(pictures1))
                 mPicturesList.add(pictures1);
@@ -301,9 +304,9 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
                     .setMessage(getString(R.string.would_you_delete_picture))
                     .setNegativeButton(getString(R.string.cancel), (dialogInterface, i) -> dialogInterface.cancel())
                     .setPositiveButton(getString(R.string.delete), (dialogInterface, i) -> {
-                        if (mRealEstateId == 0)
+                        if (mRealEstateId == 0) {
                             mPicturesList.remove(position);
-                        else {
+                        } else {
                             mRealEstateViewModel.deletePicture(mPicturesList.get(position));
                             mPicturesList.remove(position);
                         }
@@ -335,9 +338,10 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
 
     private void updateRealEstateWithNewValues() {
         getTheUserInput();
+        mNbPictures = mPicturesList.size();
         updateCurrentRealEstate(mTypePropertyInput, price, surface, nbRooms, nbBedrooms, nbBathrooms,
                 description, address, zipCode, mCountryCodeInput, mLatitude, mLongitude, city, amenities, isSold, initialDate,
-                finalDate, mAgentInput, yearConstruction, floors, Boolean.valueOf(mCoOwnershipInput));
+                finalDate, mAgentInput, yearConstruction, floors, Boolean.valueOf(mCoOwnershipInput), mNbPictures);
         savePictureInDb(mRealEstateId);
         int nbRows = mRealEstateViewModel.updateRealEstate(mRealEstate);
         if (nbRows == 1) {
@@ -349,9 +353,10 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
 
     private void createNewRealEstateFromInputValues() {
         getTheUserInput();
+        mNbPictures = mPicturesList.size();
         mRowId = mRealEstateViewModel.createRealEstate(new RealEstate(mTypePropertyInput, price, surface, nbRooms,
                 nbBedrooms, nbBathrooms, description, address, zipCode, mCountryCodeInput, mLatitude, mLongitude, city, amenities,
-                isSold, initialDate, finalDate, mAgentInput, yearConstruction, floors, Boolean.valueOf(mCoOwnershipInput)));
+                isSold, initialDate, finalDate, mAgentInput, yearConstruction, floors, Boolean.valueOf(mCoOwnershipInput), mNbPictures));
         if (mRowId != -1L) {
             savePictureInDb(mRowId);
             Snackbar.make(mActivity.findViewById(R.id.activity_main_container), getString(R.string.save_success),
@@ -398,7 +403,7 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
         if (mFinalSaleTxt.getText() != null && mFinalSaleTxt.getText().length() != 0) {
             finalDate = Utils.convertStringToDate(Objects.requireNonNull(mFinalSaleTxt.getText()).toString());
             isSold = true;
-        }else
+        } else
             isSold = false;
         if (mYearConstructionTxt.getText() != null && mYearConstructionTxt.getText().length() != 0)
             yearConstruction = Utils.convertStringToDate(Objects.requireNonNull(mYearConstructionTxt.getText()).toString());
@@ -426,7 +431,7 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
                                          int nbBedrooms, int nbBathrooms, String description, String address,
                                          int zipCode, String countryCodeInput, double latitude, double longitude, String city, String amenities,
                                          boolean isSold, Date initialDate, Date finalDate, String agentInput,
-                                         Date yearConstruction, int floors, Boolean coownership) {
+                                         Date yearConstruction, int floors, Boolean coownership, int nbPictures) {
         mRealEstate.setTypeProperty(typePropertyInput);
         mRealEstate.setPrice(price);
         mRealEstate.setSurface(surface);
@@ -448,6 +453,7 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
         mRealEstate.setYearConstruction(yearConstruction);
         mRealEstate.setFloors(floors);
         mRealEstate.setCoOwnership(coownership);
+        mRealEstate.setNbPictures(nbPictures);
     }
 
     private String getCountryCodeAccordingToCountry(String country) {
@@ -509,30 +515,27 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
         DatePickerDialog datePickerDialog = new DatePickerDialog(mActivity, (datePicker, year1, month1, day1) -> {
             switch (view.getId()) {
                 case R.id.fragment_add_initial_sale_txt:
-                    mInitialSaleTxt.setText(getString(R.string.hour_format, day1, month1, year1));
+                    mInitialSaleTxt.setText(getString(R.string.hour_format, day1, month1 + 1, year1));
                     break;
                 case R.id.fragment_add_final_sale_txt:
-                    mFinalSaleTxt.setText(getString(R.string.hour_format, day1, month1, year1));
+                    mFinalSaleTxt.setText(getString(R.string.hour_format, day1, month1 + 1, year1));
                     break;
                 case R.id.fragment_add_year_construction_txt:
-                    mYearConstructionTxt.setText(getString(R.string.hour_format, day1, month1, year1));
+                    mYearConstructionTxt.setText(getString(R.string.hour_format, day1, month1 + 1, year1));
                     break;
             }
         }, year, month, day);
-        datePickerDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Delete Date", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                switch (view.getId()){
-                    case R.id.fragment_add_initial_sale_txt:
-                        mInitialSaleTxt.setText(null);
-                        break;
-                    case R.id.fragment_add_final_sale_txt:
-                        mFinalSaleTxt.setText(null);
-                        break;
-                    case R.id.fragment_add_year_construction_txt:
-                        mYearConstructionTxt.setText(null);
-                        break;
-                }
+        datePickerDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Delete Date", (dialogInterface, i) -> {
+            switch (view.getId()) {
+                case R.id.fragment_add_initial_sale_txt:
+                    mInitialSaleTxt.setText(null);
+                    break;
+                case R.id.fragment_add_final_sale_txt:
+                    mFinalSaleTxt.setText(null);
+                    break;
+                case R.id.fragment_add_year_construction_txt:
+                    mYearConstructionTxt.setText(null);
+                    break;
             }
         });
         datePickerDialog.show();
@@ -585,7 +588,7 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
     }
 
     private File createImageFile() throws IOException {
-        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timestamp + "_";
         File storageDir = mActivity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(imageFileName, ".jpg", storageDir);

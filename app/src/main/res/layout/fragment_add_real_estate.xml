@@ -13,7 +13,7 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutTypeProperty"
+            android:id="@+id/layout_type_property"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutPrice"
+            android:id="@+id/layout_price"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
             android:hint="@string/enter_price"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layoutTypeProperty">
+            app:layout_constraintTop_toBottomOf="@+id/layout_type_property">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_price_txt"
@@ -54,7 +54,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutSurface"
+            android:id="@+id/layout_surface"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
             android:hint="@string/enter_the_surface"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layoutPrice">
+            app:layout_constraintTop_toBottomOf="@+id/layout_price">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_surface_txt"
@@ -74,7 +74,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutRooms"
+            android:id="@+id/layout_rooms"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
             android:hint="@string/enter_the_number_of_rooms"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layoutSurface">
+            app:layout_constraintTop_toBottomOf="@+id/layout_surface">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_rooms_txt"
@@ -94,7 +94,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutBedrooms"
+            android:id="@+id/layout_bedrooms"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -104,7 +104,7 @@
             android:hint="@string/enter_the_number_of_bedrooms"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layoutRooms">
+            app:layout_constraintTop_toBottomOf="@+id/layout_rooms">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_bedrooms_txt"
@@ -114,7 +114,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutBathrooms"
+            android:id="@+id/layout_bathrooms"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -124,7 +124,7 @@
             android:hint="@string/enter_the_number_of_bathrooms"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layoutBedrooms">
+            app:layout_constraintTop_toBottomOf="@+id/layout_bedrooms">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_bathrooms_txt"
@@ -134,7 +134,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutFloors"
+            android:id="@+id/layout_floors"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -144,7 +144,7 @@
             android:hint="@string/enter_the_number_of_floors"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layoutBathrooms">
+            app:layout_constraintTop_toBottomOf="@+id/layout_bathrooms">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_floors_txt"
@@ -154,7 +154,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutYearConstruction"
+            android:id="@+id/layout_year_construction"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -164,7 +164,7 @@
             android:hint="@string/year_of_the_construction"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layoutCoOwnership">
+            app:layout_constraintTop_toBottomOf="@+id/chipGroupAmenities">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_year_construction_txt"
@@ -175,7 +175,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutDescription"
+            android:id="@+id/layout_description"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -185,7 +185,7 @@
             android:hint="@string/enter_the_real_estate_description"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layoutYearConstruction">
+            app:layout_constraintTop_toBottomOf="@+id/layout_year_construction">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_description_txt"
@@ -197,7 +197,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutCountryCode"
+            android:id="@+id/layout_country_code"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -207,7 +207,7 @@
             android:hint="@string/country"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layoutDescription">
+            app:layout_constraintTop_toBottomOf="@+id/layout_description">
 
             <androidx.appcompat.widget.AppCompatAutoCompleteTextView
                 android:id="@+id/fragment_add_country_code_spinner"
@@ -218,7 +218,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutAddress"
+            android:id="@+id/layout_address"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -228,7 +228,7 @@
             android:hint="@string/enter_the_real_estate_address"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layoutCountryCode">
+            app:layout_constraintTop_toBottomOf="@+id/layout_country_code">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_address_txt"
@@ -238,7 +238,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutZipCode"
+            android:id="@+id/layout_zipcode"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -248,7 +248,7 @@
             android:hint="@string/enter_the_zipcode"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layoutAddress">
+            app:layout_constraintTop_toBottomOf="@+id/layout_address">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_zipcode_txt"
@@ -258,7 +258,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutCity"
+            android:id="@+id/layout_city"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -268,7 +268,7 @@
             android:hint="@string/enter_the_city"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layoutZipCode">
+            app:layout_constraintTop_toBottomOf="@+id/layout_zipcode">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_city_txt"
@@ -278,7 +278,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutAmenities"
+            android:id="@+id/layout_amenities"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -288,7 +288,7 @@
             android:hint="@string/enter_the_nearest_amenities"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layoutCity">
+            app:layout_constraintTop_toBottomOf="@+id/layout_city">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_amenities_txt"
@@ -298,7 +298,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutDateForSale"
+            android:id="@+id/layout_date_for_sale"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -308,7 +308,7 @@
             android:hint="@string/for_sale_since"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layoutAmenities">
+            app:layout_constraintTop_toBottomOf="@+id/layout_amenities">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_initial_sale_txt"
@@ -319,7 +319,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutDateSold"
+            android:id="@+id/layout_date_sold"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -329,7 +329,7 @@
             android:hint="@string/sold_since"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layoutDateForSale">
+            app:layout_constraintTop_toBottomOf="@+id/layout_date_for_sale">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_final_sale_txt"
@@ -340,7 +340,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutCoOwnership"
+            android:id="@+id/layout_coownership"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -350,7 +350,7 @@
             android:hint="@string/co_ownership"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layoutFloors">
+            app:layout_constraintTop_toBottomOf="@+id/layout_floors">
 
             <androidx.appcompat.widget.AppCompatAutoCompleteTextView
                 android:id="@+id/fragment_add_co_ownership_spinner"
@@ -360,8 +360,59 @@
                 android:focusable="false" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <TextView
+            android:id="@+id/search_amenities_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/amenities"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_coownership" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupAmenities"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/search_amenities_txt"
+            app:singleLine="false">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_school"
+                style="@style/CustomChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/school" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_shop"
+                style="@style/CustomChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/shops" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_transport"
+                style="@style/CustomChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/public_transport" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_garden"
+                style="@style/CustomChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/garden" />
+        </com.google.android.material.chip.ChipGroup>
+
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutAgent"
+            android:id="@+id/layout_agent"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -371,7 +422,7 @@
             android:hint="@string/real_estate_agent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layoutDateSold">
+            app:layout_constraintTop_toBottomOf="@+id/layout_date_sold">
 
             <androidx.appcompat.widget.AppCompatAutoCompleteTextView
                 android:id="@+id/fragment_add_agent_spinner"
@@ -382,7 +433,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutPictures"
+            android:id="@+id/layout_pictures"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -392,14 +443,13 @@
             android:hint="@string/add_pictures"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layoutAgent">
+            app:layout_constraintTop_toBottomOf="@+id/layout_agent">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_pictures_txt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableEnd="@drawable/ic_add_circle"
-                android:drawableTint="@color/colorPrimary"
                 android:cursorVisible="false"
                 android:focusable="false" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -413,7 +463,7 @@
             android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layoutPictures" />
+            app:layout_constraintTop_toBottomOf="@+id/layout_pictures" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/fragment_add_validation_btn"

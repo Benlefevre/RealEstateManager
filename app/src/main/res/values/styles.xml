@@ -32,7 +32,7 @@
         <item name="checkedIcon">@drawable/ic_check</item>
         <item name="rippleColor">@color/colorSecondary</item>
         <item name="chipStrokeWidth">1dp</item>
-        <item name="chipStrokeColor">@color/colorPrimary</item>
+        <item name="chipStrokeColor">@color/colorStroke</item>
         <item name="android:textAlignment">center</item>
     </style>
 
@@ -42,7 +42,7 @@
         <item name="checkedIcon">@drawable/ic_check</item>
         <item name="rippleColor">@color/colorSecondary</item>
         <item name="chipStrokeWidth">1dp</item>
-        <item name="chipStrokeColor">@color/colorPrimary</item>
+        <item name="chipStrokeColor">@color/colorStroke</item>
         <item name="android:textAlignment">center</item>
     </style>
 

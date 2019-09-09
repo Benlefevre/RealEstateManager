@@ -30,6 +30,7 @@ import com.openclassrooms.realestatemanager.data.entities.RealEstate;
 import com.openclassrooms.realestatemanager.injections.Injection;
 import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
 import com.openclassrooms.realestatemanager.ui.viewmodel.RealEstateViewModel;
+import com.openclassrooms.realestatemanager.utils.Converters;
 import com.openclassrooms.realestatemanager.utils.Utils;
 
 import java.util.Calendar;
@@ -39,6 +40,7 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 
 public class SearchFragment extends Fragment {
@@ -99,6 +101,7 @@ public class SearchFragment extends Fragment {
     private RealEstateViewModel mRealEstateViewModel;
 
     private Activity mActivity;
+    private Unbinder mUnbinder;
     private String mQuery;
 
     private int mZipcodeInput;
@@ -115,6 +118,8 @@ public class SearchFragment extends Fragment {
     private int mChipCoownerInput;
     private String mTypeInput;
     private String mAmenitiesInput;
+    private long mForSaleDate;
+    private long mSoldDate;
 
 //    private OnFragmentInteractionListener mListener;
 
@@ -143,7 +148,7 @@ public class SearchFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_search, container, false);
-        ButterKnife.bind(this, view);
+        mUnbinder = ButterKnife.bind(this, view);
         return view;
     }
 
@@ -184,6 +189,10 @@ public class SearchFragment extends Fragment {
             mMaxPriceInput = Utils.convertPriceAccordingToPreferences(mActivity, mMaxPriceTxt.getText().toString().trim());
         if (mMinFloorsTxt.getText() != null && mMinFloorsTxt.getText().length() != 0)
             mFloorsInput = Integer.parseInt(mMinFloorsTxt.getText().toString().trim());
+        if (mForSaleTxt.getText() != null && mForSaleTxt.getText().length() != 0)
+            mForSaleDate = Converters.dateToTimestamp(Utils.convertStringToDate(mForSaleTxt.getText().toString().trim()));
+        if (mSoldTxt.getText() != null && mSoldTxt.getText().length() != 0)
+            mSoldDate = Converters.dateToTimestamp(Utils.convertStringToDate(mSoldTxt.getText().toString().trim()));
 
         getUserPhotoChoice();
         getUserRoomChoice();
@@ -196,15 +205,28 @@ public class SearchFragment extends Fragment {
     }
 
     private void getUserAmenitiesChoice() {
-        mAmenitiesInput = "";
-        if (mChipSchool.isChecked())
-            mAmenitiesInput = mAmenitiesInput + "School";
-        if (mChipShop.isChecked())
-            mAmenitiesInput = mAmenitiesInput + "Shops";
-        if (mChipTransport.isChecked())
-            mAmenitiesInput = mAmenitiesInput + "Public transport";
-        if (mChipGarden.isChecked())
-            mAmenitiesInput = mAmenitiesInput + "Garden";
+        mAmenitiesInput = "(";
+        if (mChipSchool.isChecked()) {
+            if (!mAmenitiesInput.equals("("))
+                mAmenitiesInput += ", ";
+            mAmenitiesInput += "'%School%'";
+        }
+        if (mChipShop.isChecked()) {
+            if (!mAmenitiesInput.equals("("))
+                mAmenitiesInput += ", ";
+            mAmenitiesInput += "'%Shops%'";
+        }
+        if (mChipTransport.isChecked()) {
+            if (!mAmenitiesInput.equals("("))
+                mAmenitiesInput += ", ";
+            mAmenitiesInput += "'%Public transport%'";
+        }
+        if (mChipGarden.isChecked()) {
+            if (!mAmenitiesInput.equals("("))
+                mAmenitiesInput += ", ";
+            mAmenitiesInput += "'%Garden%'";
+        }
+        mAmenitiesInput += ")";
     }
 
     private void getUserTypeChoice() {
@@ -212,27 +234,27 @@ public class SearchFragment extends Fragment {
         if (mChipApartment.isChecked()) {
             if (!mTypeInput.equals("("))
                 mTypeInput += ", ";
-            mTypeInput = mTypeInput + " 'Apartment'";
+            mTypeInput = mTypeInput + "'Apartment'";
         }
         if (mChipLoft.isChecked()) {
             if (!mTypeInput.equals("("))
                 mTypeInput += ", ";
-            mTypeInput = mTypeInput + " 'Loft'";
+            mTypeInput += "'Loft'";
         }
         if (mChipHouse.isChecked()) {
             if (!mTypeInput.equals("("))
                 mTypeInput += ", ";
-            mTypeInput = mTypeInput + " 'House'";
+            mTypeInput += "'House'";
         }
         if (mChipVilla.isChecked()) {
             if (!mTypeInput.equals("("))
                 mTypeInput += ", ";
-            mTypeInput = mTypeInput + " 'Villa'";
+            mTypeInput += "'Villa'";
         }
         if (mChipManor.isChecked()) {
             if (!mTypeInput.equals("("))
                 mTypeInput += ", ";
-            mTypeInput = mTypeInput + " 'Manor'";
+            mTypeInput += "'Manor'";
         }
         mTypeInput += ")";
     }
@@ -331,6 +353,9 @@ public class SearchFragment extends Fragment {
             case R.id.chip_5_photo:
                 mChipPhotoInput = 5;
                 break;
+            default:
+                mChipPhotoInput = 0;
+                break;
         }
     }
 
@@ -358,10 +383,10 @@ public class SearchFragment extends Fragment {
         DatePickerDialog datePickerDialog = new DatePickerDialog(mActivity, (datePicker, year1, month1, day1) -> {
             switch (view.getId()) {
                 case R.id.fragment_search_for_sale_txt:
-                    mForSaleTxt.setText(getString(R.string.hour_format, day1, month1, year1));
+                    mForSaleTxt.setText(getString(R.string.hour_format, day1, month1 + 1, year1));
                     break;
                 case R.id.fragment_search_sold_txt:
-                    mSoldTxt.setText(getString(R.string.hour_format, day1, month1, year1));
+                    mSoldTxt.setText(getString(R.string.hour_format, day1, month1 +1 , year1));
                     break;
             }
         }, year, month, day);
@@ -396,6 +421,8 @@ public class SearchFragment extends Fragment {
             mQuery += " AND RealEstate.mFloors >= " + mFloorsInput;
         if (!mTypeInput.equals("()"))
             mQuery += " AND RealEstate.mTypeProperty IN " + mTypeInput;
+        if (!mAmenitiesInput.equals("()"))
+            mQuery += " AND RealEstate.mAmenities LIKE " + mAmenitiesInput;
         if (mChipRoomsInput != 0)
             mQuery += " AND RealEstate.mNbRooms >= " + mChipRoomsInput;
         if (mChipBedroomsInput != 0)
@@ -404,6 +431,12 @@ public class SearchFragment extends Fragment {
             mQuery += " AND RealEstate.mNbBathrooms >= " + mChipBathroomsInput;
         if (mChipCoownerInput != 10)
             mQuery += " AND RealEstate.mCoOwnership = " + mChipCoownerInput;
+        if (mForSaleDate != 0)
+            mQuery += " AND RealEstate.mInitialSale >= " + mForSaleDate;
+        if (mSoldDate != 0)
+            mQuery += " AND RealEstate.mFinalSale <= " + mSoldDate;
+        if (mChipPhotoInput != 0)
+            mQuery += " AND RealEstate.mNbPictures >= " + mChipPhotoInput;
 
         mQuery += " ;";
 
@@ -436,6 +469,12 @@ public class SearchFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
 //        mListener = null;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     @OnClick({R.id.fragment_search_for_sale_txt, R.id.fragment_search_sold_txt, R.id.fragment_search_search_btn})

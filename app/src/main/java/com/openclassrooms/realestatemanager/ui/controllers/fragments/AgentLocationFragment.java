@@ -46,8 +46,6 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
     @BindView(R.id.fragment_agent_location_mapview)
     MapView mMapview;
 
-    private Unbinder mUnbinder;
-
     private Activity mActivity;
     private GoogleMap mGoogleMap;
     private Boolean mLocationPermissionsGranted;
@@ -85,7 +83,9 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_agent_location, container, false);
-        mUnbinder = ButterKnife.bind(this, view);
+        ButterKnife.bind(this, view);
+        mMapview.onCreate(savedInstanceState);
+        mMapview.getMapAsync(this);
         return view;
     }
 
@@ -96,8 +96,6 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
         assert mActivity != null;
         Toolbar toolbar = mActivity.findViewById(R.id.activity_main_toolbar);
         toolbar.setTitle("Around me");
-        mMapview.onCreate(savedInstanceState);
-        mMapview.getMapAsync(this);
         configureViewModel();
     }
 
@@ -252,7 +250,10 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
     public void onDestroy() {
         super.onDestroy();
         mMapview.onDestroy();
-        mUnbinder.unbind();
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
 }
