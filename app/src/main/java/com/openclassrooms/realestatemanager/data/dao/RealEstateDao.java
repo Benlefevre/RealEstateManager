@@ -1,5 +1,7 @@
 package com.openclassrooms.realestatemanager.data.dao;
 
+import android.database.Cursor;
+
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
@@ -25,7 +27,7 @@ public interface RealEstateDao {
     @Query("SELECT * FROM RealEstate WHERE mZipCode = :zipCode AND mCountryCode = :countryCode")
     LiveData<List<RealEstate>> getRealEstateByZipcodeAndCountry(int zipCode, String countryCode);
 
-    @RawQuery (observedEntities = {RealEstate.class, Pictures.class})
+    @RawQuery(observedEntities = {RealEstate.class, Pictures.class})
     LiveData<List<RealEstate>> getRealEstateAccordingUserSearch(SupportSQLiteQuery query);
 
     @Insert
@@ -36,4 +38,10 @@ public interface RealEstateDao {
 
     @Update
     int updateRealEstate(RealEstate realEstate);
+
+    @Query("SELECT * FROM RealEstate WHERE mid = :id")
+    Cursor getRealEstateWithCursor(long id);
+
+    @Query("SELECT * FROM RealEstate")
+    Cursor getRealEstateWithCursor();
 }

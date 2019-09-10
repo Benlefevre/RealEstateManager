@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -46,7 +45,6 @@ import static com.openclassrooms.realestatemanager.utils.Constants.DETAILS_FRAGM
 import static com.openclassrooms.realestatemanager.utils.Constants.EDIT_REAL_ESTATE_FRAGMENT;
 import static com.openclassrooms.realestatemanager.utils.Constants.ESTATE_LIST_FRAGMENT;
 import static com.openclassrooms.realestatemanager.utils.Constants.FULL_SCREEN_FRAGMENT;
-import static com.openclassrooms.realestatemanager.utils.Constants.READ_AND_WRITE_EXTERNAL_STORAGE;
 import static com.openclassrooms.realestatemanager.utils.Constants.SEARCH_FRAGMENT;
 import static com.openclassrooms.realestatemanager.utils.Constants.SETTING_FRAGMENT;
 
@@ -76,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        getPermissionsExternalStorage();
         configureToolbar();
         configureDrawer();
         configureNavigationView();
@@ -104,15 +101,6 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
         setSupportActionBar(mToolbar);
     }
 
-    @AfterPermissionGranted(READ_AND_WRITE_EXTERNAL_STORAGE)
-    private void getPermissionsExternalStorage() {
-        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        if (!EasyPermissions.hasPermissions(this, perms)) {
-            EasyPermissions.requestPermissions(this, getString(R.string.storage_rationale),
-                    READ_AND_WRITE_EXTERNAL_STORAGE, perms);
-        }
-    }
-
     @AfterPermissionGranted(ACCESS_LOCATION)
     private void getPermissionsAccessLocation() {
         String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
@@ -122,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                     ACCESS_LOCATION, perms);
         } else {
             mLocationPermissionsGranted = true;
+            displayFragmentAccordingToTheDirection(AGENT_LOCATION_FRAGMENT);
         }
     }
 
@@ -183,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                 displayFragmentAccordingToTheDirection(ESTATE_LIST_FRAGMENT);
                 break;
             case R.id.drawer_localisation:
-                displayFragmentAccordingToTheDirection(AGENT_LOCATION_FRAGMENT);
+                getPermissionsAccessLocation();
                 break;
             case R.id.drawer_search:
                 displayFragmentAccordingToTheDirection(SEARCH_FRAGMENT);
@@ -234,7 +223,6 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                 isNetworkEnabled = Utils.isNetworkAccessEnabled(this);
                 if (isNetworkEnabled) {
                     mDisplayedFragment = 4;
-                    getPermissionsAccessLocation();
                     mFragmentManager.popBackStack();
                     AgentLocationFragment agentLocationFragment = (AgentLocationFragment) mFragmentManager.findFragmentByTag(AGENT_LOCATION_FRAGMENT);
                     if (agentLocationFragment == null) {

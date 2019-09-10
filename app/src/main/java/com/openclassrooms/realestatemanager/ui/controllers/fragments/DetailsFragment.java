@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -75,7 +76,6 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     TextView mConstructionTxt;
 
     private Unbinder mUnbinder;
-    private SharedPreferences mPreferences;
     private Activity mActivity;
     private GoogleMap mGoogleMap;
 
@@ -109,7 +109,6 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         if (getArguments() != null) {
             mRealEstateId = getArguments().getLong(ARG_PARAM1);
         }
-        configureViewModel();
     }
 
     @Override
@@ -119,8 +118,6 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         View view = inflater.inflate(R.layout.fragment_details, container, false);
         setHasOptionsMenu(true);
         mUnbinder = ButterKnife.bind(this, view);
-        configureRecyclerView();
-        getRealEstateDetails(mRealEstateId);
         return view;
     }
 
@@ -130,9 +127,12 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         mActivity = getActivity();
         Toolbar toolbar = Objects.requireNonNull(mActivity).findViewById(R.id.activity_main_toolbar);
         toolbar.setTitle("Details");
+        configureViewModel();
+        configureRecyclerView();
+        getRealEstateDetails(mRealEstateId);
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(this);
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(mActivity);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mActivity);
     }
 
     @Override
@@ -169,7 +169,7 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     //    Configuring ViewModel
     private void configureViewModel() {
         ViewModelFactory viewModelFactory = Injection.providerViewModelFactory(getActivity());
-        mRealEstateViewModel = ViewModelProviders.of(this, viewModelFactory).get(RealEstateViewModel.class);
+        mRealEstateViewModel = ViewModelProviders.of((FragmentActivity) mActivity, viewModelFactory).get(RealEstateViewModel.class);
     }
 
     private void getRealEstateDetails(long realEstateId) {
@@ -232,6 +232,18 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mGoogleMap = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mMapView.getMapAsync(this);
     }
 
     @Override

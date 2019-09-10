@@ -29,6 +29,7 @@ import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.loader.content.CursorLoader;
 import androidx.preference.PreferenceManager;
@@ -70,9 +71,9 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static android.app.Activity.RESULT_OK;
-import static com.openclassrooms.realestatemanager.utils.Constants.ACCESS_CAMERA;
 import static com.openclassrooms.realestatemanager.utils.Constants.IMAGE_CAPTURE_CODE;
 import static com.openclassrooms.realestatemanager.utils.Constants.IMAGE_PICK_CODE;
+import static com.openclassrooms.realestatemanager.utils.Constants.READ_AND_WRITE_EXTERNAL_STORAGE_AND_CAMERA;
 
 
 public class AddRealEstateFragment extends Fragment implements AdapterView.OnItemClickListener {
@@ -197,7 +198,6 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         if (getArguments() != null)
             mRealEstateId = getArguments().getLong(REAL_ESTATE_ID);
-        configureViewModel();
         mPicturesList = new ArrayList<>();
     }
 
@@ -219,6 +219,7 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
             toolbar.setTitle("Add a real estate");
         else
             toolbar.setTitle("Edit the real estate");
+        configureViewModel();
         configureSpinner();
         configureRecyclerView();
         configureTextLayoutHintAccordingToPreferences();
@@ -230,7 +231,7 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
     //    Configuring ViewModel
     private void configureViewModel() {
         ViewModelFactory viewModelFactory = Injection.providerViewModelFactory(getActivity());
-        mRealEstateViewModel = ViewModelProviders.of(this, viewModelFactory).get(RealEstateViewModel.class);
+        mRealEstateViewModel = ViewModelProviders.of((FragmentActivity) mActivity, viewModelFactory).get(RealEstateViewModel.class);
     }
 
     private void fetchDetailsAndPicturesAccordingToRealEstateId(long realEstateId) {
@@ -589,7 +590,8 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
                 }
                 break;
             case R.id.fragment_add_pictures_txt:
-                getCameraPermissions();
+//                getCameraPermissions();
+                getPermissionsExternalStorageAndCamera();
         }
     }
 
@@ -616,14 +618,15 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
             return true;
     }
 
-    @AfterPermissionGranted(ACCESS_CAMERA)
-    private void getCameraPermissions() {
-        String[] perms = {Manifest.permission.CAMERA};
-        if (EasyPermissions.hasPermissions(mActivity, perms))
+
+    @AfterPermissionGranted(READ_AND_WRITE_EXTERNAL_STORAGE_AND_CAMERA)
+    private void getPermissionsExternalStorageAndCamera() {
+        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+        if (!EasyPermissions.hasPermissions(mActivity, perms)) {
+            EasyPermissions.requestPermissions(this, getString(R.string.storage_rationale),
+                    READ_AND_WRITE_EXTERNAL_STORAGE_AND_CAMERA, perms);
+        }else
             openDialogToFetchPictures();
-        else
-            EasyPermissions.requestPermissions(mActivity, "We need this permission to allow you to take pictures",
-                    ACCESS_CAMERA, perms);
     }
 
     private void openDialogToFetchPictures() {
@@ -659,7 +662,7 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
                 e.printStackTrace();
             }
             if (photoFile != null) {
-                Uri photoUri = FileProvider.getUriForFile(mActivity, BuildConfig.APPLICATION_ID + ".provider", photoFile);
+                Uri photoUri = FileProvider.getUriForFile(mActivity, BuildConfig.APPLICATION_ID + ".fileprovider", photoFile);
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
                 startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE);
             }
@@ -703,6 +706,12 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
             }
 
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode,permissions,grantResults,this);
     }
 
     @Override

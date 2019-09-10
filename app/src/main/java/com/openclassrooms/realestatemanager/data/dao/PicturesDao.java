@@ -1,5 +1,7 @@
 package com.openclassrooms.realestatemanager.data.dao;
 
+import android.database.Cursor;
+
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -29,4 +31,6 @@ public interface PicturesDao {
     @Delete
     void deletePicture (Pictures pictures);
 
+    @Query("SELECT * FROM Pictures WHERE mRealEstateId = :realEstateId")
+    Cursor getPicturesWithCursor(long realEstateId);
 }

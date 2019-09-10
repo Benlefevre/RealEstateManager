@@ -38,7 +38,7 @@
             android:value="@string/google_maps_key" />
 
         <provider
-            android:authorities="${applicationId}.provider"
+            android:authorities="${applicationId}.fileprovider"
             android:name="androidx.core.content.FileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
@@ -46,6 +46,13 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths"/>
         </provider>
+
+        <provider
+            android:authorities="${applicationId}.dbprovider"
+            android:name=".provider.RealEstateContentProvider"
+            android:exported="true"/>
+
+
     </application>
 
 </manifest>

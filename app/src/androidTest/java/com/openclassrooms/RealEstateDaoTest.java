@@ -28,7 +28,7 @@ public class RealEstateDaoTest {
     private static RealEstate realEstateDemo = new RealEstate("apartment",3450000,
             130,4,3,2,"Test description","Test Address",
             75000, "FR", 0, 0 ,"Paris","School, Supermarket ",false,new Date(), null,
-            "Benoit Lefèvre", null, 3, true);
+            "Benoit Lefèvre", null, 3, true,3);
 
     @Rule
     public InstantTaskExecutorRule mInstantTaskExecutorRule = new InstantTaskExecutorRule();
