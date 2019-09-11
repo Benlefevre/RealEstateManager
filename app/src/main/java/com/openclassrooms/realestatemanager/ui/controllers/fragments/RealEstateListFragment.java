@@ -136,7 +136,7 @@ public class RealEstateListFragment extends Fragment {
     }
 
     private void getSearchedRealEstate() {
-        mRealEstateViewModel.getSelected().observe(getViewLifecycleOwner(), this::initList);
+        mRealEstateViewModel.getRealEstateList().observe(getViewLifecycleOwner(), this::initList);
     }
 
     //    Récupération d'une photo pour la liste
@@ -164,16 +164,17 @@ public class RealEstateListFragment extends Fragment {
             RealEstateViewHolder holder = (RealEstateViewHolder) view.getTag();
             int position = holder.getAdapterPosition();
             long id = mRealEstates.get(position).getId();
-            passIdToDetailsFragment(id);
+            mRealEstateViewModel.addSelectedRealEstateId(id);
+            openDetailsFragment();
         });
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
         mRecyclerView.setAdapter(mEstateAdapter);
     }
 
     //    Passe l'id du bien selectionné via le callback à l'activité
-    private void passIdToDetailsFragment(long id) {
+    private void openDetailsFragment() {
         if (mListener != null) {
-            mListener.onFragmentInteraction(id);
+            mListener.openDetailsFragment();
         }
     }
 
@@ -195,7 +196,7 @@ public class RealEstateListFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(long id);
+        void openDetailsFragment();
 
         void onFragmentInteraction(String destination);
     }

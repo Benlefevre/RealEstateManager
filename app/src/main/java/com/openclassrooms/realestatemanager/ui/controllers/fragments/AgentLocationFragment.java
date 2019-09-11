@@ -41,18 +41,12 @@ import butterknife.ButterKnife;
 
 public class AgentLocationFragment extends Fragment implements OnMapReadyCallback {
 
-    private static final String LOCATION_PERMISSIONS = "param1";
-
     @BindView(R.id.fragment_agent_location_mapview)
     MapView mMapview;
 
     private Activity mActivity;
     private GoogleMap mGoogleMap;
-    private Boolean mLocationPermissionsGranted;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
     private Location mLastKnownLocation;
-    private int mZipcode;
-    private String mCountryCode;
 
     private RealEstateViewModel mRealEstateViewModel;
 
@@ -62,10 +56,9 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
         // Required empty public constructor
     }
 
-    public static AgentLocationFragment newInstance(Boolean locationPermissionsGranted) {
+    public static AgentLocationFragment newInstance() {
         AgentLocationFragment fragment = new AgentLocationFragment();
         Bundle args = new Bundle();
-        args.putBoolean(LOCATION_PERMISSIONS, locationPermissionsGranted);
         fragment.setArguments(args);
         return fragment;
     }
@@ -73,9 +66,6 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mLocationPermissionsGranted = getArguments().getBoolean(LOCATION_PERMISSIONS);
-        }
     }
 
     @Override
@@ -118,9 +108,9 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
         }
     }
 
-    private void passRealEstateIdToFragmentDetails(long id) {
+    private void passRealEstateIdToFragmentDetails() {
         if (mListener != null) {
-            mListener.onFragmentInteraction(id);
+            mListener.openDetailsFragment();
         }
     }
 
@@ -135,7 +125,7 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
 
             @Override
             public View getInfoContents(Marker marker) {
-                View view = LayoutInflater.from(getContext()).inflate(R.layout.infowindow_item,null);
+                View view = LayoutInflater.from(getContext()).inflate(R.layout.infowindow_item, null);
                 TextView title = view.findViewById(R.id.infowindow_item_txt);
                 title.setText(marker.getTitle());
                 return view;
@@ -143,15 +133,17 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
         });
         mGoogleMap.setOnInfoWindowClickListener(marker -> {
             long id = Long.parseLong(marker.getSnippet());
-            passRealEstateIdToFragmentDetails(id);
+            mRealEstateViewModel.addSelectedRealEstateId(id);
+            passRealEstateIdToFragmentDetails();
 
         });
         mGoogleMap.setOnMarkerClickListener(marker -> {
             long id = Long.parseLong(marker.getSnippet());
-            if (marker.getTitle().equals(marker.getTag())){
+            if (marker.getTitle().equals(marker.getTag())) {
                 marker.setTag(null);
-                passRealEstateIdToFragmentDetails(id);
-            }else{
+                mRealEstateViewModel.addSelectedRealEstateId(id);
+                passRealEstateIdToFragmentDetails();
+            } else {
                 marker.showInfoWindow();
                 marker.setTag(marker.getTitle());
             }
@@ -163,32 +155,31 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
 
     private void getLastKnownLocation() {
         try {
-            if (mLocationPermissionsGranted) {
-                mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mActivity);
-                mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(location -> {
-                    if (location != null) {
-                        mGoogleMap.setMyLocationEnabled(true);
-                        mLastKnownLocation = location;
-                        getTheCountryCodeAndZipCode(mLastKnownLocation);
-                        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom((
-                                new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude())), 14));
-                    }
-                });
-            }
+            FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mActivity);
+            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(location -> {
+                if (location != null) {
+                    mGoogleMap.setMyLocationEnabled(true);
+                    mLastKnownLocation = location;
+                    getTheCountryCodeAndZipCode(mLastKnownLocation);
+                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom((
+                            new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude())), 14));
+                }
+            });
+
         } catch (SecurityException e) {
             e.printStackTrace();
         }
 
     }
 
-    private void getTheCountryCodeAndZipCode(Location location){
+    private void getTheCountryCodeAndZipCode(Location location) {
         Geocoder geocoder = new Geocoder(getContext());
         try {
-            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
-            for (Address address : addresses){
-                mZipcode = Integer.parseInt(address.getPostalCode().trim());
-                mCountryCode = address.getCountryCode().trim();
-                getRealEstateByZipCodeAndCountry(mZipcode, mCountryCode);
+            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            for (Address address : addresses) {
+                int zipcode = Integer.parseInt(address.getPostalCode().trim());
+                String countryCode = address.getCountryCode().trim();
+                getRealEstateByZipCodeAndCountry(zipcode, countryCode);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -196,7 +187,7 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
     }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(long id);
+        void openDetailsFragment();
     }
 
     @Override

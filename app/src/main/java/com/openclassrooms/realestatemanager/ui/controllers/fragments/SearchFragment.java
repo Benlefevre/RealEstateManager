@@ -18,7 +18,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.PreferenceManager;
 import androidx.sqlite.db.SimpleSQLiteQuery;
@@ -29,16 +28,13 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.openclassrooms.realestatemanager.R;
-import com.openclassrooms.realestatemanager.data.entities.RealEstate;
 import com.openclassrooms.realestatemanager.injections.Injection;
 import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
 import com.openclassrooms.realestatemanager.ui.viewmodel.RealEstateViewModel;
-import com.openclassrooms.realestatemanager.utils.Constants;
 import com.openclassrooms.realestatemanager.utils.Converters;
 import com.openclassrooms.realestatemanager.utils.Utils;
 
 import java.util.Calendar;
-import java.util.List;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -106,7 +102,6 @@ public class SearchFragment extends Fragment {
 
     private Activity mActivity;
     private Unbinder mUnbinder;
-    private String mQuery;
 
     private int mZipcodeInput;
     private String mCityInput;
@@ -374,55 +369,55 @@ public class SearchFragment extends Fragment {
     }
 
     private void fetchRealEstateAccordingToUserInput() {
-        mQuery = "SELECT * FROM RealEstate WHERE mId > 0";
+        String query = "SELECT * FROM RealEstate WHERE mId > 0";
         if (!TextUtils.isEmpty(mZipcodeTxt.getText()))
-            mQuery += " AND mZipCode = " + mZipcodeInput;
+            query += " AND mZipCode = " + mZipcodeInput;
         if (!TextUtils.isEmpty(mCityTxt.getText()))
-            mQuery += " AND RealEstate.mCity LIKE " + "'%" + mCityInput + "%'";
+            query += " AND RealEstate.mCity LIKE " + "'%" + mCityInput + "%'";
         if (!TextUtils.isEmpty(mMinSurfaceTxt.getText()))
-            mQuery += " AND RealEstate.mSurface >= " + mMinSurfaceInput;
+            query += " AND RealEstate.mSurface >= " + mMinSurfaceInput;
         if (!TextUtils.isEmpty(mMaxSurfaceTxt.getText()))
-            mQuery += " AND RealEstate.mSurface <= " + mMaxSurfaceInput;
+            query += " AND RealEstate.mSurface <= " + mMaxSurfaceInput;
         if (!TextUtils.isEmpty(mMinPriceTxt.getText()))
-            mQuery += " AND RealEstate.mPrice >= " + mMinPriceInput;
+            query += " AND RealEstate.mPrice >= " + mMinPriceInput;
         if (!TextUtils.isEmpty(mMaxPriceTxt.getText()))
-            mQuery += " AND RealEstate.mPrice <= " + mMaxPriceInput;
+            query += " AND RealEstate.mPrice <= " + mMaxPriceInput;
         if (!TextUtils.isEmpty(mMinFloorsTxt.getText()))
-            mQuery += " AND RealEstate.mFloors >= " + mFloorsInput;
+            query += " AND RealEstate.mFloors >= " + mFloorsInput;
         if (!mTypeInput.equals("()"))
-            mQuery += " AND RealEstate.mTypeProperty IN " + mTypeInput;
+            query += " AND RealEstate.mTypeProperty IN " + mTypeInput;
         if (mAmenitiesInput.contains("School"))
-            mQuery += " AND RealEstate.mAmenities LIKE '%School%'";
+            query += " AND RealEstate.mAmenities LIKE '%School%'";
         if (mAmenitiesInput.contains("Shops"))
-            mQuery += " AND RealEstate.mAmenities LIKE '%Shops%'";
+            query += " AND RealEstate.mAmenities LIKE '%Shops%'";
         if (mAmenitiesInput.contains("Public transport"))
-            mQuery += " AND RealEstate.mAmenities LIKE '%Public transport%'";
+            query += " AND RealEstate.mAmenities LIKE '%Public transport%'";
         if (mAmenitiesInput.contains("Garden"))
-            mQuery += " AND RealEstate.mAmenities LIKE '%Garden%'";
+            query += " AND RealEstate.mAmenities LIKE '%Garden%'";
         if (mChipRoomsInput != 0)
-            mQuery += " AND RealEstate.mNbRooms >= " + mChipRoomsInput;
+            query += " AND RealEstate.mNbRooms >= " + mChipRoomsInput;
         if (mChipBedroomsInput != 0)
-            mQuery += " AND RealEstate.mNbBedrooms >= " + mChipBedroomsInput;
+            query += " AND RealEstate.mNbBedrooms >= " + mChipBedroomsInput;
         if (mChipBathroomsInput != 0)
-            mQuery += " AND RealEstate.mNbBathrooms >= " + mChipBathroomsInput;
+            query += " AND RealEstate.mNbBathrooms >= " + mChipBathroomsInput;
         if (mChipCoownerInput != 10)
-            mQuery += " AND RealEstate.mCoOwnership = " + mChipCoownerInput;
+            query += " AND RealEstate.mCoOwnership = " + mChipCoownerInput;
         if (mForSaleDate != 0)
-            mQuery += " AND RealEstate.mInitialSale >= " + mForSaleDate;
+            query += " AND RealEstate.mInitialSale >= " + mForSaleDate;
         if (mSoldDate != 0)
-            mQuery += " AND RealEstate.mFinalSale <= " + mSoldDate;
+            query += " AND RealEstate.mFinalSale <= " + mSoldDate;
         if (mChipPhotoInput != 0)
-            mQuery += " AND RealEstate.mNbPictures >= " + mChipPhotoInput;
+            query += " AND RealEstate.mNbPictures >= " + mChipPhotoInput;
 
-        mQuery += " ;";
+        query += " ;";
 
-        Log.i("test", "fetchRealEstateAccordingToUserInput: " + mQuery);
+        Log.i("test", "fetchRealEstateAccordingToUserInput: " + query);
 
-        mRealEstateViewModel.getRealEstateAccordingUserSearch(new SimpleSQLiteQuery(mQuery)).observe(getViewLifecycleOwner(), realEstates -> {
+        mRealEstateViewModel.getRealEstateAccordingUserSearch(new SimpleSQLiteQuery(query)).observe(getViewLifecycleOwner(), realEstates -> {
             if (realEstates.isEmpty())
                 Snackbar.make(mActivity.findViewById(R.id.activity_main_container), "Sorry, there is no results", Snackbar.LENGTH_SHORT).show();
             else {
-                mRealEstateViewModel.select(realEstates);
+                mRealEstateViewModel.addRealEstateList(realEstates);
                 if (mListener != null) {
                     mListener.passSearchedRealEstate();
                 }

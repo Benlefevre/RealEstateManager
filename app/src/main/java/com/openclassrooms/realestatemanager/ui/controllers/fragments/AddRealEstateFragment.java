@@ -170,7 +170,6 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
 
     private String currentPhotoPath;
     private long mRealEstateId;
-    private long mRowId;
     private List<Pictures> mPicturesList;
     private DetailsPhotoAdapter mPhotoAdapter;
 
@@ -380,12 +379,12 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
     private void createNewRealEstateFromInputValues() {
         getTheUserInput();
         mNbPictures = mPicturesList.size();
-        mRowId = mRealEstateViewModel.createRealEstate(new RealEstate(mTypePropertyInput, price, surface, nbRooms,
+        long rowId = mRealEstateViewModel.createRealEstate(new RealEstate(mTypePropertyInput, price, surface, nbRooms,
                 nbBedrooms, nbBathrooms, description, address, zipCode, mCountryCodeInput, mLatitude,
                 mLongitude, city, amenities, isSold, initialDate, finalDate, mAgentInput, yearConstruction,
                 floors, Boolean.valueOf(mCoOwnershipInput), mNbPictures));
-        if (mRowId != -1L) {
-            savePictureInDb(mRowId);
+        if (rowId != -1L) {
+            savePictureInDb(rowId);
             Snackbar.make(mActivity.findViewById(R.id.activity_main_container), getString(R.string.save_success),
                     Snackbar.LENGTH_LONG).show();
             Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
@@ -590,7 +589,6 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
                 }
                 break;
             case R.id.fragment_add_pictures_txt:
-//                getCameraPermissions();
                 getPermissionsExternalStorageAndCamera();
         }
     }

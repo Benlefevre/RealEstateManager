@@ -27,6 +27,7 @@ public class RealEstateViewModel extends ViewModel {
     private ExecutorService mExecutorService;
 
     private MutableLiveData<List<RealEstate>> mRealEstateList = new MutableLiveData<>();
+    private MutableLiveData<Long> mSelectedRealEstateId = new MutableLiveData<>();
 
     public RealEstateViewModel(RealEstateDataRepository realEstateDataRepository, Executor executor,
                                PicturesDataRepository picturesDataRepository){
@@ -105,12 +106,20 @@ public class RealEstateViewModel extends ViewModel {
         mExecutor.execute(() -> mPicturesDataRepository.deletePicture(pictures));
     }
 
-    public void select(List<RealEstate> realEstates){
+    public void addRealEstateList(List<RealEstate> realEstates){
         mRealEstateList.setValue(realEstates);
     }
 
-    public LiveData<List<RealEstate>> getSelected(){
+    public LiveData<List<RealEstate>> getRealEstateList(){
         return mRealEstateList;
+    }
+
+    public void addSelectedRealEstateId(long realEstateId){
+        mSelectedRealEstateId.setValue(realEstateId);
+    }
+
+    public LiveData<Long> getSelectedRealEstateId(){
+        return mSelectedRealEstateId;
     }
 
 

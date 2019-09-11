@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
 
     private FragmentManager mFragmentManager;
     private int mDisplayedFragment;
-    private Boolean mLocationPermissionsGranted;
     private long mId;
     private List<Pictures> mPicturesList;
     private Uri mUri;
@@ -105,11 +104,9 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
     private void getPermissionsAccessLocation() {
         String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
         if (!EasyPermissions.hasPermissions(this, perms)) {
-            mLocationPermissionsGranted = false;
             EasyPermissions.requestPermissions(this, getString(R.string.location_rationale),
                     ACCESS_LOCATION, perms);
         } else {
-            mLocationPermissionsGranted = true;
             displayFragmentAccordingToTheDirection(AGENT_LOCATION_FRAGMENT);
         }
     }
@@ -131,35 +128,6 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-
-    @Override
-    public void onFragmentInteraction(String destination) {
-        if (destination.equals(ADD_REAL_ESTATE_FRAGMENT)) {
-            displayFragmentAccordingToTheDirection(ADD_REAL_ESTATE_FRAGMENT);
-        } else if (destination.equals(SEARCH_FRAGMENT)) {
-            displayFragmentAccordingToTheDirection(SEARCH_FRAGMENT);
-        }
-    }
-
-    @Override
-    public void onFragmentInteraction(long id) {
-        mId = id;
-        displayFragmentAccordingToTheDirection(DETAILS_FRAGMENT);
-    }
-
-    @Override
-    public void onFragmentInteraction(List<Pictures> pictures, Uri uri) {
-        mPicturesList = pictures;
-        mUri = uri;
-        displayFragmentAccordingToTheDirection(FULL_SCREEN_FRAGMENT);
-    }
-
-    @Override
-    public void onFragmentInteractionEdit(long id) {
-        mId = id;
-        displayFragmentAccordingToTheDirection(EDIT_REAL_ESTATE_FRAGMENT);
-
     }
 
     @Override
@@ -204,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                 mDisplayedFragment = 2;
                 DetailsFragment detailsFragment = (DetailsFragment) mFragmentManager.findFragmentByTag(DETAILS_FRAGMENT);
                 if (detailsFragment == null) {
-                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, DetailsFragment.newInstance(mId), DETAILS_FRAGMENT)
+                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, DetailsFragment.newInstance(), DETAILS_FRAGMENT)
                             .addToBackStack("Fragment")
                             .commit();
                 } else
@@ -226,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                     mFragmentManager.popBackStack();
                     AgentLocationFragment agentLocationFragment = (AgentLocationFragment) mFragmentManager.findFragmentByTag(AGENT_LOCATION_FRAGMENT);
                     if (agentLocationFragment == null) {
-                        mFragmentManager.beginTransaction().replace(R.id.activity_main_container, AgentLocationFragment.newInstance(mLocationPermissionsGranted), AGENT_LOCATION_FRAGMENT)
+                        mFragmentManager.beginTransaction().replace(R.id.activity_main_container, AgentLocationFragment.newInstance(), AGENT_LOCATION_FRAGMENT)
                                 .addToBackStack("Fragment")
                                 .commit();
                     } else {
@@ -303,5 +271,33 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
         mFragmentManager.beginTransaction().replace(R.id.activity_main_container,RealEstateListFragment.newInstance(SEARCH_FRAGMENT))
                 .addToBackStack("Fragment")
                 .commit();
+    }
+
+    @Override
+    public void onFragmentInteraction(String destination) {
+        if (destination.equals(ADD_REAL_ESTATE_FRAGMENT)) {
+            displayFragmentAccordingToTheDirection(ADD_REAL_ESTATE_FRAGMENT);
+        } else if (destination.equals(SEARCH_FRAGMENT)) {
+            displayFragmentAccordingToTheDirection(SEARCH_FRAGMENT);
+        }
+    }
+
+    @Override
+    public void openDetailsFragment() {
+        displayFragmentAccordingToTheDirection(DETAILS_FRAGMENT);
+    }
+
+    @Override
+    public void openFullScreenFragment(List<Pictures> pictures, Uri uri) {
+        mPicturesList = pictures;
+        mUri = uri;
+        displayFragmentAccordingToTheDirection(FULL_SCREEN_FRAGMENT);
+    }
+
+    @Override
+    public void openAddFragmentToEditRealEstate(long id) {
+        mId = id;
+        displayFragmentAccordingToTheDirection(EDIT_REAL_ESTATE_FRAGMENT);
+
     }
 }

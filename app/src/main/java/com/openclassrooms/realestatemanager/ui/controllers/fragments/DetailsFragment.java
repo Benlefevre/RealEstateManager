@@ -50,8 +50,6 @@ import butterknife.Unbinder;
 
 public class DetailsFragment extends Fragment implements OnMapReadyCallback {
 
-    private static final String ARG_PARAM1 = "param1";
-
     @BindView(R.id.fragment_details_desc_txt)
     TextView mDescription;
     @BindView(R.id.fragment_details_surface_txt)
@@ -95,10 +93,9 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         // Required empty public constructor
     }
 
-    public static DetailsFragment newInstance(long param1) {
+    public static DetailsFragment newInstance() {
         DetailsFragment fragment = new DetailsFragment();
         Bundle args = new Bundle();
-        args.putLong(ARG_PARAM1, param1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -107,7 +104,6 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mRealEstateId = getArguments().getLong(ARG_PARAM1);
         }
     }
 
@@ -129,10 +125,9 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         toolbar.setTitle("Details");
         configureViewModel();
         configureRecyclerView();
-        getRealEstateDetails(mRealEstateId);
+        getSelectedRealEstateId();
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(this);
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mActivity);
     }
 
     @Override
@@ -144,7 +139,7 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.fragment_details_edit) {
-            passRealEstateIdToAddFragment(mRealEstateId);
+            openAddFragmentToEditRealEstate(mRealEstateId);
         } else {
             return super.onOptionsItemSelected(item);
         }
@@ -172,7 +167,12 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         mRealEstateViewModel = ViewModelProviders.of((FragmentActivity) mActivity, viewModelFactory).get(RealEstateViewModel.class);
     }
 
+    private void getSelectedRealEstateId(){
+        mRealEstateViewModel.getSelectedRealEstateId().observe(getViewLifecycleOwner(),this::getRealEstateDetails);
+    }
+
     private void getRealEstateDetails(long realEstateId) {
+        mRealEstateId = realEstateId;
         mRealEstateViewModel.getRealEstate(realEstateId).observe(getViewLifecycleOwner(), this::initDetails);
         mRealEstateViewModel.getPictures(realEstateId).observe(getViewLifecycleOwner(), this::bindPhotoInRecyclerView);
     }
@@ -213,13 +213,13 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
 
     private void passPicturesAndUriToFullScreenFragment(List<Pictures> pictures, Uri uri) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(pictures, uri);
+            mListener.openFullScreenFragment(pictures, uri);
         }
     }
 
-    private void passRealEstateIdToAddFragment(long realEstateId){
+    private void openAddFragmentToEditRealEstate(long realEstateId){
         if (mListener != null){
-            mListener.onFragmentInteractionEdit(realEstateId);
+            mListener.openAddFragmentToEditRealEstate(realEstateId);
         }
     }
 
@@ -253,8 +253,8 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(List<Pictures> pictures, Uri uri);
-        void onFragmentInteractionEdit(long id);
+        void openFullScreenFragment(List<Pictures> pictures, Uri uri);
+        void openAddFragmentToEditRealEstate(long id);
     }
 
     @Override

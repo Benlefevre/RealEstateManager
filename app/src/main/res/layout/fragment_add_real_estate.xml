@@ -14,7 +14,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layout_type_property"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+            style="@style/customTextInputDropdown"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -198,7 +198,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layout_country_code"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+            style="@style/customTextInputDropdown"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -321,7 +321,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layout_coownership"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+            style="@style/customTextInputDropdown"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -361,7 +361,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layout_agent"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+            style="@style/customTextInputDropdown"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"

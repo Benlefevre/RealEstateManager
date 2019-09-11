@@ -37,8 +37,8 @@ public abstract class RealEstateDatabase extends RoomDatabase {
                                 public void onCreate(@NonNull SupportSQLiteDatabase db) {
                                     super.onCreate(db);
                                     Executors.newSingleThreadExecutor().execute(() -> {
-                                        getInstance(context).mRealEstateDao().insertAll(RealEstate.populateData());
-                                        getInstance(context).mRealEstatePicturesDao().insertAll(Pictures.populateData());
+                                        getInstance(context.getApplicationContext()).mRealEstateDao().insertAll(RealEstate.populateData());
+                                        getInstance(context.getApplicationContext()).mRealEstatePicturesDao().insertAll(Pictures.populateData());
                                     });
                                 }
                             })
