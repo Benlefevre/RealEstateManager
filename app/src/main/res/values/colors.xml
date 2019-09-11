@@ -16,6 +16,6 @@
 
 
     <color name="colorPictureTitle">#70000000</color>
-    <color name="colorStroke">@color/mtrl_on_surface_emphasis_medium</color>
+    <color name="colorStroke">#B36B6B6B</color>
 
 </resources>

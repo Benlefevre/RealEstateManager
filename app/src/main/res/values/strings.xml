@@ -115,6 +115,8 @@
     <string name="surface_m2">Surface in m²</string>
     <string name="price_dollars">Price in Dollars</string>
     <string name="price_euros">Price in Euros</string>
+    <string name="is_sold">Is Sold?</string>
+    <string name="check_if_searched_real_estate_are_sold">Check if searched real estate are sold</string>
 
 
     <string-array name="typeProperty">

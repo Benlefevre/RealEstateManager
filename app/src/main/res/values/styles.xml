@@ -17,34 +17,35 @@
         <item name="colorOnSurface">@color/colorOnSurface</item>
         <item name="colorError">@color/colorError</item>
         <item name="colorOnError">@color/colorOnError</item>
-        <item name="android:textViewStyle">@style/TextAppearance.MaterialComponents.Body2</item>
-<!--        <item name="android:statusBarColor">@color/colorPrimaryVariant</item>-->
+        <item name="android:textViewStyle">@style/customTextViewDefaultStyle</item>
     </style>
-
 
     <style name="ToolbarTheme" parent="AppTheme">
         <item name="android:textColorPrimary">@color/colorOnPrimary</item>
+        <item name="android:textAppearance">@style/TextAppearance.MaterialComponents.Headline6</item>
         <item name="colorControlNormal">@android:color/white</item>
     </style>
 
     <style name="customTextInputLayout" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
         <item name="errorTextColor">@color/colorSecondary</item>
         <item name="errorIconTint">@color/colorSecondary</item>
-        <item name="android:textAppearance">@style/TextAppearance.MaterialComponents.Body2</item>
-        <item name="boxCornerRadiusBottomEnd">25dp</item>
-        <item name="boxCornerRadiusBottomStart">25dp</item>
-        <item name="boxCornerRadiusTopEnd">25dp</item>
-        <item name="boxCornerRadiusTopStart">25dp</item>
+        <item name="hintTextAppearance">@style/customTextAppearanceBody2</item>
+        <item name="android:textAppearance">@style/customTextAppearanceBody2</item>
+        <item name="boxCornerRadiusBottomEnd">27dp</item>
+        <item name="boxCornerRadiusBottomStart">27dp</item>
+        <item name="boxCornerRadiusTopEnd">27dp</item>
+        <item name="boxCornerRadiusTopStart">27dp</item>
     </style>
 
     <style name="customTextInputDropdown" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu">
         <item name="errorTextColor">@color/colorSecondary</item>
         <item name="errorIconTint">@color/colorSecondary</item>
-        <item name="android:textAppearance">@style/TextAppearance.MaterialComponents.Body2</item>
-        <item name="boxCornerRadiusBottomEnd">25dp</item>
-        <item name="boxCornerRadiusBottomStart">25dp</item>
-        <item name="boxCornerRadiusTopEnd">25dp</item>
-        <item name="boxCornerRadiusTopStart">25dp</item>
+        <item name="android:textAppearance">@style/customTextAppearanceBody2</item>
+        <item name="hintTextAppearance">@style/customTextAppearanceBody2</item>
+        <item name="boxCornerRadiusBottomEnd">27dp</item>
+        <item name="boxCornerRadiusBottomStart">27dp</item>
+        <item name="boxCornerRadiusTopEnd">27dp</item>
+        <item name="boxCornerRadiusTopStart">27dp</item>
     </style>
 
     <style name="CustomChip" parent="@style/Widget.MaterialComponents.Chip.Filter">
@@ -55,7 +56,9 @@
         <item name="chipStrokeWidth">1dp</item>
         <item name="chipStrokeColor">@color/colorStroke</item>
         <item name="android:textAlignment">center</item>
-        <item name="android:textAppearance">@style/TextAppearance.MaterialComponents.Body2</item>
+        <item name="android:textAppearance">@style/customTextAppearanceBody2</item>
+        <item name="chipMinHeight">35dp</item>
+<!--        <item name="chipCornerRadius">50dp</item>-->
     </style>
 
     <style name="CustomChipChoice" parent="@style/Widget.MaterialComponents.Chip.Choice">
@@ -66,7 +69,31 @@
         <item name="chipStrokeWidth">1dp</item>
         <item name="chipStrokeColor">@color/colorStroke</item>
         <item name="android:textAlignment">center</item>
-        <item name="android:textAppearance">@style/TextAppearance.MaterialComponents.Body2</item>
+        <item name="android:textAppearance">@style/customTextAppearanceBody2</item>
+        <item name="chipMinHeight">35dp</item>
+<!--        <item name="chipCornerRadius">50dp</item>-->
     </style>
+
+    <style name="customTextViewDefaultStyle" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textAppearance">@style/customTextAppearanceBody2</item>
+    </style>
+
+    <style name="customTextAppearanceBody2" parent="@style/TextAppearance.MaterialComponents.Body2">
+        <item name="android:textSize">@dimen/body2</item>
+    </style>
+
+    <style name="customTextAppearanceSubtitle1" parent="@style/TextAppearance.MaterialComponents.Subtitle1">
+        <item name="android:textSize">@dimen/subtitle1</item>
+    </style>
+
+    <style name="customTextAppearanceSubtitle2" parent="@style/TextAppearance.MaterialComponents.Subtitle2">
+        <item name="android:textSize">@dimen/subtitle2</item>
+    </style>
+
+    <style name="customPreferencesStyle" parent="PreferenceThemeOverlay">
+        <item name="android:textSize">@dimen/body2</item>
+    </style>
+
+
 
 </resources>

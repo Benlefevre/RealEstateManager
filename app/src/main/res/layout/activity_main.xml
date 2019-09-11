@@ -39,6 +39,8 @@
         android:layout_gravity="start"
         android:background="@color/colorPrimary"
         android:fitsSystemWindows="true"
+        app:itemTextAppearance="@style/customTextAppearanceBody2"
+        app:itemIconSize="@dimen/drawer_icon_size"
         app:itemIconTint="@android:color/white"
         app:menu="@menu/drawer_menu"
         app:itemTextColor="@android:color/white">

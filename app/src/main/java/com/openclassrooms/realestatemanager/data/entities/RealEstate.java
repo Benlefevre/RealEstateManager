@@ -44,7 +44,7 @@ public class RealEstate {
 
     public RealEstate(String typeProperty, int price, int surface, int nbRooms,
                       int nbBedrooms, int nbBathrooms, String description, String address,
-                      int zipCode, String countryCode, double latitude, double longitude, String city, String amenities, boolean status,
+                      int zipCode, String countryCode, double latitude, double longitude, String city, String amenities, boolean isSold,
                       Date initialSale, Date finalSale, String realEstateAgent, Date yearConstruction,
                       int floors, boolean coOwnership, int nbPictures) {
         mTypeProperty = typeProperty;
@@ -61,7 +61,7 @@ public class RealEstate {
         mLongitude = longitude;
         mCity = city;
         mAmenities = amenities;
-        mSold = status;
+        mSold = isSold;
         mInitialSale = initialSale;
         mFinalSale = finalSale;
         mRealEstateAgent = realEstateAgent;

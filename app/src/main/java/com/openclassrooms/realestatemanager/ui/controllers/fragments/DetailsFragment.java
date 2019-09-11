@@ -103,8 +103,6 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-        }
     }
 
     @Override
@@ -156,7 +154,7 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
 
     private void addRealEstatePositionOnMap() {
         LatLng latLng = new LatLng(mLatitude, mLongitude);
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
         mGoogleMap.addMarker(new MarkerOptions().position(latLng));
     }
 

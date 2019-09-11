@@ -1,26 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
         app:key="units"
         app:title="@string/units_preferences">
 
-       <ListPreference
-           app:key="area"
-           app:title="@string/area_unit"
-           app:defaultValue="sq ft"
-           app:entries="@array/unit_area"
-           app:entryValues="@array/area_values"
-           app:summary="@string/choose_unit_area"/>
+        <ListPreference
+            app:defaultValue="sq ft"
+            app:entries="@array/unit_area"
+            app:entryValues="@array/area_values"
+            app:key="area"
+            app:summary="@string/choose_unit_area"
+            app:title="@string/area_unit" />
 
         <ListPreference
-            app:key="currency"
-            app:title="@string/currency"
             app:defaultValue="$"
             app:entries="@array/currency_entries"
             app:entryValues="@array/currency_values"
-            app:summary="@string/choose_currency"/>
+            app:key="currency"
+            app:summary="@string/choose_currency"
+            app:title="@string/currency" />
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -28,12 +27,12 @@
         app:title="@string/date_format">
 
         <ListPreference
-            app:key="date_pattern"
-            app:title="@string/date_format"
             app:defaultValue="us"
             app:entries="@array/date_entries"
             app:entryValues="@array/date_values"
-            app:summary="Choose the date format for date picker"/>
+            app:key="date_pattern"
+            app:summary="Choose the date format for date picker"
+            app:title="@string/date_format" />
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="subtitle1">20sp</dimen>
+    <dimen name="subtitle2">18sp</dimen>
+    <dimen name="body2">18sp</dimen>
+
+    <dimen name="recycler_details_height">250dp</dimen>
+    <dimen name="mapview_details_height">300dp</dimen>
+
+    <dimen name="img_view_details_width">250dp</dimen>
+    <dimen name="img_view_details_height">250dp</dimen>
+    <dimen name="title_details_height">45dp</dimen>
+
+    <dimen name="drawer_icon_size">32dp</dimen>
+</resources>

@@ -7,8 +7,8 @@
 
     <ImageView
         android:id="@+id/fragment_details_photo_img"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="@dimen/img_view_details_width"
+        android:layout_height="@dimen/img_view_details_height"
         android:layout_marginStart="4dp"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -20,7 +20,7 @@
     <TextView
         android:id="@+id/fragment_details_photo_title"
         android:layout_width="0dp"
-        android:layout_height="35dp"
+        android:layout_height="@dimen/title_details_height"
         android:background="@color/colorPictureTitle"
         android:paddingTop="8dp"
         android:text="@string/description"

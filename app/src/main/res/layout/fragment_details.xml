@@ -11,19 +11,19 @@
 
         <TextView
             android:id="@+id/fragment_details_description"
-            style="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:textAppearance="@style/customTextAppearanceSubtitle1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:fontFamily="sans-serif-medium"
             android:text="@string/description"
-            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider3" />
 
         <TextView
             android:id="@+id/fragment_details_desc_txt"
+            android:textAppearance="@style/customTextAppearanceBody2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -36,7 +36,7 @@
 
         <TextView
             android:id="@+id/fragment_details_surface"
-            style="@style/TextAppearance.MaterialComponents.Subtitle2"
+            android:textAppearance="@style/customTextAppearanceSubtitle2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -49,6 +49,7 @@
 
         <TextView
             android:id="@+id/fragment_details_surface_txt"
+            android:textAppearance="@style/customTextAppearanceBody2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -61,7 +62,7 @@
 
         <TextView
             android:id="@+id/fragment_details_rooms"
-            style="@style/TextAppearance.MaterialComponents.Subtitle2"
+            android:textAppearance="@style/customTextAppearanceSubtitle2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -74,6 +75,7 @@
 
         <TextView
             android:id="@+id/fragment_details_rooms_txt"
+            android:textAppearance="@style/customTextAppearanceBody2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -86,7 +88,7 @@
 
         <TextView
             android:id="@+id/fragment_details_bedrooms"
-            style="@style/TextAppearance.MaterialComponents.Subtitle2"
+            android:textAppearance="@style/customTextAppearanceSubtitle2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -99,6 +101,7 @@
 
         <TextView
             android:id="@+id/fragment_details_bedrooms_txt"
+            android:textAppearance="@style/customTextAppearanceBody2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -111,7 +114,7 @@
 
         <TextView
             android:id="@+id/fragment_details_bathroom"
-            style="@style/TextAppearance.MaterialComponents.Subtitle2"
+            android:textAppearance="@style/customTextAppearanceSubtitle2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -124,6 +127,7 @@
 
         <TextView
             android:id="@+id/fragment_details_bathroom_txt"
+            android:textAppearance="@style/customTextAppearanceBody2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -136,7 +140,7 @@
 
         <TextView
             android:id="@+id/fragment_details_address"
-            style="@style/TextAppearance.MaterialComponents.Subtitle2"
+            android:textAppearance="@style/customTextAppearanceSubtitle2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -149,6 +153,7 @@
 
         <TextView
             android:id="@+id/fragment_details_location_txt"
+            android:textAppearance="@style/customTextAppearanceBody2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -161,7 +166,7 @@
 
         <TextView
             android:id="@+id/fragment_details_floors"
-            style="@style/TextAppearance.MaterialComponents.Subtitle2"
+            android:textAppearance="@style/customTextAppearanceSubtitle2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -174,6 +179,7 @@
 
         <TextView
             android:id="@+id/fragment_details_floors_txt"
+            android:textAppearance="@style/customTextAppearanceBody2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -186,7 +192,7 @@
 
         <TextView
             android:id="@+id/fragment_details_coownership"
-            style="@style/TextAppearance.MaterialComponents.Subtitle2"
+            android:textAppearance="@style/customTextAppearanceSubtitle2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -199,6 +205,7 @@
 
         <TextView
             android:id="@+id/fragment_details_coownership_txt"
+            android:textAppearance="@style/customTextAppearanceBody2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -211,7 +218,7 @@
 
         <TextView
             android:id="@+id/fragment_deatils_year_construction"
-            style="@style/TextAppearance.MaterialComponents.Subtitle2"
+            android:textAppearance="@style/customTextAppearanceSubtitle2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -224,6 +231,7 @@
 
         <TextView
             android:id="@+id/fragment_details_construction_txt"
+            android:textAppearance="@style/customTextAppearanceBody2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -244,7 +252,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/fragment_details_recyclerview"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="@dimen/recycler_details_height"
             android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -253,7 +261,7 @@
         <com.google.android.gms.maps.MapView
             android:id="@+id/fragment_details_mapView"
             android:layout_width="0dp"
-            android:layout_height="180dp"
+            android:layout_height="@dimen/mapview_details_height"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
@@ -300,9 +308,7 @@
             android:layout_marginTop="8dp"
             android:fontFamily="sans-serif-medium"
             android:text="@string/property_details"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-            android:textSize="16sp"
-            android:textStyle="bold"
+            android:textAppearance="@style/customTextAppearanceSubtitle1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider" />
 
@@ -314,8 +320,7 @@
             android:layout_marginTop="8dp"
             android:fontFamily="sans-serif-medium"
             android:text="@string/location"
-            android:textSize="16sp"
-            android:textStyle="bold"
+            android:textAppearance="@style/customTextAppearanceSubtitle1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider2" />
 

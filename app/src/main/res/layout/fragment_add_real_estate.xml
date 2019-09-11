@@ -27,6 +27,7 @@
 
             <androidx.appcompat.widget.AppCompatAutoCompleteTextView
                 android:id="@+id/fragment_add_type_property_spinner"
+                android:textAppearance="@style/customTextAppearanceBody2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:cursorVisible="false"
@@ -48,6 +49,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_price_txt"
+                android:textAppearance="@style/customTextAppearanceBody2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number" />
@@ -68,6 +70,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_surface_txt"
+                android:textAppearance="@style/customTextAppearanceBody2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number" />
@@ -88,6 +91,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_rooms_txt"
+                android:textAppearance="@style/customTextAppearanceBody2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number" />
@@ -108,6 +112,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_bedrooms_txt"
+                android:textAppearance="@style/customTextAppearanceBody2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number" />
@@ -128,6 +133,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_bathrooms_txt"
+                android:textAppearance="@style/customTextAppearanceBody2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number" />
@@ -148,6 +154,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_floors_txt"
+                android:textAppearance="@style/customTextAppearanceBody2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number" />
@@ -168,6 +175,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_year_construction_txt"
+                android:textAppearance="@style/customTextAppearanceBody2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:cursorVisible="false"
@@ -189,6 +197,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_description_txt"
+                android:textAppearance="@style/customTextAppearanceBody2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine"
@@ -211,6 +220,7 @@
 
             <androidx.appcompat.widget.AppCompatAutoCompleteTextView
                 android:id="@+id/fragment_add_country_code_spinner"
+                android:textAppearance="@style/customTextAppearanceBody2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:cursorVisible="false"
@@ -232,6 +242,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_address_txt"
+                android:textAppearance="@style/customTextAppearanceBody2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text" />
@@ -252,6 +263,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_zipcode_txt"
+                android:textAppearance="@style/customTextAppearanceBody2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number" />
@@ -272,6 +284,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_city_txt"
+                android:textAppearance="@style/customTextAppearanceBody2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text" />
@@ -292,6 +305,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_initial_sale_txt"
+                android:textAppearance="@style/customTextAppearanceBody2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:cursorVisible="false"
@@ -313,6 +327,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_final_sale_txt"
+                android:textAppearance="@style/customTextAppearanceBody2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:cursorVisible="false"
@@ -334,6 +349,7 @@
 
             <androidx.appcompat.widget.AppCompatAutoCompleteTextView
                 android:id="@+id/fragment_add_co_ownership_spinner"
+                android:textAppearance="@style/customTextAppearanceBody2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:cursorVisible="false"
@@ -342,6 +358,7 @@
 
         <TextView
             android:id="@+id/search_amenities_txt"
+            android:textAppearance="@style/customTextAppearanceBody2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -374,6 +391,7 @@
 
             <androidx.appcompat.widget.AppCompatAutoCompleteTextView
                 android:id="@+id/fragment_add_agent_spinner"
+                android:textAppearance="@style/customTextAppearanceBody2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:cursorVisible="false"
@@ -395,6 +413,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_add_pictures_txt"
+                android:textAppearance="@style/customTextAppearanceBody2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableEnd="@drawable/ic_add_circle"
@@ -405,7 +424,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/fragment_add_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="@dimen/recycler_details_height"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"

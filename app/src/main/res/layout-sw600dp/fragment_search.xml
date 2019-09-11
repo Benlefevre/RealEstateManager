@@ -20,8 +20,8 @@
             android:fontFamily="sans-serif-medium"
             android:text="@string/type_of_property"
             android:textAppearance="@style/customTextAppearanceSubtitle2"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/divider4" />
+            app:layout_constraintStart_toStartOf="@+id/guideline4"
+            app:layout_constraintTop_toBottomOf="@+id/divider7" />
 
         <TextView
             android:id="@+id/search_price_txt"
@@ -33,7 +33,7 @@
             android:text="@string/price"
             android:textAppearance="@style/customTextAppearanceSubtitle2"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/chipGroupType" />
+            app:layout_constraintTop_toBottomOf="@+id/divider4" />
 
         <TextView
             android:id="@+id/search_surface_txt"
@@ -68,8 +68,8 @@
             android:fontFamily="sans-serif-medium"
             android:text="@string/number_of_bedrooms"
             android:textAppearance="@style/customTextAppearanceSubtitle2"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/chipGroup_rooms" />
+            app:layout_constraintStart_toStartOf="@+id/guideline4"
+            app:layout_constraintTop_toBottomOf="@+id/max_surface_layout" />
 
         <TextView
             android:id="@+id/search_nbBathrooms_txt"
@@ -172,7 +172,7 @@
             android:background="?android:attr/listDivider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/chipGroupPhoto" />
+            app:layout_constraintTop_toBottomOf="@+id/chipGroupType" />
 
         <View
             android:id="@+id/divider6"
@@ -207,13 +207,13 @@
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipGroupType"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:clipToPadding="false"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toBottomOf="@+id/search_type_txt"
             app:singleLine="false">
 
@@ -255,11 +255,11 @@
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipGroupPhoto"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/search_nbPhoto_txt"
             app:singleLine="false"
@@ -302,11 +302,11 @@
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipGroup_coowner"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            app:layout_constraintEnd_toStartOf="@+id/guideline4"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/search_coowner_txt"
             app:singleLine="true"
@@ -411,11 +411,11 @@
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipGroup_rooms"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/search_nbRooms_txt"
             app:singleLine="true"
@@ -461,12 +461,12 @@
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipGroup_bedrooms"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toBottomOf="@+id/search_nbBedrooms_txt"
             app:singleLine="true"
             app:singleSelection="true">
@@ -511,11 +511,11 @@
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipGroup_bathrooms"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/search_nbBathrooms_txt"
             app:singleLine="true"
@@ -628,7 +628,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="16dp"
             android:hint="@string/zipcode"
             app:layout_constraintEnd_toStartOf="@+id/guideline4"
             app:layout_constraintStart_toStartOf="parent"
@@ -636,10 +636,10 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_search_zipcode_txt"
-                android:textAppearance="@style/customTextAppearanceBody2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number" />
+                android:inputType="number"
+                android:textAppearance="@style/customTextAppearanceBody2" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -656,10 +656,10 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_search_city_txt"
-                android:textAppearance="@style/customTextAppearanceBody2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text" />
+                android:inputType="text"
+                android:textAppearance="@style/customTextAppearanceBody2" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
@@ -672,7 +672,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/chipGroup_is_sold" />
+            app:layout_constraintTop_toBottomOf="@+id/chipGroup_coowner" />
 
         <TextView
             android:id="@+id/search_is_sold_txt"

@@ -97,6 +97,8 @@ public class SearchFragment extends Fragment {
     TextInputEditText mCityTxt;
     @BindView(R.id.fragment_search_search_btn)
     MaterialButton mSearchBtn;
+    @BindView(R.id.chipGroup_is_sold)
+    ChipGroup mChipGroupIsSold;
 
     private RealEstateViewModel mRealEstateViewModel;
 
@@ -115,6 +117,7 @@ public class SearchFragment extends Fragment {
     private int mChipBedroomsInput;
     private int mChipBathroomsInput;
     private int mChipCoownerInput;
+    private int mChipIsSoldInput;
     private String mTypeInput;
     private String mAmenitiesInput;
     private long mForSaleDate;
@@ -188,6 +191,7 @@ public class SearchFragment extends Fragment {
         getUserBedroomsChoice();
         getUserBathroomsChoice();
         getUserCoownerChoice();
+        getUserIsSoldChoice();
         getUserTypeChoice();
         mAmenitiesInput = Utils.getUserAmenitiesChoice(mChipSchool, mChipShop, mChipTransport, mChipGarden);
 
@@ -234,6 +238,20 @@ public class SearchFragment extends Fragment {
                 break;
             default:
                 mChipCoownerInput = 10;
+                break;
+        }
+    }
+
+    private void getUserIsSoldChoice() {
+        switch (mChipGroupIsSold.getCheckedChipId()) {
+            case R.id.chip_yes_sold:
+                mChipIsSoldInput = 1;
+                break;
+            case R.id.chip_no_sold:
+                mChipIsSoldInput = 0;
+                break;
+            default:
+                mChipIsSoldInput = 10;
                 break;
         }
     }
@@ -402,6 +420,8 @@ public class SearchFragment extends Fragment {
             query += " AND RealEstate.mNbBathrooms >= " + mChipBathroomsInput;
         if (mChipCoownerInput != 10)
             query += " AND RealEstate.mCoOwnership = " + mChipCoownerInput;
+        if (mChipIsSoldInput != 10)
+            query += " AND RealEstate.mSold = " + mChipIsSoldInput;
         if (mForSaleDate != 0)
             query += " AND RealEstate.mInitialSale >= " + mForSaleDate;
         if (mSoldDate != 0)

@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.ui.controllers.fragments;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -17,6 +18,8 @@ import java.util.Objects;
  */
 public class SettingsFragment extends PreferenceFragmentCompat {
 
+    private Activity mActivity;
+
     public SettingsFragment() {
         // Required empty public constructor
     }
@@ -24,13 +27,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Toolbar toolbar = Objects.requireNonNull(getActivity()).findViewById(R.id.activity_main_toolbar);
+        mActivity = getActivity();
+        Objects.requireNonNull(mActivity).setTheme(R.style.customPreferencesStyle);
+        Toolbar toolbar = Objects.requireNonNull(mActivity).findViewById(R.id.activity_main_toolbar);
         toolbar.setTitle("Settings");
     }
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.settings, rootKey);
+
     }
 
 

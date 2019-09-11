@@ -16,6 +16,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -167,7 +168,11 @@ public class RealEstateListFragment extends Fragment {
             mRealEstateViewModel.addSelectedRealEstateId(id);
             openDetailsFragment();
         });
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
+        boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
+        if (tabletSize)
+            mRecyclerView.setLayoutManager(new GridLayoutManager(mActivity,2,GridLayoutManager.VERTICAL,false));
+        else
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity, RecyclerView.VERTICAL, false));
         mRecyclerView.setAdapter(mEstateAdapter);
     }
 
