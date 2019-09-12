@@ -22,17 +22,4 @@
             app:title="@string/currency" />
     </PreferenceCategory>
 
-    <PreferenceCategory
-        app:key="date_format"
-        app:title="@string/date_format">
-
-        <ListPreference
-            app:defaultValue="us"
-            app:entries="@array/date_entries"
-            app:entryValues="@array/date_values"
-            app:key="date_pattern"
-            app:summary="Choose the date format for date picker"
-            app:title="@string/date_format" />
-    </PreferenceCategory>
-
 </PreferenceScreen>

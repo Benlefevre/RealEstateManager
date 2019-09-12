@@ -291,8 +291,7 @@ public class RealEstate {
     }
 
     public static RealEstate[] populateData(){
-        Date date = new Date();
-        return new RealEstate[]{
+        return  new RealEstate[]{
                 new RealEstate("Apartment",160000, 1399, 4, 3, 2, "Very nice apartment located on the 6th and last floor of 130m2." +
                         " Located in the heart of town and close to all amenities. It has 3 large bedrooms," +
                         " 2 bathrooms and a large living room with a terrace overlooking a private park.",

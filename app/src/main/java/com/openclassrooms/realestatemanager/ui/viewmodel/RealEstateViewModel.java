@@ -1,5 +1,7 @@
 package com.openclassrooms.realestatemanager.ui.viewmodel;
 
+import android.net.Uri;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -28,6 +30,7 @@ public class RealEstateViewModel extends ViewModel {
 
     private MutableLiveData<List<RealEstate>> mRealEstateList = new MutableLiveData<>();
     private MutableLiveData<Long> mSelectedRealEstateId = new MutableLiveData<>();
+    private MutableLiveData<List<Uri>> mUriList = new MutableLiveData<>();
 
     public RealEstateViewModel(RealEstateDataRepository realEstateDataRepository, Executor executor,
                                PicturesDataRepository picturesDataRepository){
@@ -106,6 +109,8 @@ public class RealEstateViewModel extends ViewModel {
         mExecutor.execute(() -> mPicturesDataRepository.deletePicture(pictures));
     }
 
+
+
     public void addRealEstateList(List<RealEstate> realEstates){
         mRealEstateList.setValue(realEstates);
     }
@@ -122,6 +127,12 @@ public class RealEstateViewModel extends ViewModel {
         return mSelectedRealEstateId;
     }
 
+    public void addUriList(List<Uri> uriList){
+        mUriList.setValue(uriList);
+    }
 
+    public LiveData<List<Uri>> getUriList(){
+        return mUriList;
+    }
 
 }

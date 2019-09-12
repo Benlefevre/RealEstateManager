@@ -32,20 +32,35 @@ public abstract class RealEstateDatabase extends RoomDatabase {
                 if (INSTANCE == null){
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),RealEstateDatabase.class,
                             "RealEstateManager.db")
-                            .addCallback(new Callback() {
-                                @Override
-                                public void onCreate(@NonNull SupportSQLiteDatabase db) {
-                                    super.onCreate(db);
-                                    Executors.newSingleThreadExecutor().execute(() -> {
-                                        getInstance(context.getApplicationContext()).mRealEstateDao().insertAll(RealEstate.populateData());
-                                        getInstance(context.getApplicationContext()).mRealEstatePicturesDao().insertAll(Pictures.populateData());
-                                    });
-                                }
-                            })
+                            .addCallback(prepopulateDataBaseWithRealEstate(context.getApplicationContext()))
+                            .addCallback(prepopulateDatabaseWithPictures(context.getApplicationContext()))
                             .build();
                 }
             }
         }
         return INSTANCE;
     }
+
+    private static Callback prepopulateDataBaseWithRealEstate(Context context){
+        return new Callback() {
+            @Override
+            public void onCreate(@NonNull SupportSQLiteDatabase db) {
+                super.onCreate(db);
+                Executors.newSingleThreadScheduledExecutor().execute(() ->
+                        getInstance(context).mRealEstateDao().insertAll(RealEstate.populateData()));
+            }
+        };
+    }
+
+    private static Callback prepopulateDatabaseWithPictures(Context context){
+        return new Callback() {
+            @Override
+            public void onCreate(@NonNull SupportSQLiteDatabase db) {
+                super.onCreate(db);
+                Executors.newSingleThreadScheduledExecutor().execute(() ->
+                        getInstance(context).mRealEstatePicturesDao().insertAll(Pictures.populateData()));
+            }
+        };
+    }
+
 }

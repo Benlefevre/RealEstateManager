@@ -2,10 +2,8 @@ package com.openclassrooms.realestatemanager.ui.controllers.activities;
 
 import android.Manifest;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
@@ -21,7 +19,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.openclassrooms.realestatemanager.R;
-import com.openclassrooms.realestatemanager.data.entities.Pictures;
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.AddRealEstateFragment;
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.AgentLocationFragment;
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.DetailsFragment;
@@ -30,8 +27,6 @@ import com.openclassrooms.realestatemanager.ui.controllers.fragments.RealEstateL
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.SearchFragment;
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.SettingsFragment;
 import com.openclassrooms.realestatemanager.utils.Utils;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -64,8 +59,6 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
     private FragmentManager mFragmentManager;
     private int mDisplayedFragment;
     private long mId;
-    private List<Pictures> mPicturesList;
-    private Uri mUri;
     private boolean isNetworkEnabled;
 
     @Override
@@ -77,11 +70,12 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
         configureDrawer();
         configureNavigationView();
         mFragmentManager = getSupportFragmentManager();
-        displayMainFragment();
         verifyIfNetworkAccessEnabled();
+        if (savedInstanceState == null)
+            displayMainFragment();
     }
 
-    private void displayMainFragment(){
+    private void displayMainFragment() {
         displayFragmentAccordingToTheDirection(ESTATE_LIST_FRAGMENT);
     }
 
@@ -123,7 +117,6 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
         }
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -164,8 +157,6 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                             .commit();
                 } else {
                     mFragmentManager.popBackStackImmediate("Fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, realEstateListFragment).commit();
-                    Log.i("test", "displayFragmentAccordingToTheDirection: 1");
                 }
                 break;
             case DETAILS_FRAGMENT:
@@ -175,14 +166,13 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                     mFragmentManager.beginTransaction().replace(R.id.activity_main_container, DetailsFragment.newInstance(), DETAILS_FRAGMENT)
                             .addToBackStack("Fragment")
                             .commit();
-                } else
-                    Log.i("test", "displayFragmentAccordingToTheDirection: 2");
+                }
                 break;
             case FULL_SCREEN_FRAGMENT:
                 mDisplayedFragment = 3;
                 FullScreenFragment fullScreenFragment = (FullScreenFragment) mFragmentManager.findFragmentByTag(FULL_SCREEN_FRAGMENT);
                 if (fullScreenFragment == null) {
-                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, FullScreenFragment.newInstance(mPicturesList, mUri), FULL_SCREEN_FRAGMENT)
+                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, FullScreenFragment.newInstance(), FULL_SCREEN_FRAGMENT)
                             .addToBackStack("Fragment")
                             .commit();
                 }
@@ -197,12 +187,8 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                         mFragmentManager.beginTransaction().replace(R.id.activity_main_container, AgentLocationFragment.newInstance(), AGENT_LOCATION_FRAGMENT)
                                 .addToBackStack("Fragment")
                                 .commit();
-                    } else {
-                        mFragmentManager.beginTransaction().replace(R.id.activity_main_container, agentLocationFragment)
-                                .addToBackStack("Fragment")
-                                .commit();
                     }
-                }else {
+                } else {
                     Snackbar snackbar = Snackbar.make(mDrawer, "Please enabled network access", Snackbar.LENGTH_LONG);
                     snackbar.setAction("Go to settings", view -> startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS)));
                     snackbar.setActionTextColor(getResources().getColor(R.color.colorSecondary));
@@ -217,8 +203,6 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                     mFragmentManager.beginTransaction().replace(R.id.activity_main_container, new SettingsFragment(), SETTING_FRAGMENT)
                             .addToBackStack("Fragment")
                             .commit();
-                } else {
-                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, settingsFragment).commit();
                 }
                 break;
             case ADD_REAL_ESTATE_FRAGMENT:
@@ -229,8 +213,6 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                     mFragmentManager.beginTransaction().replace(R.id.activity_main_container, AddRealEstateFragment.newInstance(), ADD_REAL_ESTATE_FRAGMENT)
                             .addToBackStack("Fragment")
                             .commit();
-                } else {
-                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, addRealEstateFragment).commit();
                 }
                 break;
             case EDIT_REAL_ESTATE_FRAGMENT:
@@ -240,22 +222,25 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                     mFragmentManager.beginTransaction().replace(R.id.activity_main_container, AddRealEstateFragment.newInstance(mId), EDIT_REAL_ESTATE_FRAGMENT)
                             .addToBackStack("Fragment")
                             .commit();
-                } else {
-                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, editRealEstateFragment).commit();
                 }
                 break;
             case SEARCH_FRAGMENT:
                 mDisplayedFragment = 8;
                 mFragmentManager.popBackStack();
                 SearchFragment searchFragment = (SearchFragment) mFragmentManager.findFragmentByTag(SEARCH_FRAGMENT);
-                if (searchFragment == null){
-                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, SearchFragment.newInstance(),SEARCH_FRAGMENT)
+                if (searchFragment == null) {
+                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, SearchFragment.newInstance(), SEARCH_FRAGMENT)
                             .addToBackStack("Fragment")
                             .commit();
-                }else
-                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, searchFragment, SEARCH_FRAGMENT).commit();
+                }
                 break;
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putInt("displayed", mDisplayedFragment);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -268,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
 
     @Override
     public void passSearchedRealEstate() {
-        mFragmentManager.beginTransaction().replace(R.id.activity_main_container,RealEstateListFragment.newInstance(SEARCH_FRAGMENT))
+        mFragmentManager.beginTransaction().replace(R.id.activity_main_container, RealEstateListFragment.newInstance(SEARCH_FRAGMENT))
                 .addToBackStack("Fragment")
                 .commit();
     }
@@ -288,9 +273,7 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
     }
 
     @Override
-    public void openFullScreenFragment(List<Pictures> pictures, Uri uri) {
-        mPicturesList = pictures;
-        mUri = uri;
+    public void openFullScreenFragment() {
         displayFragmentAccordingToTheDirection(FULL_SCREEN_FRAGMENT);
     }
 

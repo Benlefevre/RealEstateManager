@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.ui.controllers.fragments;
 
+import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,11 +11,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
 import com.openclassrooms.realestatemanager.R;
-import com.openclassrooms.realestatemanager.data.entities.Pictures;
+import com.openclassrooms.realestatemanager.injections.Injection;
+import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
 import com.openclassrooms.realestatemanager.ui.adapters.FullScreenViewPagerAdapter;
+import com.openclassrooms.realestatemanager.ui.viewmodel.RealEstateViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,49 +32,30 @@ import butterknife.Unbinder;
 
 public class FullScreenFragment extends Fragment {
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
     private Unbinder mUnbinder;
 
     @BindView(R.id.fragment_fullscreen_viewpager)
     ViewPager mViewPager;
 
     private List<Uri> mUriList;
+    private Activity mActivity;
+    private RealEstateViewModel mRealEstateViewModel;
 
 
     public FullScreenFragment() {
         // Required empty public constructor
     }
 
-
-    public static FullScreenFragment newInstance(List<Pictures> picturesList, Uri uri) {
-        ArrayList<String> uriList = new ArrayList<>();
+    public static FullScreenFragment newInstance(){
         FullScreenFragment fragment = new FullScreenFragment();
         Bundle args = new Bundle();
-        for (Pictures pictures : picturesList) {
-            uriList.add(pictures.getUri().toString());
-        }
-        args.putStringArrayList(ARG_PARAM1, uriList);
-        args.putString(ARG_PARAM2, uri.toString());
         fragment.setArguments(args);
         return fragment;
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mUriList = new ArrayList<>();
-            Uri uri = Uri.parse(getArguments().getString(ARG_PARAM2));
-            mUriList.add(uri);
-            for (String string : Objects.requireNonNull(getArguments().getStringArrayList(ARG_PARAM1))){
-                if(!string.equals(uri.toString())){
-                    mUriList.add(Uri.parse(string));
-                }
-            }
-        }
     }
 
     @Override
@@ -78,19 +64,33 @@ public class FullScreenFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_full_screen_photo, container, false);
         mUnbinder = ButterKnife.bind(this, view);
-        configureViewPager();
         return view;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Toolbar toolbar = Objects.requireNonNull(getActivity()).findViewById(R.id.activity_main_toolbar);
+        mActivity = getActivity();
+        Toolbar toolbar = Objects.requireNonNull(mActivity).findViewById(R.id.activity_main_toolbar);
         toolbar.setTitle("Details pictures");
+        configureViewModel();
+        getUriList();
     }
 
-    private void configureViewPager() {
-        FullScreenViewPagerAdapter adapter = new FullScreenViewPagerAdapter(getActivity(),mUriList);
+    private void configureViewModel() {
+        ViewModelFactory viewModelFactory = Injection.providerViewModelFactory(mActivity);
+        mRealEstateViewModel = ViewModelProviders.of((FragmentActivity) mActivity, viewModelFactory).get(RealEstateViewModel.class);
+    }
+
+    private void getUriList(){
+        mUriList = new ArrayList<>();
+        mRealEstateViewModel.getUriList().observe(getViewLifecycleOwner(),this::configureViewPager);
+    }
+
+    private void configureViewPager(List<Uri> uriList) {
+        mUriList = new ArrayList<>();
+        mUriList.addAll(uriList);
+        FullScreenViewPagerAdapter adapter = new FullScreenViewPagerAdapter(mActivity,mUriList);
         mViewPager.setAdapter(adapter);
     }
 

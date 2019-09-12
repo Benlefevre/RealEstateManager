@@ -22,7 +22,7 @@
     <string name="open_drawer">Open navigation drawer</string>
     <string name="around_me">Around me</string>
     <string name="location_rationale">We need this permissions to locate your position and display all real estates around you.</string>
-    <string name="storage_rationale">We need this permissions to access pictures saved in your device.</string>
+    <string name="storage_rationale">We need this permissions to access pictures saved in your device and to allow you to take photos with your camera.</string>
     <string name="enter_price">Enter the price</string>
     <string name="enter_the_surface">Enter the surface</string>
     <string name="add_a_real_estate">Add a real estate</string>

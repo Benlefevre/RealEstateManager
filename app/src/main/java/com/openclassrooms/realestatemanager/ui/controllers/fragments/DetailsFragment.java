@@ -2,7 +2,6 @@ package com.openclassrooms.realestatemanager.ui.controllers.fragments;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,7 +18,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -158,10 +156,9 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         mGoogleMap.addMarker(new MarkerOptions().position(latLng));
     }
 
-
     //    Configuring ViewModel
     private void configureViewModel() {
-        ViewModelFactory viewModelFactory = Injection.providerViewModelFactory(getActivity());
+        ViewModelFactory viewModelFactory = Injection.providerViewModelFactory(mActivity);
         mRealEstateViewModel = ViewModelProviders.of((FragmentActivity) mActivity, viewModelFactory).get(RealEstateViewModel.class);
     }
 
@@ -187,10 +184,21 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
             PicturesDetailsViewHolder holder = (PicturesDetailsViewHolder) view.getTag();
             int position = holder.getAdapterPosition();
             Uri uri = mPicturesList.get(position).getUri();
-            passPicturesAndUriToFullScreenFragment(mPicturesList, uri);
+            setUriListInMutableLiveData(uri);
+            passPicturesAndUriToFullScreenFragment();
         });
         mPhotoRecyclerview.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
         mPhotoRecyclerview.setAdapter(mPhotoAdapter);
+    }
+
+    private void setUriListInMutableLiveData(Uri uri){
+        List<Uri> uriList = new ArrayList<>();
+        uriList.add(uri);
+        for (Pictures pictures : mPicturesList){
+            if (!pictures.getUri().equals(uri))
+                uriList.add(pictures.getUri());
+        }
+        mRealEstateViewModel.addUriList(uriList);
     }
 
     private void initDetails(RealEstate realEstate) {
@@ -209,9 +217,9 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
-    private void passPicturesAndUriToFullScreenFragment(List<Pictures> pictures, Uri uri) {
+    private void passPicturesAndUriToFullScreenFragment() {
         if (mListener != null) {
-            mListener.openFullScreenFragment(pictures, uri);
+            mListener.openFullScreenFragment();
         }
     }
 
@@ -251,7 +259,7 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     }
 
     public interface OnFragmentInteractionListener {
-        void openFullScreenFragment(List<Pictures> pictures, Uri uri);
+        void openFullScreenFragment();
         void openAddFragmentToEditRealEstate(long id);
     }
 

@@ -127,7 +127,7 @@ public class RealEstateListFragment extends Fragment {
 
     //    Configuring ViewModel
     private void configureViewModel() {
-        ViewModelFactory viewModelFactory = Injection.providerViewModelFactory(getActivity());
+        ViewModelFactory viewModelFactory = Injection.providerViewModelFactory(mActivity);
         mRealEstateViewModel = ViewModelProviders.of((FragmentActivity) mActivity, viewModelFactory).get(RealEstateViewModel.class);
     }
 
