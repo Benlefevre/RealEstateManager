@@ -150,7 +150,6 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
             return true;
         });
         getLastKnownLocation();
-
     }
 
     private void getLastKnownLocation() {
@@ -165,11 +164,9 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
                             new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude())), 14));
                 }
             });
-
         } catch (SecurityException e) {
             e.printStackTrace();
         }
-
     }
 
     private void getTheCountryCodeAndZipCode(Location location) {
@@ -241,6 +238,12 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
     public void onDestroy() {
         super.onDestroy();
         mMapview.onDestroy();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mMapview.onSaveInstanceState(outState);
     }
 
     @Override

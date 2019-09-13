@@ -77,7 +77,7 @@ public class RealEstateContentProviderTest {
         assertEquals(4, cursor.getInt(cursor.getColumnIndexOrThrow("mNbRooms")));
         assertEquals(3, cursor.getInt(cursor.getColumnIndexOrThrow("mNbBedrooms")));
         assertEquals(2, cursor.getInt(cursor.getColumnIndexOrThrow("mNbBathrooms")));
-        assertEquals("600 E 8th 6F St Kansas City, MO 64106", cursor.getString(cursor.getColumnIndexOrThrow("mAddress")));
+        assertEquals("600 E 8th 6F St ", cursor.getString(cursor.getColumnIndexOrThrow("mAddress")));
         assertEquals(64106, cursor.getInt(cursor.getColumnIndexOrThrow("mZipCode")));
         assertEquals("US", cursor.getString(cursor.getColumnIndexOrThrow("mCountryCode")));
         assertEquals(39.104264, cursor.getDouble(cursor.getColumnIndexOrThrow("mLatitude")), 0);

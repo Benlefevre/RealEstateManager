@@ -38,6 +38,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static com.openclassrooms.realestatemanager.utils.Constants.DETAILS_FRAGMENT;
 
 public class RealEstateListFragment extends Fragment {
 
@@ -54,6 +55,8 @@ public class RealEstateListFragment extends Fragment {
     private List<Pictures> mPictures;
     private Activity mActivity;
     private String mOrigin;
+    private long mRealEstateId;
+    private boolean isTabletLand;
 
 
     private OnFragmentInteractionListener mListener;
@@ -95,11 +98,14 @@ public class RealEstateListFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mActivity = getActivity();
+        isTabletLand = getResources().getBoolean(R.bool.isTabletLand);
         configureViewModel();
         if (mOrigin.equals(Constants.SEARCH_FRAGMENT))
             getSearchedRealEstate();
         else
             getAllRealEstate();
+        if (isTabletLand)
+            getSelectedRealEstateId();
         Toolbar toolbar = Objects.requireNonNull(mActivity).findViewById(R.id.activity_main_toolbar);
         toolbar.setTitle("Real Estate Manager");
     }
@@ -119,6 +125,9 @@ public class RealEstateListFragment extends Fragment {
             case R.id.fragment_list_search_btn:
                 mListener.onFragmentInteraction(Constants.SEARCH_FRAGMENT);
                 break;
+            case R.id.fragment_list_edit:
+                mListener.openAddFragmentToEditRealEstate(mRealEstateId);
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -129,6 +138,10 @@ public class RealEstateListFragment extends Fragment {
     private void configureViewModel() {
         ViewModelFactory viewModelFactory = Injection.providerViewModelFactory(mActivity);
         mRealEstateViewModel = ViewModelProviders.of((FragmentActivity) mActivity, viewModelFactory).get(RealEstateViewModel.class);
+    }
+
+    private void getSelectedRealEstateId() {
+        mRealEstateViewModel.getSelectedRealEstateId().observe(getViewLifecycleOwner(), realEstateId -> mRealEstateId = realEstateId);
     }
 
     //    Récupération de l'ensemble des biens
@@ -153,10 +166,13 @@ public class RealEstateListFragment extends Fragment {
 
 
     private void initList(List<RealEstate> realEstates) {
+        mRealEstates.clear();
         mRealEstates.addAll(realEstates);
         for (RealEstate realEstate : mRealEstates) {
             getOnePicture(realEstate.getId());
         }
+        if (!mRealEstates.isEmpty() && isTabletLand)
+            mRealEstateViewModel.addSelectedRealEstateId(mRealEstates.get(0).getId());
     }
 
     private void configureRecyclerView() {
@@ -166,11 +182,11 @@ public class RealEstateListFragment extends Fragment {
             int position = holder.getAdapterPosition();
             long id = mRealEstates.get(position).getId();
             mRealEstateViewModel.addSelectedRealEstateId(id);
-            openDetailsFragment();
+            if (!isTabletLand)
+                openDetailsFragment();
         });
-        boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
-        if (tabletSize)
-            mRecyclerView.setLayoutManager(new GridLayoutManager(mActivity,2,GridLayoutManager.VERTICAL,false));
+        if (getResources().getBoolean(R.bool.isTablet))
+            mRecyclerView.setLayoutManager(new GridLayoutManager(mActivity, 2, GridLayoutManager.VERTICAL, false));
         else
             mRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity, RecyclerView.VERTICAL, false));
         mRecyclerView.setAdapter(mEstateAdapter);
@@ -200,12 +216,6 @@ public class RealEstateListFragment extends Fragment {
         mListener = null;
     }
 
-    public interface OnFragmentInteractionListener {
-        void openDetailsFragment();
-
-        void onFragmentInteraction(String destination);
-    }
-
     @Override
     public void onDestroyView() {
         mRecyclerView.setAdapter(null);
@@ -213,4 +223,20 @@ public class RealEstateListFragment extends Fragment {
         super.onDestroyView();
         mUnbinder.unbind();
     }
+
+    @Override
+    public void onResume() {
+        if (isTabletLand) {
+            mListener.checkVisibility(DETAILS_FRAGMENT);
+        }
+        super.onResume();
+    }
+
+    public interface OnFragmentInteractionListener {
+        void openDetailsFragment();
+        void onFragmentInteraction(String destination);
+        void checkVisibility(String destination);
+        void openAddFragmentToEditRealEstate(long id);
+    }
+
 }

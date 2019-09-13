@@ -4,13 +4,17 @@ import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.Guideline;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
@@ -27,6 +31,8 @@ import com.openclassrooms.realestatemanager.ui.controllers.fragments.RealEstateL
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.SearchFragment;
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.SettingsFragment;
 import com.openclassrooms.realestatemanager.utils.Utils;
+
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,15 +57,23 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
     Toolbar mToolbar;
     @BindView(R.id.activity_main_container)
     FrameLayout mContainer;
+    @Nullable
+    @BindView(R.id.activity_main_container2)
+    FrameLayout mContainer2;
+    @Nullable
+    @BindView(R.id.guideline5)
+    Guideline mGuideline;
     @BindView(R.id.activity_home_nav_view)
     NavigationView mNavView;
     @BindView(R.id.activity_home_drawer)
     DrawerLayout mDrawer;
 
     private FragmentManager mFragmentManager;
-    private int mDisplayedFragment;
+    private String mDisplayedFragment;
+    private DetailsFragment mDetailsFragment;
     private long mId;
     private boolean isNetworkEnabled;
+    private boolean isTabletLand;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +85,12 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
         configureNavigationView();
         mFragmentManager = getSupportFragmentManager();
         verifyIfNetworkAccessEnabled();
+        isTabletLand = getResources().getBoolean(R.bool.isTabletLand);
         if (savedInstanceState == null)
             displayMainFragment();
+        if (isTabletLand) {
+            setWeightForHideDetailsFragment();
+        }
     }
 
     private void displayMainFragment() {
@@ -109,10 +127,10 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
         isNetworkEnabled = Utils.isNetworkAccessEnabled(this);
         if (!isNetworkEnabled) {
             new MaterialAlertDialogBuilder(this)
-                    .setTitle("A network access is needed")
-                    .setMessage("The application need a network access to locate your position and to display map")
-                    .setPositiveButton("Go to setting", (dialogInterface, i) -> startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS)))
-                    .setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.cancel())
+                    .setTitle(getString(R.string.network_needed))
+                    .setMessage(getString(R.string.network_to_display_map))
+                    .setPositiveButton(getString(R.string.go_to_setting), (dialogInterface, i) -> startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS)))
+                    .setNegativeButton(getString(R.string.cancel), (dialogInterface, i) -> dialogInterface.cancel())
                     .show();
         }
     }
@@ -149,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
     private void displayFragmentAccordingToTheDirection(String direction) {
         switch (direction) {
             case ESTATE_LIST_FRAGMENT:
-                mDisplayedFragment = 1;
+                mDisplayedFragment = ESTATE_LIST_FRAGMENT;
                 RealEstateListFragment realEstateListFragment = (RealEstateListFragment) mFragmentManager.findFragmentByTag(ESTATE_LIST_FRAGMENT);
                 if (realEstateListFragment == null) {
                     mFragmentManager.beginTransaction().replace(R.id.activity_main_container,
@@ -160,27 +178,37 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                 }
                 break;
             case DETAILS_FRAGMENT:
-                mDisplayedFragment = 2;
-                DetailsFragment detailsFragment = (DetailsFragment) mFragmentManager.findFragmentByTag(DETAILS_FRAGMENT);
-                if (detailsFragment == null) {
-                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, DetailsFragment.newInstance(), DETAILS_FRAGMENT)
-                            .addToBackStack("Fragment")
-                            .commit();
+                mDisplayedFragment = DETAILS_FRAGMENT;
+                mDetailsFragment = (DetailsFragment) mFragmentManager.findFragmentByTag(DETAILS_FRAGMENT);
+                if (mDetailsFragment == null) {
+                    mDetailsFragment = DetailsFragment.newInstance();
+                    if (!isTabletLand) {
+                        mFragmentManager.beginTransaction().replace(R.id.activity_main_container, mDetailsFragment, DETAILS_FRAGMENT)
+                                .addToBackStack("Fragment")
+                                .commit();
+                    } else {
+                        mDisplayedFragment = DETAILS_FRAGMENT + 1;
+                        setWeightToShowDetailsFragment();
+                        mFragmentManager.beginTransaction().replace(R.id.activity_main_container2, mDetailsFragment, DETAILS_FRAGMENT)
+                                .commit();
+                    }
                 }
                 break;
             case FULL_SCREEN_FRAGMENT:
-                mDisplayedFragment = 3;
+                mDisplayedFragment = FULL_SCREEN_FRAGMENT;
                 FullScreenFragment fullScreenFragment = (FullScreenFragment) mFragmentManager.findFragmentByTag(FULL_SCREEN_FRAGMENT);
                 if (fullScreenFragment == null) {
                     mFragmentManager.beginTransaction().replace(R.id.activity_main_container, FullScreenFragment.newInstance(), FULL_SCREEN_FRAGMENT)
                             .addToBackStack("Fragment")
                             .commit();
                 }
+                if (isTabletLand)
+                    setWeightForHideDetailsFragment();
                 break;
             case AGENT_LOCATION_FRAGMENT:
                 isNetworkEnabled = Utils.isNetworkAccessEnabled(this);
                 if (isNetworkEnabled) {
-                    mDisplayedFragment = 4;
+                    mDisplayedFragment = AGENT_LOCATION_FRAGMENT;
                     mFragmentManager.popBackStack();
                     AgentLocationFragment agentLocationFragment = (AgentLocationFragment) mFragmentManager.findFragmentByTag(AGENT_LOCATION_FRAGMENT);
                     if (agentLocationFragment == null) {
@@ -194,9 +222,11 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                     snackbar.setActionTextColor(getResources().getColor(R.color.colorSecondary));
                     snackbar.show();
                 }
+                if (isTabletLand)
+                    setWeightForHideDetailsFragment();
                 break;
             case SETTING_FRAGMENT:
-                mDisplayedFragment = 5;
+                mDisplayedFragment = SETTING_FRAGMENT;
                 mFragmentManager.popBackStack();
                 SettingsFragment settingsFragment = (SettingsFragment) mFragmentManager.findFragmentByTag(SETTING_FRAGMENT);
                 if (settingsFragment == null) {
@@ -204,9 +234,11 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                             .addToBackStack("Fragment")
                             .commit();
                 }
+                if (isTabletLand)
+                    setWeightForHideDetailsFragment();
                 break;
             case ADD_REAL_ESTATE_FRAGMENT:
-                mDisplayedFragment = 6;
+                mDisplayedFragment = ADD_REAL_ESTATE_FRAGMENT;
                 mFragmentManager.popBackStack();
                 AddRealEstateFragment addRealEstateFragment = (AddRealEstateFragment) mFragmentManager.findFragmentByTag(ADD_REAL_ESTATE_FRAGMENT);
                 if (addRealEstateFragment == null) {
@@ -214,18 +246,22 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                             .addToBackStack("Fragment")
                             .commit();
                 }
+                if (isTabletLand)
+                    setWeightForHideDetailsFragment();
                 break;
             case EDIT_REAL_ESTATE_FRAGMENT:
-                mDisplayedFragment = 7;
+                mDisplayedFragment = EDIT_REAL_ESTATE_FRAGMENT;
                 AddRealEstateFragment editRealEstateFragment = (AddRealEstateFragment) mFragmentManager.findFragmentByTag(EDIT_REAL_ESTATE_FRAGMENT);
                 if (editRealEstateFragment == null) {
                     mFragmentManager.beginTransaction().replace(R.id.activity_main_container, AddRealEstateFragment.newInstance(mId), EDIT_REAL_ESTATE_FRAGMENT)
                             .addToBackStack("Fragment")
                             .commit();
                 }
+                if (isTabletLand)
+                    setWeightForHideDetailsFragment();
                 break;
             case SEARCH_FRAGMENT:
-                mDisplayedFragment = 8;
+                mDisplayedFragment = SEARCH_FRAGMENT;
                 mFragmentManager.popBackStack();
                 SearchFragment searchFragment = (SearchFragment) mFragmentManager.findFragmentByTag(SEARCH_FRAGMENT);
                 if (searchFragment == null) {
@@ -233,14 +269,51 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                             .addToBackStack("Fragment")
                             .commit();
                 }
+                if (isTabletLand)
+                    setWeightForHideDetailsFragment();
                 break;
         }
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putInt("displayed", mDisplayedFragment);
+        outState.putString("displayed", mDisplayedFragment);
+        outState.putLong("mId", mId);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+//        mDisplayedFragment = savedInstanceState.getString("displayed", "");
+//        mId = savedInstanceState.getLong("mId", 0);
+        mDetailsFragment = (DetailsFragment) mFragmentManager.findFragmentByTag(DETAILS_FRAGMENT);
+        if (!isTabletLand && mDetailsFragment != null)
+            mFragmentManager.beginTransaction().remove(mDetailsFragment).commit();
+    }
+
+    private void setWeightForHideDetailsFragment() {
+        if (isTabletLand) {
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) Objects.requireNonNull(mGuideline).getLayoutParams();
+            params.guidePercent = 1F;
+            mGuideline.setLayoutParams(params);
+        }
+    }
+
+    private void setWeightToShowDetailsFragment() {
+        if (isTabletLand) {
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) Objects.requireNonNull(mGuideline).getLayoutParams();
+            params.guidePercent = 0.4F;
+            mGuideline.setLayoutParams(params);
+        }
+    }
+
+    private void checkWeight() {
+        if (isTabletLand) {
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) Objects.requireNonNull(mGuideline).getLayoutParams();
+            if (params.guidePercent == 1F)
+                setWeightToShowDetailsFragment();
+        }
     }
 
     @Override
@@ -269,6 +342,8 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
 
     @Override
     public void openDetailsFragment() {
+        if (isTabletLand)
+            checkWeight();
         displayFragmentAccordingToTheDirection(DETAILS_FRAGMENT);
     }
 
@@ -281,6 +356,22 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
     public void openAddFragmentToEditRealEstate(long id) {
         mId = id;
         displayFragmentAccordingToTheDirection(EDIT_REAL_ESTATE_FRAGMENT);
+    }
 
+    @Override
+    public void checkVisibility(String destination) {
+        switch (destination) {
+            case DETAILS_FRAGMENT:
+                if (isTabletLand) {
+                    checkWeight();
+                    displayFragmentAccordingToTheDirection(destination);
+                }
+                break;
+            case SEARCH_FRAGMENT:
+                setWeightForHideDetailsFragment();
+                break;
+            default:
+                break;
+        }
     }
 }

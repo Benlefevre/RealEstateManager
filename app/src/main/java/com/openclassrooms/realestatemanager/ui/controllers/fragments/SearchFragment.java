@@ -42,6 +42,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+import static com.openclassrooms.realestatemanager.utils.Constants.SEARCH_FRAGMENT;
 
 public class SearchFragment extends Fragment {
 
@@ -128,7 +129,6 @@ public class SearchFragment extends Fragment {
     public SearchFragment() {
         // Required empty public constructor
     }
-
 
     public static SearchFragment newInstance() {
         SearchFragment fragment = new SearchFragment();
@@ -469,6 +469,13 @@ public class SearchFragment extends Fragment {
         mUnbinder.unbind();
     }
 
+    @Override
+    public void onResume() {
+        if (getResources().getBoolean(R.bool.isTabletLand))
+            mListener.checkVisibility(SEARCH_FRAGMENT);
+        super.onResume();
+    }
+
     @OnClick({R.id.fragment_search_for_sale_txt, R.id.fragment_search_sold_txt, R.id.fragment_search_search_btn})
     void onViewClicked(View view) {
         switch (view.getId()) {
@@ -487,5 +494,6 @@ public class SearchFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
         void passSearchedRealEstate();
+        void checkVisibility(String destination);
     }
 }

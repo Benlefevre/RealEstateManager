@@ -117,6 +117,10 @@
     <string name="price_euros">Price in Euros</string>
     <string name="is_sold">Is Sold?</string>
     <string name="check_if_searched_real_estate_are_sold">Check if searched real estate are sold</string>
+    <string name="adress_details">%1$s %2$s %3$s</string>
+    <string name="network_needed">A network access is needed</string>
+    <string name="network_to_display_map">The application need a network access to locate your position and to display map</string>
+    <string name="go_to_setting">Go to setting</string>
 
 
     <string-array name="typeProperty">

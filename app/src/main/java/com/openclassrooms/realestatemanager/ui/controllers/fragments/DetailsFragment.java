@@ -45,7 +45,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-
 public class DetailsFragment extends Fragment implements OnMapReadyCallback {
 
     @BindView(R.id.fragment_details_desc_txt)
@@ -108,7 +107,8 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_details, container, false);
-        setHasOptionsMenu(true);
+        if (!getResources().getBoolean(R.bool.isTabletLand))
+            setHasOptionsMenu(true);
         mUnbinder = ButterKnife.bind(this, view);
         return view;
     }
@@ -118,7 +118,8 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         super.onActivityCreated(savedInstanceState);
         mActivity = getActivity();
         Toolbar toolbar = Objects.requireNonNull(mActivity).findViewById(R.id.activity_main_toolbar);
-        toolbar.setTitle("Details");
+        if (!getResources().getBoolean(R.bool.isTabletLand))
+            toolbar.setTitle("Details");
         configureViewModel();
         configureRecyclerView();
         getSelectedRealEstateId();
@@ -162,8 +163,8 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         mRealEstateViewModel = ViewModelProviders.of((FragmentActivity) mActivity, viewModelFactory).get(RealEstateViewModel.class);
     }
 
-    private void getSelectedRealEstateId(){
-        mRealEstateViewModel.getSelectedRealEstateId().observe(getViewLifecycleOwner(),this::getRealEstateDetails);
+    private void getSelectedRealEstateId() {
+        mRealEstateViewModel.getSelectedRealEstateId().observe(getViewLifecycleOwner(), this::getRealEstateDetails);
     }
 
     private void getRealEstateDetails(long realEstateId) {
@@ -173,11 +174,12 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void bindPhotoInRecyclerView(List<Pictures> pictures) {
+        mPicturesList.clear();
         mPicturesList.addAll(pictures);
         mPhotoAdapter.notifyDataSetChanged();
     }
 
-    private void configureRecyclerView(){
+    private void configureRecyclerView() {
         mPicturesList = new ArrayList<>();
         mPhotoAdapter = new DetailsPhotoAdapter(mPicturesList, 1);
         mPhotoAdapter.setOnClickListener(view -> {
@@ -191,10 +193,10 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         mPhotoRecyclerview.setAdapter(mPhotoAdapter);
     }
 
-    private void setUriListInMutableLiveData(Uri uri){
+    private void setUriListInMutableLiveData(Uri uri) {
         List<Uri> uriList = new ArrayList<>();
         uriList.add(uri);
-        for (Pictures pictures : mPicturesList){
+        for (Pictures pictures : mPicturesList) {
             if (!pictures.getUri().equals(uri))
                 uriList.add(pictures.getUri());
         }
@@ -202,12 +204,25 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void initDetails(RealEstate realEstate) {
+        String address, zipcode, city;
+        if (realEstate.getAddress() == null)
+            address = "";
+        else
+            address = realEstate.getAddress();
+        if (realEstate.getZipCode() == 0)
+            zipcode = "";
+        else
+            zipcode = String.valueOf(realEstate.getZipCode());
+        if (realEstate.getCity() == null)
+            city = "";
+        else
+            city = realEstate.getCity();
         mDescription.setText(realEstate.getDescription());
-        mSurface.setText(Utils.displayAreaUnitAccordingToPreferences(mActivity,realEstate.getSurface()));
+        mSurface.setText(Utils.displayAreaUnitAccordingToPreferences(mActivity, realEstate.getSurface()));
         mRooms.setText(String.valueOf(realEstate.getNbRooms()));
         mBedrooms.setText(String.valueOf(realEstate.getNbBedrooms()));
         mBathroom.setText(String.valueOf(realEstate.getNbBathrooms()));
-        mLocation.setText(String.valueOf(realEstate.getAddress()));
+        mLocation.setText(getString(R.string.adress_details, address, zipcode, city));
         mFloors.setText(String.valueOf(realEstate.getFloors()));
         mCoownershipTxt.setText(String.valueOf(realEstate.isCoOwnership()));
         mConstructionTxt.setText(Utils.convertDateToString(realEstate.getYearConstruction(), mActivity));
@@ -223,8 +238,8 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    private void openAddFragmentToEditRealEstate(long realEstateId){
-        if (mListener != null){
+    private void openAddFragmentToEditRealEstate(long realEstateId) {
+        if (mListener != null) {
             mListener.openAddFragmentToEditRealEstate(realEstateId);
         }
     }
@@ -270,4 +285,6 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         super.onDestroyView();
         mUnbinder.unbind();
     }
+
+
 }

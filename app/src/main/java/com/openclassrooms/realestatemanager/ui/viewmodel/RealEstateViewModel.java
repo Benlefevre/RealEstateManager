@@ -109,8 +109,6 @@ public class RealEstateViewModel extends ViewModel {
         mExecutor.execute(() -> mPicturesDataRepository.deletePicture(pictures));
     }
 
-
-
     public void addRealEstateList(List<RealEstate> realEstates){
         mRealEstateList.setValue(realEstates);
     }

@@ -23,8 +23,8 @@ public class UtilsTest {
 
     @Test
     public void convertStringToDateTest() {
-        String string;
-        assertNull(null);
+        String string = null;
+        assertNull(Utils.convertStringToDate(string));
         string = "1-1-2019";
         Date date = Utils.convertStringToDate(string);
         assertEquals("Tue Jan 01 00:00:00 CET 2019", date.toString());
