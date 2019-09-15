@@ -6,8 +6,8 @@
 
     <ImageView
         android:id="@+id/dialog_picture_preview_img"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="@dimen/img_view_details_width"
+        android:layout_height="@dimen/img_view_details_height"
         android:layout_marginTop="8dp"
         android:contentDescription="@string/a_preview_of_the_chosen_picture"
         app:layout_constraintEnd_toEndOf="parent"
