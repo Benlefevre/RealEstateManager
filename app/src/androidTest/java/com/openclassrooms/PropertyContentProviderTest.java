@@ -8,8 +8,8 @@ import androidx.room.Room;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.openclassrooms.realestatemanager.data.database.RealEstateDatabase;
-import com.openclassrooms.realestatemanager.provider.RealEstateContentProvider;
+import com.openclassrooms.realestatemanager.data.database.RealEstateManagerDatabase;
+import com.openclassrooms.realestatemanager.provider.RealEstateManagerContentProvider;
 import com.openclassrooms.realestatemanager.utils.Converters;
 
 import org.junit.After;
@@ -26,14 +26,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
-public class RealEstateContentProviderTest {
+public class PropertyContentProviderTest {
 
     private ContentResolver mContentResolver;
-    private RealEstateDatabase mRealEstateDatabase;
+    private RealEstateManagerDatabase mRealEstateManagerDatabase;
 
     @Before
     public void setUp() {
-        mRealEstateDatabase = Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getInstrumentation().getTargetContext(), RealEstateDatabase.class)
+        mRealEstateManagerDatabase = Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getInstrumentation().getTargetContext(), RealEstateManagerDatabase.class)
                 .allowMainThreadQueries()
                 .build();
         mContentResolver = InstrumentationRegistry.getInstrumentation().getTargetContext().getContentResolver();
@@ -41,12 +41,12 @@ public class RealEstateContentProviderTest {
 
     @After
     public void closeDb(){
-        mRealEstateDatabase.close();
+        mRealEstateManagerDatabase.close();
     }
 
     @Test
     public void getRealEstateWhenWrongIdInserted() {
-        final Cursor cursor = mContentResolver.query(ContentUris.withAppendedId(RealEstateContentProvider.URI_REALESTATE, 250000), null, null, null, null);
+        final Cursor cursor = mContentResolver.query(ContentUris.withAppendedId(RealEstateManagerContentProvider.URI_REALESTATE, 250000), null, null, null, null);
 
         assertThat(cursor, notNullValue());
         assertThat(cursor.getCount(), is(0));
@@ -55,7 +55,7 @@ public class RealEstateContentProviderTest {
 
     @Test
     public void getAllRealEstatesWhenIdEquals0(){
-        final Cursor cursor = mContentResolver.query(ContentUris.withAppendedId(RealEstateContentProvider.URI_REALESTATE,0),null,null,null,null);
+        final Cursor cursor = mContentResolver.query(ContentUris.withAppendedId(RealEstateManagerContentProvider.URI_REALESTATE,0),null,null,null,null);
 
         assertThat(cursor, notNullValue());
         assertThat(cursor.getCount(), is(greaterThan(2)));
@@ -64,7 +64,7 @@ public class RealEstateContentProviderTest {
 
     @Test
     public void getRealEstateWithId() {
-        final Cursor cursor = mContentResolver.query(ContentUris.withAppendedId(RealEstateContentProvider.URI_REALESTATE, 1), null, null, null, null);
+        final Cursor cursor = mContentResolver.query(ContentUris.withAppendedId(RealEstateManagerContentProvider.URI_REALESTATE, 1), null, null, null, null);
 
         assertThat(cursor, notNullValue());
         assertEquals(1, cursor.getCount());
@@ -96,7 +96,7 @@ public class RealEstateContentProviderTest {
 
     @Test
     public void getPicturesWithId() {
-        final Cursor cursor = mContentResolver.query(ContentUris.withAppendedId(RealEstateContentProvider.URI_PICTURE, 1), null, null, null, null);
+        final Cursor cursor = mContentResolver.query(ContentUris.withAppendedId(RealEstateManagerContentProvider.URI_PICTURE, 1), null, null, null, null);
 
         assertThat(cursor, notNullValue());
         assertEquals(4, cursor.getCount());

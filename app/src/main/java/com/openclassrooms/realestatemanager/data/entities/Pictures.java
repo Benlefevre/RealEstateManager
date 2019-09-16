@@ -7,7 +7,7 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-@Entity(foreignKeys = @ForeignKey(entity = RealEstate.class,
+@Entity(foreignKeys = @ForeignKey(entity = Property.class,
         parentColumns = "mId",
         childColumns = "mRealEstateId"))
 

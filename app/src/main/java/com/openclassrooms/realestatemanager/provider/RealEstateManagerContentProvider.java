@@ -11,15 +11,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.openclassrooms.realestatemanager.BuildConfig;
-import com.openclassrooms.realestatemanager.data.database.RealEstateDatabase;
+import com.openclassrooms.realestatemanager.data.database.RealEstateManagerDatabase;
 import com.openclassrooms.realestatemanager.data.entities.Pictures;
-import com.openclassrooms.realestatemanager.data.entities.RealEstate;
+import com.openclassrooms.realestatemanager.data.entities.Property;
 
-public class RealEstateContentProvider extends ContentProvider {
+public class RealEstateManagerContentProvider extends ContentProvider {
 
     public static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".dbprovider";
-    public static final String TABLE_REALESTATE = RealEstate.class.getSimpleName();
-    public static final String TABLE_REALESTATE_ITEM = RealEstate.class.getSimpleName() + "/#";
+    public static final String TABLE_REALESTATE = Property.class.getSimpleName();
+    public static final String TABLE_REALESTATE_ITEM = Property.class.getSimpleName() + "/#";
     public static final String TABLE_PICTURE = Pictures.class.getSimpleName();
     public static final String TABLE_PICTURES_ITEM = Pictures.class.getSimpleName() + "/#";
     public static final Uri URI_REALESTATE = Uri.parse("content://" + AUTHORITY + "/" + TABLE_REALESTATE);
@@ -48,15 +48,15 @@ public class RealEstateContentProvider extends ContentProvider {
                 case 3:
                     long id = ContentUris.parseId(uri);
                     if (id == 0)
-                        cursor = RealEstateDatabase.getInstance(getContext()).mRealEstateDao().getRealEstateWithCursor();
+                        cursor = RealEstateManagerDatabase.getInstance(getContext()).mPropertyDao().getRealEstateWithCursor();
                     else
-                        cursor = RealEstateDatabase.getInstance(getContext()).mRealEstateDao().getRealEstateWithCursor(id);
+                        cursor = RealEstateManagerDatabase.getInstance(getContext()).mPropertyDao().getRealEstateWithCursor(id);
                     cursor.setNotificationUri(getContext().getContentResolver(), uri);
                     cursor.moveToFirst();
                     return cursor;
                 case 4:
                     long estateId = ContentUris.parseId(uri);
-                    cursor = RealEstateDatabase.getInstance(getContext()).mRealEstatePicturesDao().getPicturesWithCursor(estateId);
+                    cursor = RealEstateManagerDatabase.getInstance(getContext()).mPicturesDao().getPicturesWithCursor(estateId);
                     cursor.setNotificationUri(getContext().getContentResolver(), uri);
                     cursor.moveToFirst();
                     return cursor;

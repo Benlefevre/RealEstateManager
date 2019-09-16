@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
@@ -23,11 +22,11 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.openclassrooms.realestatemanager.R;
-import com.openclassrooms.realestatemanager.ui.controllers.fragments.AddRealEstateFragment;
+import com.openclassrooms.realestatemanager.ui.controllers.fragments.AddPropertyFragment;
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.AgentLocationFragment;
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.DetailsFragment;
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.FullScreenFragment;
-import com.openclassrooms.realestatemanager.ui.controllers.fragments.RealEstateListFragment;
+import com.openclassrooms.realestatemanager.ui.controllers.fragments.PropertyListFragment;
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.SearchFragment;
 import com.openclassrooms.realestatemanager.ui.controllers.fragments.SettingsFragment;
 import com.openclassrooms.realestatemanager.utils.Utils;
@@ -49,7 +48,7 @@ import static com.openclassrooms.realestatemanager.utils.Constants.FULL_SCREEN_F
 import static com.openclassrooms.realestatemanager.utils.Constants.SEARCH_FRAGMENT;
 import static com.openclassrooms.realestatemanager.utils.Constants.SETTING_FRAGMENT;
 
-public class MainActivity extends AppCompatActivity implements RealEstateListFragment.OnFragmentInteractionListener,
+public class MainActivity extends AppCompatActivity implements PropertyListFragment.OnFragmentInteractionListener,
         DetailsFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener,
         AgentLocationFragment.OnFragmentInteractionListener, SearchFragment.OnFragmentInteractionListener {
 
@@ -168,10 +167,10 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
         switch (direction) {
             case ESTATE_LIST_FRAGMENT:
                 mDisplayedFragment = ESTATE_LIST_FRAGMENT;
-                RealEstateListFragment realEstateListFragment = (RealEstateListFragment) mFragmentManager.findFragmentByTag(ESTATE_LIST_FRAGMENT);
-                if (realEstateListFragment == null) {
+                PropertyListFragment propertyListFragment = (PropertyListFragment) mFragmentManager.findFragmentByTag(ESTATE_LIST_FRAGMENT);
+                if (propertyListFragment == null) {
                     mFragmentManager.beginTransaction().replace(R.id.activity_main_container,
-                            RealEstateListFragment.newInstance(ESTATE_LIST_FRAGMENT), ESTATE_LIST_FRAGMENT)
+                            PropertyListFragment.newInstance(ESTATE_LIST_FRAGMENT), ESTATE_LIST_FRAGMENT)
                             .commit();
                 } else {
                     mFragmentManager.popBackStackImmediate("Fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -189,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                     } else {
                         mDisplayedFragment = DETAILS_FRAGMENT + 1;
                         setWeightToShowDetailsFragment();
-                        mFragmentManager.beginTransaction().replace(R.id.activity_main_container2, mDetailsFragment, DETAILS_FRAGMENT)
+                        mFragmentManager.beginTransaction().replace(R.id.activity_main_container2, mDetailsFragment, DETAILS_FRAGMENT + 1)
                                 .commit();
                     }
                 }
@@ -240,9 +239,9 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
             case ADD_REAL_ESTATE_FRAGMENT:
                 mDisplayedFragment = ADD_REAL_ESTATE_FRAGMENT;
                 mFragmentManager.popBackStack();
-                AddRealEstateFragment addRealEstateFragment = (AddRealEstateFragment) mFragmentManager.findFragmentByTag(ADD_REAL_ESTATE_FRAGMENT);
-                if (addRealEstateFragment == null) {
-                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, AddRealEstateFragment.newInstance(), ADD_REAL_ESTATE_FRAGMENT)
+                AddPropertyFragment addPropertyFragment = (AddPropertyFragment) mFragmentManager.findFragmentByTag(ADD_REAL_ESTATE_FRAGMENT);
+                if (addPropertyFragment == null) {
+                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, AddPropertyFragment.newInstance(), ADD_REAL_ESTATE_FRAGMENT)
                             .addToBackStack("Fragment")
                             .commit();
                 }
@@ -251,9 +250,9 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
                 break;
             case EDIT_REAL_ESTATE_FRAGMENT:
                 mDisplayedFragment = EDIT_REAL_ESTATE_FRAGMENT;
-                AddRealEstateFragment editRealEstateFragment = (AddRealEstateFragment) mFragmentManager.findFragmentByTag(EDIT_REAL_ESTATE_FRAGMENT);
+                AddPropertyFragment editRealEstateFragment = (AddPropertyFragment) mFragmentManager.findFragmentByTag(EDIT_REAL_ESTATE_FRAGMENT);
                 if (editRealEstateFragment == null) {
-                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, AddRealEstateFragment.newInstance(mId), EDIT_REAL_ESTATE_FRAGMENT)
+                    mFragmentManager.beginTransaction().replace(R.id.activity_main_container, AddPropertyFragment.newInstance(mId), EDIT_REAL_ESTATE_FRAGMENT)
                             .addToBackStack("Fragment")
                             .commit();
                 }
@@ -285,9 +284,7 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-//        mDisplayedFragment = savedInstanceState.getString("displayed", "");
-//        mId = savedInstanceState.getLong("mId", 0);
-        mDetailsFragment = (DetailsFragment) mFragmentManager.findFragmentByTag(DETAILS_FRAGMENT);
+        mDetailsFragment = (DetailsFragment) mFragmentManager.findFragmentByTag(DETAILS_FRAGMENT + 1);
         if (!isTabletLand && mDetailsFragment != null)
             mFragmentManager.beginTransaction().remove(mDetailsFragment).commit();
     }
@@ -326,7 +323,7 @@ public class MainActivity extends AppCompatActivity implements RealEstateListFra
 
     @Override
     public void passSearchedRealEstate() {
-        mFragmentManager.beginTransaction().replace(R.id.activity_main_container, RealEstateListFragment.newInstance(SEARCH_FRAGMENT))
+        mFragmentManager.beginTransaction().replace(R.id.activity_main_container, PropertyListFragment.newInstance(SEARCH_FRAGMENT))
                 .addToBackStack("Fragment")
                 .commit();
     }

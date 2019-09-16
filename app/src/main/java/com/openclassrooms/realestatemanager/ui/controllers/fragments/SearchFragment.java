@@ -387,47 +387,47 @@ public class SearchFragment extends Fragment {
     }
 
     private void fetchRealEstateAccordingToUserInput() {
-        String query = "SELECT * FROM RealEstate WHERE mId > 0";
+        String query = "SELECT * FROM Property WHERE mId > 0";
         if (!TextUtils.isEmpty(mZipcodeTxt.getText()))
             query += " AND mZipCode = " + mZipcodeInput;
         if (!TextUtils.isEmpty(mCityTxt.getText()))
-            query += " AND RealEstate.mCity LIKE " + "'%" + mCityInput + "%'";
+            query += " AND Property.mCity LIKE " + "'%" + mCityInput + "%'";
         if (!TextUtils.isEmpty(mMinSurfaceTxt.getText()))
-            query += " AND RealEstate.mSurface >= " + mMinSurfaceInput;
+            query += " AND Property.mSurface >= " + mMinSurfaceInput;
         if (!TextUtils.isEmpty(mMaxSurfaceTxt.getText()))
-            query += " AND RealEstate.mSurface <= " + mMaxSurfaceInput;
+            query += " AND Property.mSurface <= " + mMaxSurfaceInput;
         if (!TextUtils.isEmpty(mMinPriceTxt.getText()))
-            query += " AND RealEstate.mPrice >= " + mMinPriceInput;
+            query += " AND Property.mPrice >= " + mMinPriceInput;
         if (!TextUtils.isEmpty(mMaxPriceTxt.getText()))
-            query += " AND RealEstate.mPrice <= " + mMaxPriceInput;
+            query += " AND Property.mPrice <= " + mMaxPriceInput;
         if (!TextUtils.isEmpty(mMinFloorsTxt.getText()))
-            query += " AND RealEstate.mFloors >= " + mFloorsInput;
+            query += " AND Property.mFloors >= " + mFloorsInput;
         if (!mTypeInput.equals("()"))
-            query += " AND RealEstate.mTypeProperty IN " + mTypeInput;
+            query += " AND Property.mTypeProperty IN " + mTypeInput;
         if (mAmenitiesInput.contains("School"))
-            query += " AND RealEstate.mAmenities LIKE '%School%'";
+            query += " AND Property.mAmenities LIKE '%School%'";
         if (mAmenitiesInput.contains("Shops"))
-            query += " AND RealEstate.mAmenities LIKE '%Shops%'";
+            query += " AND Property.mAmenities LIKE '%Shops%'";
         if (mAmenitiesInput.contains("Public transport"))
-            query += " AND RealEstate.mAmenities LIKE '%Public transport%'";
+            query += " AND Property.mAmenities LIKE '%Public transport%'";
         if (mAmenitiesInput.contains("Garden"))
-            query += " AND RealEstate.mAmenities LIKE '%Garden%'";
+            query += " AND Property.mAmenities LIKE '%Garden%'";
         if (mChipRoomsInput != 0)
-            query += " AND RealEstate.mNbRooms >= " + mChipRoomsInput;
+            query += " AND Property.mNbRooms >= " + mChipRoomsInput;
         if (mChipBedroomsInput != 0)
-            query += " AND RealEstate.mNbBedrooms >= " + mChipBedroomsInput;
+            query += " AND Property.mNbBedrooms >= " + mChipBedroomsInput;
         if (mChipBathroomsInput != 0)
-            query += " AND RealEstate.mNbBathrooms >= " + mChipBathroomsInput;
+            query += " AND Property.mNbBathrooms >= " + mChipBathroomsInput;
         if (mChipCoownerInput != 10)
-            query += " AND RealEstate.mCoOwnership = " + mChipCoownerInput;
+            query += " AND Property.mCoOwnership = " + mChipCoownerInput;
         if (mChipIsSoldInput != 10)
-            query += " AND RealEstate.mSold = " + mChipIsSoldInput;
+            query += " AND Property.mSold = " + mChipIsSoldInput;
         if (mForSaleDate != 0)
-            query += " AND RealEstate.mInitialSale >= " + mForSaleDate;
+            query += " AND Property.mInitialSale >= " + mForSaleDate;
         if (mSoldDate != 0)
-            query += " AND RealEstate.mFinalSale <= " + mSoldDate;
+            query += " AND Property.mFinalSale <= " + mSoldDate;
         if (mChipPhotoInput != 0)
-            query += " AND RealEstate.mNbPictures >= " + mChipPhotoInput;
+            query += " AND Property.mNbPictures >= " + mChipPhotoInput;
 
         query += " ;";
 

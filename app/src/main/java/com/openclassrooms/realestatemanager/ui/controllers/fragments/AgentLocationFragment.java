@@ -28,7 +28,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.openclassrooms.realestatemanager.R;
-import com.openclassrooms.realestatemanager.data.entities.RealEstate;
+import com.openclassrooms.realestatemanager.data.entities.Property;
 import com.openclassrooms.realestatemanager.injections.Injection;
 import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
 import com.openclassrooms.realestatemanager.ui.viewmodel.RealEstateViewModel;
@@ -99,11 +99,11 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
         mRealEstateViewModel.getRealEstateByZipcodeAndCountry(zipCode, countryCode).observe(getViewLifecycleOwner(), this::addRealEstatesMarker);
     }
 
-    private void addRealEstatesMarker(List<RealEstate> realEstates) {
+    private void addRealEstatesMarker(List<Property> properties) {
         if (mGoogleMap != null) {
-            for (RealEstate realEstate : realEstates) {
-                mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(realEstate.getLatitude(),
-                        realEstate.getLongitude())).title(realEstate.getAddress()).snippet(String.valueOf(realEstate.getId())));
+            for (Property property : properties) {
+                mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(property.getLatitude(),
+                        property.getLongitude())).title(property.getAddress()).snippet(String.valueOf(property.getId())));
             }
         }
     }

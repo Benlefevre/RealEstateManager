@@ -45,7 +45,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.openclassrooms.realestatemanager.BuildConfig;
 import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.data.entities.Pictures;
-import com.openclassrooms.realestatemanager.data.entities.RealEstate;
+import com.openclassrooms.realestatemanager.data.entities.Property;
 import com.openclassrooms.realestatemanager.injections.Injection;
 import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
 import com.openclassrooms.realestatemanager.ui.adapters.DetailsPhotoAdapter;
@@ -76,7 +76,7 @@ import static com.openclassrooms.realestatemanager.utils.Constants.IMAGE_PICK_CO
 import static com.openclassrooms.realestatemanager.utils.Constants.READ_AND_WRITE_EXTERNAL_STORAGE_AND_CAMERA;
 
 
-public class AddRealEstateFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class AddPropertyFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private static final String REAL_ESTATE_ID = "realEstateId";
 
@@ -144,7 +144,7 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
 
     private Unbinder mUnbinder;
 
-    private RealEstate mRealEstate;
+    private Property mProperty;
     private String mTypePropertyInput;
     private String mCountryCodeInput;
     private String mAgentInput;
@@ -176,16 +176,16 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
     private Activity mActivity;
     private RealEstateViewModel mRealEstateViewModel;
 
-    public AddRealEstateFragment() {
+    public AddPropertyFragment() {
         // Required empty public constructor
     }
 
-    public static AddRealEstateFragment newInstance() {
-        return new AddRealEstateFragment();
+    public static AddPropertyFragment newInstance() {
+        return new AddPropertyFragment();
     }
 
-    public static AddRealEstateFragment newInstance(long realEstateId) {
-        AddRealEstateFragment fragment = new AddRealEstateFragment();
+    public static AddPropertyFragment newInstance(long realEstateId) {
+        AddPropertyFragment fragment = new AddPropertyFragment();
         Bundle args = new Bundle();
         args.putLong(REAL_ESTATE_ID, realEstateId);
         fragment.setArguments(args);
@@ -215,9 +215,9 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
         mActivity = getActivity();
         Toolbar toolbar = Objects.requireNonNull(mActivity).findViewById(R.id.activity_main_toolbar);
         if (mRealEstateId == 0)
-            toolbar.setTitle("Add a real estate");
+            toolbar.setTitle(getString(R.string.add_a_real_estate));
         else
-            toolbar.setTitle("Edit the real estate");
+            toolbar.setTitle(getString(R.string.edit_the_real_estate));
         configureViewModel();
         configureSpinner();
         configureRecyclerView();
@@ -248,48 +248,48 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
         mPhotoAdapter.notifyDataSetChanged();
     }
 
-    private void updateUiAfterFetchRealEstate(RealEstate realEstate) {
-        mRealEstate = realEstate;
-        mTypePropertySpinner.setText(mRealEstate.getTypeProperty(), false);
+    private void updateUiAfterFetchRealEstate(Property property) {
+        mProperty = property;
+        mTypePropertySpinner.setText(mProperty.getTypeProperty(), false);
         mTypePropertyInput = mTypePropertySpinner.getText().toString();
-        mCoOwnershipSpinner.setText(String.valueOf(mRealEstate.isCoOwnership()), false);
+        mCoOwnershipSpinner.setText(String.valueOf(mProperty.isCoOwnership()), false);
         mCoOwnershipInput = mCoOwnershipSpinner.getText().toString();
-        mAgentSpinner.setText(mRealEstate.getRealEstateAgent(), false);
+        mAgentSpinner.setText(mProperty.getRealEstateAgent(), false);
         mAgentInput = mAgentSpinner.getText().toString();
-        mDescriptionTxt.setText(mRealEstate.getDescription());
-        mAddAddressTxt.setText(mRealEstate.getAddress());
-        mCityTxt.setText(mRealEstate.getCity());
-        mFloorsTxt.setText(String.valueOf(mRealEstate.getFloors()));
-        if (mRealEstate.getCountryCode() != null)
-            mCountryCodeSpinner.setText(getCountryAccordingToCountryCode(mRealEstate.getCountryCode()), false);
+        mDescriptionTxt.setText(mProperty.getDescription());
+        mAddAddressTxt.setText(mProperty.getAddress());
+        mCityTxt.setText(mProperty.getCity());
+        mFloorsTxt.setText(String.valueOf(mProperty.getFloors()));
+        if (mProperty.getCountryCode() != null)
+            mCountryCodeSpinner.setText(getCountryAccordingToCountryCode(mProperty.getCountryCode()), false);
         if (mCountryCodeSpinner.getText() != null && mCountryCodeSpinner.getText().length() != 0)
             mCountryCodeInput = getCountryCodeAccordingToCountry(mCountryCodeSpinner.getText().toString());
-        if (mRealEstate.getPrice() != 0)
-            mPriceTxt.setText(String.valueOf(Utils.convertPriceAccordingToPreferenceToEdit(mActivity, mRealEstate.getPrice())));
-        if (mRealEstate.getSurface() != 0)
-            mSurfaceTxt.setText(String.valueOf(Utils.convertAreaAccordingToPreferencesToEdit(mActivity, mRealEstate.getSurface())));
-        if (mRealEstate.getNbRooms() != 0)
-            mRoomsTxt.setText(String.valueOf(mRealEstate.getNbRooms()));
-        if (mRealEstate.getNbBedrooms() != 0)
-            mBedroomsTxt.setText(String.valueOf(mRealEstate.getNbBedrooms()));
-        if (mRealEstate.getNbBathrooms() != 0)
-            mBathroomsTxt.setText(String.valueOf(mRealEstate.getNbBathrooms()));
-        if (mRealEstate.getZipCode() != 0)
-            mZipcodeTxt.setText(String.valueOf(mRealEstate.getZipCode()));
-        if (mRealEstate.getInitialSale() != null)
-            mInitialSaleTxt.setText(Utils.convertDateToString(mRealEstate.getInitialSale(), mActivity));
-        if (mRealEstate.getFinalSale() != null)
-            mFinalSaleTxt.setText(Utils.convertDateToString(mRealEstate.getFinalSale(), mActivity));
-        if (mRealEstate.getYearConstruction() != null)
-            mYearConstructionTxt.setText(Utils.convertDateToString(mRealEstate.getYearConstruction(), mActivity));
-        if (mRealEstate.getAmenities() != null) {
-            if (mRealEstate.getAmenities().contains("School"))
+        if (mProperty.getPrice() != 0)
+            mPriceTxt.setText(String.valueOf(Utils.convertPriceAccordingToPreferenceToEdit(mActivity, mProperty.getPrice())));
+        if (mProperty.getSurface() != 0)
+            mSurfaceTxt.setText(String.valueOf(Utils.convertAreaAccordingToPreferencesToEdit(mActivity, mProperty.getSurface())));
+        if (mProperty.getNbRooms() != 0)
+            mRoomsTxt.setText(String.valueOf(mProperty.getNbRooms()));
+        if (mProperty.getNbBedrooms() != 0)
+            mBedroomsTxt.setText(String.valueOf(mProperty.getNbBedrooms()));
+        if (mProperty.getNbBathrooms() != 0)
+            mBathroomsTxt.setText(String.valueOf(mProperty.getNbBathrooms()));
+        if (mProperty.getZipCode() != 0)
+            mZipcodeTxt.setText(String.valueOf(mProperty.getZipCode()));
+        if (mProperty.getInitialSale() != null)
+            mInitialSaleTxt.setText(Utils.convertDateToString(mProperty.getInitialSale(), mActivity));
+        if (mProperty.getFinalSale() != null)
+            mFinalSaleTxt.setText(Utils.convertDateToString(mProperty.getFinalSale(), mActivity));
+        if (mProperty.getYearConstruction() != null)
+            mYearConstructionTxt.setText(Utils.convertDateToString(mProperty.getYearConstruction(), mActivity));
+        if (mProperty.getAmenities() != null) {
+            if (mProperty.getAmenities().contains("School"))
                 mChipSchool.setChecked(true);
-            if (mRealEstate.getAmenities().contains("Shops"))
+            if (mProperty.getAmenities().contains("Shops"))
                 mChipShop.setChecked(true);
-            if (mRealEstate.getAmenities().contains("Public transport"))
+            if (mProperty.getAmenities().contains("Public transport"))
                 mChipTransport.setChecked(true);
-            if (mRealEstate.getAmenities().contains("Garden"))
+            if (mProperty.getAmenities().contains("Garden"))
                 mChipGarden.setChecked(true);
         }
     }
@@ -349,14 +349,14 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
         String currency = preferences.getString("currency", "$");
 
         if (area.equals("sq ft"))
-            mLayoutSurface.setHint("Enter the surface in sq ft");
+            mLayoutSurface.setHint(getString(R.string.enter_surface_sqft));
         else
-            mLayoutSurface.setHint("Enter the surface in m²");
+            mLayoutSurface.setHint(getString(R.string.enter_surface_m));
 
         if (currency.equals("$"))
-            mLayoutPrice.setHint("Enter the price in Dollars");
+            mLayoutPrice.setHint(getString(R.string.enter_price_dollars));
         else
-            mLayoutPrice.setHint("Enter the price in Euros");
+            mLayoutPrice.setHint(getString(R.string.enter_price_euros));
     }
 
     private void updateRealEstateWithNewValues() {
@@ -366,7 +366,7 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
                 description, address, zipCode, mCountryCodeInput, mLatitude, mLongitude, city, amenities, isSold, initialDate,
                 finalDate, mAgentInput, yearConstruction, floors, Boolean.valueOf(mCoOwnershipInput), mNbPictures);
         savePictureInDb(mRealEstateId);
-        int nbRows = mRealEstateViewModel.updateRealEstate(mRealEstate);
+        int nbRows = mRealEstateViewModel.updateRealEstate(mProperty);
         if (nbRows == 1) {
             Snackbar.make(mActivity.findViewById(R.id.activity_main_container),
                     getString(R.string.update_success), Snackbar.LENGTH_LONG).show();
@@ -379,7 +379,7 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
     private void createNewRealEstateFromInputValues() {
         getTheUserInput();
         mNbPictures = mPicturesList.size();
-        long rowId = mRealEstateViewModel.createRealEstate(new RealEstate(mTypePropertyInput, price, surface, nbRooms,
+        long rowId = mRealEstateViewModel.createRealEstate(new Property(mTypePropertyInput, price, surface, nbRooms,
                 nbBedrooms, nbBathrooms, description, address, zipCode, mCountryCodeInput, mLatitude,
                 mLongitude, city, amenities, isSold, initialDate, finalDate, mAgentInput, yearConstruction,
                 floors, Boolean.valueOf(mCoOwnershipInput), mNbPictures));
@@ -414,7 +414,6 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
             description = mDescriptionTxt.getText().toString();
         if (!TextUtils.isEmpty(mAddAddressTxt.getText())) {
             address = mAddAddressTxt.getText().toString();
-//            getLocation(address);
         }
         if (!TextUtils.isEmpty(mZipcodeTxt.getText()))
             zipCode = Integer.parseInt(mZipcodeTxt.getText().toString());
@@ -457,28 +456,28 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
                                          int zipCode, String countryCodeInput, double latitude, double longitude, String city, String amenities,
                                          boolean isSold, Date initialDate, Date finalDate, String agentInput,
                                          Date yearConstruction, int floors, Boolean coownership, int nbPictures) {
-        mRealEstate.setTypeProperty(typePropertyInput);
-        mRealEstate.setPrice(price);
-        mRealEstate.setSurface(surface);
-        mRealEstate.setNbRooms(nbRooms);
-        mRealEstate.setNbBedrooms(nbBedrooms);
-        mRealEstate.setNbBathrooms(nbBathrooms);
-        mRealEstate.setDescription(description);
-        mRealEstate.setAddress(address);
-        mRealEstate.setZipCode(zipCode);
-        mRealEstate.setCountryCode(countryCodeInput);
-        mRealEstate.setLatitude(latitude);
-        mRealEstate.setLongitude(longitude);
-        mRealEstate.setCity(city);
-        mRealEstate.setAmenities(amenities);
-        mRealEstate.setSold(isSold);
-        mRealEstate.setInitialSale(initialDate);
-        mRealEstate.setFinalSale(finalDate);
-        mRealEstate.setRealEstateAgent(agentInput);
-        mRealEstate.setYearConstruction(yearConstruction);
-        mRealEstate.setFloors(floors);
-        mRealEstate.setCoOwnership(coownership);
-        mRealEstate.setNbPictures(nbPictures);
+        mProperty.setTypeProperty(typePropertyInput);
+        mProperty.setPrice(price);
+        mProperty.setSurface(surface);
+        mProperty.setNbRooms(nbRooms);
+        mProperty.setNbBedrooms(nbBedrooms);
+        mProperty.setNbBathrooms(nbBathrooms);
+        mProperty.setDescription(description);
+        mProperty.setAddress(address);
+        mProperty.setZipCode(zipCode);
+        mProperty.setCountryCode(countryCodeInput);
+        mProperty.setLatitude(latitude);
+        mProperty.setLongitude(longitude);
+        mProperty.setCity(city);
+        mProperty.setAmenities(amenities);
+        mProperty.setSold(isSold);
+        mProperty.setInitialSale(initialDate);
+        mProperty.setFinalSale(finalDate);
+        mProperty.setRealEstateAgent(agentInput);
+        mProperty.setYearConstruction(yearConstruction);
+        mProperty.setFloors(floors);
+        mProperty.setCoOwnership(coownership);
+        mProperty.setNbPictures(nbPictures);
     }
 
     private String getCountryCodeAccordingToCountry(String country) {
@@ -596,21 +595,21 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
     private boolean verifyAddressInputForGeoCoding() {
         if (!TextUtils.isEmpty(mAddAddressTxt.getText()) && (TextUtils.isEmpty(mZipcodeTxt.getText()) || TextUtils.isEmpty(mCityTxt.getText()))) {
             if (TextUtils.isEmpty(mZipcodeTxt.getText()))
-                mLayoutZipcode.setError("Please enter the zipcode");
+                mLayoutZipcode.setError(getString(R.string.please_zipcode));
             if (TextUtils.isEmpty(mCityTxt.getText()))
-                mLayoutCity.setError("Please enter the city");
+                mLayoutCity.setError(getString(R.string.please_city));
             return false;
         } else if (!TextUtils.isEmpty(mZipcodeTxt.getText()) && (TextUtils.isEmpty(mAddAddressTxt.getText()) || TextUtils.isEmpty(mCityTxt.getText()))) {
             if (TextUtils.isEmpty(mAddAddressTxt.getText()))
-                mLayoutAddress.setError("Please enter the address");
+                mLayoutAddress.setError(getString(R.string.please_address));
             if (TextUtils.isEmpty(mCityTxt.getText()))
-                mLayoutCity.setError("Please enter the city");
+                mLayoutCity.setError(getString(R.string.please_city));
             return false;
         } else if (!TextUtils.isEmpty(mCityTxt.getText()) && (TextUtils.isEmpty(mAddAddressTxt.getText()) || TextUtils.isEmpty(mZipcodeTxt.getText()))) {
             if (TextUtils.isEmpty(mAddAddressTxt.getText()))
-                mLayoutAddress.setError("Please enter the address");
+                mLayoutAddress.setError(getString(R.string.please_address));
             if (TextUtils.isEmpty(mZipcodeTxt.getText()))
-                mLayoutZipcode.setError("Please enter the zipcode");
+                mLayoutZipcode.setError(getString(R.string.please_zipcode));
             return false;
         } else
             return true;
@@ -629,8 +628,8 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
 
     private void openDialogToFetchPictures() {
         new MaterialAlertDialogBuilder(mActivity)
-                .setTitle("By which means would you like to add a picture?")
-                .setMessage("You can either take a picture from the camera of this camera or choose a picture stored on the camera's memory")
+                .setTitle(getString(R.string.which_mean_pictures))
+                .setMessage(getString(R.string.gallery_or_camera))
                 .setNegativeButton(getString(R.string.camera), (dialogInterface, i) -> openCamera())
                 .setNeutralButton(getString(R.string.cancel), (dialogInterface, i) -> dialogInterface.cancel())
                 .setPositiveButton(getString(R.string.memory), (dialogInterface, i) -> pickImageFromGallery())
@@ -694,7 +693,7 @@ public class AddRealEstateFragment extends Fragment implements AdapterView.OnIte
         negativeBtn.setOnClickListener(view -> builder.cancel());
         positiveBtn.setOnClickListener(view -> {
             if (editText.getText() != null && editText.getText().length() == 0) {
-                textInputLayout.setError("Please enter the picture's caption");
+                textInputLayout.setError(getString(R.string.please_caption));
             } else {
                 textInputLayout.setError(null);
                 mPicturesList.add(new Pictures(Uri.parse(uri), editText.getText().toString()));

@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey;
 import java.util.Date;
 
 @Entity
-public class RealEstate {
+public class Property {
 
     @PrimaryKey(autoGenerate = true)
     private long mId;
@@ -35,14 +35,14 @@ public class RealEstate {
     private int mNbPictures;
 
 
-    public RealEstate() {
+    public Property() {
     }
 
-    public RealEstate(String typeProperty, int price, int surface, int nbRooms,
-                      int nbBedrooms, int nbBathrooms, String description, String address,
-                      int zipCode, String countryCode, double latitude, double longitude, String city, String amenities, boolean isSold,
-                      Date initialSale, Date finalSale, String realEstateAgent, Date yearConstruction,
-                      int floors, boolean coOwnership, int nbPictures) {
+    public Property(String typeProperty, int price, int surface, int nbRooms,
+                    int nbBedrooms, int nbBathrooms, String description, String address,
+                    int zipCode, String countryCode, double latitude, double longitude, String city, String amenities, boolean isSold,
+                    Date initialSale, Date finalSale, String realEstateAgent, Date yearConstruction,
+                    int floors, boolean coOwnership, int nbPictures) {
         mTypeProperty = typeProperty;
         mPrice = price;
         mSurface = surface;
@@ -259,7 +259,7 @@ public class RealEstate {
     @NonNull
     @Override
     public String toString() {
-        return "RealEstate{" +
+        return "Property{" +
                 "mId=" + mId +
                 ", mTypeProperty='" + mTypeProperty + '\'' +
                 ", mPrice=" + mPrice +
@@ -286,31 +286,31 @@ public class RealEstate {
                 '}';
     }
 
-    public static RealEstate[] populateData(){
-        return  new RealEstate[]{
-                new RealEstate("Apartment",160000, 1399, 4, 3, 2, "Very nice apartment located on the 6th and last floor of 1399sq ft." +
+    public static Property[] populateData(){
+        return  new Property[]{
+                new Property("Apartment",160000, 1399, 4, 3, 2, "Very nice apartment located on the 6th and last floor of 1399sq ft." +
                         " Located in the heart of town and close to all amenities. It has 3 large bedrooms," +
                         " 2 bathrooms and a large living room with a terrace overlooking a private park.",
                         "600 E 8th 6F St ", 64106, "US", 39.104264, -94.576036, "Kansas City","(School, Shops)", false, new Date(1564617600000L),
                         null, "Lefèvre Benoit", new Date(619653600000L), 6, true,4),
-                new RealEstate("House", 515000, 3390, 6, 5, 4, "Very nice house of 315m2." +
+                new Property("House", 515000, 3390, 6, 5, 4, "Very nice house of 315m2." +
                         " Located in the heart of town and close to all amenities. It has 5 large bedrooms," +
                         " 4 bathrooms and a large living room with a large garden of 700m2.",
                         "6124 Ward Pkwy", 64106, "US", 39.0167956, -94.6016936, "Kansas City","(School, Garden)", false, new Date(1564617600000L),
                         null, "Lefèvre Benoit", new Date(734652000000L), 2, false,4),
-                new RealEstate("Apartment", 999950, 2799, 3, 2, 2, "Very nice apartment located on the 31th and last floor of 2799 sq ft." +
+                new Property("Apartment", 999950, 2799, 3, 2, 2, "Very nice apartment located on the 31th and last floor of 2799 sq ft." +
                         " Located in the heart of town and close to all amenities. It has 2 large bedrooms," +
                         " 2 bathrooms and a large living room with a terrace where you have an amazing view .",
                         "909 Walnut St Unit 31", 64106, "US", 39.1032208, -94.5815734, "Kansas City","(Shops, Public transport )", false, new Date(1564617600000L),
                         null, "Lefèvre Benoit", new Date(213318000000L), 31, true,5),
-                new RealEstate("Villa" ,1350000, 8390, 7, 6, 5, "Very nice villa near of the Hodge Park Amphitheater. This villa has 6 bedrooms and 5 bathrooms." +
+                new Property("Villa" ,1350000, 8390, 7, 6, 5, "Very nice villa near of the Hodge Park Amphitheater. This villa has 6 bedrooms and 5 bathrooms." +
                         " There is a huge garden of 1 acres lot.",
                         "7905 N Shoal Creek Valley Dr",64106, "US", 39.2767, -94.4595, "Kansas City", "(Garden, Shops)", false, new Date(1564617600000L),
                         null, "Lefèvre Benoit", new Date(1455494400000L), 2, false , 9),
-                new RealEstate("Villa", 1700000, 7419, 7, 6, 5, "Very nice villa located near a lake. This villa has 6 bedrooms and 5 bathrooms. The garden of 4 acres lot is very beautiful and very quiet.",
+                new Property("Villa", 1700000, 7419, 7, 6, 5, "Very nice villa located near a lake. This villa has 6 bedrooms and 5 bathrooms. The garden of 4 acres lot is very beautiful and very quiet.",
                         "7105 NW Scenic DR", 64152, "US", 39.223695, -94.753582, "Parkville", "(Garden, Shops)", false, new Date(1564617600000L),
                         null, "Lefèvre Benoit", new Date(1257206400000L),2, false, 7),
-                new RealEstate("Loft", 799000, 2942, 3, 2, 3, "Very nice Loft on the 18th and last floor. This loft has 2 bedrooms and 3 bathrooms. The view is breathtaking on all Kansas City and the Pann Valley Park",
+                new Property("Loft", 799000, 2942, 3, 2, 3, "Very nice Loft on the 18th and last floor. This loft has 2 bedrooms and 3 bathrooms. The view is breathtaking on all Kansas City and the Pann Valley Park",
                         "700 W 31st Ste 1401", 64106, "US", 39.0714351, -94.5934155, "Kansas City", "(School, Shops, Garden)", false, new Date(1564617600000L),
                         null, "Lefèvre Benoit", new Date(867024000000L), 18, true, 6 ),
         };

@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.data.entities.Pictures;
-import com.openclassrooms.realestatemanager.data.entities.RealEstate;
+import com.openclassrooms.realestatemanager.data.entities.Property;
 import com.openclassrooms.realestatemanager.utils.Utils;
 
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class RealEstateViewHolder extends RecyclerView.ViewHolder {
+public class PropertyViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.item_photo_img)
     ImageView mImageView;
@@ -35,24 +35,23 @@ public class RealEstateViewHolder extends RecyclerView.ViewHolder {
     TextView mPrice;
 
     private Context mContext;
-    private SharedPreferences mPreferences;
 
-    public RealEstateViewHolder(@NonNull View itemView, Context context) {
+    public PropertyViewHolder(@NonNull View itemView, Context context) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         itemView.setTag(this);
         mContext = context;
     }
 
-    public void updateUI(RealEstate realEstate, List<Pictures> pictures) {
+    public void updateUI(Property property, List<Pictures> pictures) {
         for (Pictures pictures1 : pictures) {
-            if (pictures1.getRealEstateId() == realEstate.getId())
+            if (pictures1.getRealEstateId() == property.getId())
                 mImageView.setImageURI(pictures1.getUri());
         }
-        mTypeProperty.setText(realEstate.getTypeProperty());
-        mNbRoomsBedrooms.setText(mContext.getString(R.string.rooms_and_bedrooms, realEstate.getNbRooms(), realEstate.getNbBedrooms()));
-        mSurface.setText(Utils.displayAreaUnitAccordingToPreferences(mContext, realEstate.getSurface()));
-        mCity.setText(realEstate.getCity());
-        mPrice.setText(Utils.displayCurrencyAccordingToPreferences(mContext, realEstate.getPrice()));
+        mTypeProperty.setText(property.getTypeProperty());
+        mNbRoomsBedrooms.setText(mContext.getString(R.string.rooms_and_bedrooms, property.getNbRooms(), property.getNbBedrooms()));
+        mSurface.setText(Utils.displayAreaUnitAccordingToPreferences(mContext, property.getSurface()));
+        mCity.setText(property.getCity());
+        mPrice.setText(Utils.displayCurrencyAccordingToPreferences(mContext, property.getPrice()));
     }
 }

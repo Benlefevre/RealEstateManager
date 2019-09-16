@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.openclassrooms.realestatemanager.data.repositories.RealEstateDataRepository;
+import com.openclassrooms.realestatemanager.data.repositories.PropertyDataRepository;
 import com.openclassrooms.realestatemanager.data.repositories.PicturesDataRepository;
 import com.openclassrooms.realestatemanager.ui.viewmodel.RealEstateViewModel;
 
@@ -12,13 +12,13 @@ import java.util.concurrent.Executor;
 
 public class ViewModelFactory implements ViewModelProvider.Factory {
 
-    private final RealEstateDataRepository mRealEstateDataRepository;
+    private final PropertyDataRepository mPropertyDataRepository;
     private final PicturesDataRepository mPicturesDataRepository;
     private final Executor mExecutor;
 
-    ViewModelFactory(RealEstateDataRepository realEstateDataRepository, Executor executor,
+    ViewModelFactory(PropertyDataRepository propertyDataRepository, Executor executor,
                      PicturesDataRepository picturesDataRepository) {
-        mRealEstateDataRepository = realEstateDataRepository;
+        mPropertyDataRepository = propertyDataRepository;
         mExecutor = executor;
         mPicturesDataRepository = picturesDataRepository;
     }
@@ -27,7 +27,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(RealEstateViewModel.class))
-            return (T) new RealEstateViewModel(mRealEstateDataRepository, mExecutor, mPicturesDataRepository);
+            return (T) new RealEstateViewModel(mPropertyDataRepository, mExecutor, mPicturesDataRepository);
         throw new IllegalArgumentException("Unknown ViewModel Class");
     }
 }

@@ -43,7 +43,8 @@
         app:itemIconSize="@dimen/drawer_icon_size"
         app:itemIconTint="@android:color/white"
         app:menu="@menu/drawer_menu"
-        app:itemTextColor="@android:color/white">
+        app:itemTextColor="@android:color/white"
+        app:headerLayout="@layout/activity_main_nav_header">
 
     </com.google.android.material.navigation.NavigationView>
 

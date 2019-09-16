@@ -10,27 +10,27 @@ import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.openclassrooms.realestatemanager.data.dao.PicturesDao;
-import com.openclassrooms.realestatemanager.data.dao.RealEstateDao;
+import com.openclassrooms.realestatemanager.data.dao.PropertyDao;
 import com.openclassrooms.realestatemanager.data.entities.Pictures;
-import com.openclassrooms.realestatemanager.data.entities.RealEstate;
+import com.openclassrooms.realestatemanager.data.entities.Property;
 import com.openclassrooms.realestatemanager.utils.Converters;
 
 import java.util.concurrent.Executors;
 
-@Database(entities = {RealEstate.class, Pictures.class}, version = 1, exportSchema = false)
+@Database(entities = {Property.class, Pictures.class}, version =1, exportSchema = false)
 @TypeConverters({Converters.class})
-public abstract class RealEstateDatabase extends RoomDatabase {
+public abstract class RealEstateManagerDatabase extends RoomDatabase {
 
-    private static volatile RealEstateDatabase INSTANCE;
+    private static volatile RealEstateManagerDatabase INSTANCE;
 
-    public abstract RealEstateDao mRealEstateDao();
-    public abstract PicturesDao mRealEstatePicturesDao();
+    public abstract PropertyDao mPropertyDao();
+    public abstract PicturesDao mPicturesDao();
 
-    public static RealEstateDatabase getInstance(Context context){
+    public static RealEstateManagerDatabase getInstance(Context context){
         if (INSTANCE == null){
-            synchronized (RealEstateDatabase.class){
+            synchronized (RealEstateManagerDatabase.class){
                 if (INSTANCE == null){
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),RealEstateDatabase.class,
+                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(), RealEstateManagerDatabase.class,
                             "RealEstateManager.db")
                             .addCallback(prepopulateDataBaseWithRealEstate(context.getApplicationContext()))
                             .addCallback(prepopulateDatabaseWithPictures(context.getApplicationContext()))
@@ -47,7 +47,7 @@ public abstract class RealEstateDatabase extends RoomDatabase {
             public void onCreate(@NonNull SupportSQLiteDatabase db) {
                 super.onCreate(db);
                 Executors.newSingleThreadScheduledExecutor().execute(() ->
-                        getInstance(context).mRealEstateDao().insertAll(RealEstate.populateData()));
+                        getInstance(context).mPropertyDao().insertAll(Property.populateData()));
             }
         };
     }
@@ -58,7 +58,7 @@ public abstract class RealEstateDatabase extends RoomDatabase {
             public void onCreate(@NonNull SupportSQLiteDatabase db) {
                 super.onCreate(db);
                 Executors.newSingleThreadScheduledExecutor().execute(() ->
-                        getInstance(context).mRealEstatePicturesDao().insertAll(Pictures.populateData()));
+                        getInstance(context).mPicturesDao().insertAll(Pictures.populateData()));
             }
         };
     }

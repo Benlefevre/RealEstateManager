@@ -22,11 +22,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.data.entities.Pictures;
-import com.openclassrooms.realestatemanager.data.entities.RealEstate;
+import com.openclassrooms.realestatemanager.data.entities.Property;
 import com.openclassrooms.realestatemanager.injections.Injection;
 import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
-import com.openclassrooms.realestatemanager.ui.adapters.RealEstateAdapter;
-import com.openclassrooms.realestatemanager.ui.viewholder.RealEstateViewHolder;
+import com.openclassrooms.realestatemanager.ui.adapters.PropertyAdapter;
+import com.openclassrooms.realestatemanager.ui.viewholder.PropertyViewHolder;
 import com.openclassrooms.realestatemanager.ui.viewmodel.RealEstateViewModel;
 import com.openclassrooms.realestatemanager.utils.Constants;
 
@@ -40,7 +40,7 @@ import butterknife.Unbinder;
 
 import static com.openclassrooms.realestatemanager.utils.Constants.DETAILS_FRAGMENT;
 
-public class RealEstateListFragment extends Fragment {
+public class PropertyListFragment extends Fragment {
 
     private static final String ORIGIN = "origin";
 
@@ -49,9 +49,9 @@ public class RealEstateListFragment extends Fragment {
 
     private Unbinder mUnbinder;
 
-    private RealEstateAdapter mEstateAdapter;
+    private PropertyAdapter mEstateAdapter;
     private RealEstateViewModel mRealEstateViewModel;
-    private List<RealEstate> mRealEstates;
+    private List<Property> mProperties;
     private List<Pictures> mPictures;
     private Activity mActivity;
     private String mOrigin;
@@ -61,12 +61,12 @@ public class RealEstateListFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public RealEstateListFragment() {
+    public PropertyListFragment() {
         // Required empty public constructor
     }
 
-    public static RealEstateListFragment newInstance(String origin) {
-        RealEstateListFragment fragment = new RealEstateListFragment();
+    public static PropertyListFragment newInstance(String origin) {
+        PropertyListFragment fragment = new PropertyListFragment();
         Bundle args = new Bundle();
         args.putString(ORIGIN, origin);
         fragment.setArguments(args);
@@ -89,7 +89,7 @@ public class RealEstateListFragment extends Fragment {
         setHasOptionsMenu(true);
         mUnbinder = ButterKnife.bind(this, view);
         mPictures = new ArrayList<>();
-        mRealEstates = new ArrayList<>();
+        mProperties = new ArrayList<>();
         configureRecyclerView();
         return view;
     }
@@ -165,22 +165,22 @@ public class RealEstateListFragment extends Fragment {
     }
 
 
-    private void initList(List<RealEstate> realEstates) {
-        mRealEstates.clear();
-        mRealEstates.addAll(realEstates);
-        for (RealEstate realEstate : mRealEstates) {
-            getOnePicture(realEstate.getId());
+    private void initList(List<Property> properties) {
+        mProperties.clear();
+        mProperties.addAll(properties);
+        for (Property property : mProperties) {
+            getOnePicture(property.getId());
         }
-        if (!mRealEstates.isEmpty() && isTabletLand)
-            mRealEstateViewModel.addSelectedRealEstateId(mRealEstates.get(0).getId());
+        if (!mProperties.isEmpty() && isTabletLand)
+            mRealEstateViewModel.addSelectedRealEstateId(mProperties.get(0).getId());
     }
 
     private void configureRecyclerView() {
-        mEstateAdapter = new RealEstateAdapter(mRealEstates, mPictures);
+        mEstateAdapter = new PropertyAdapter(mProperties, mPictures);
         mEstateAdapter.setOnItemClickListener(view -> {
-            RealEstateViewHolder holder = (RealEstateViewHolder) view.getTag();
+            PropertyViewHolder holder = (PropertyViewHolder) view.getTag();
             int position = holder.getAdapterPosition();
-            long id = mRealEstates.get(position).getId();
+            long id = mProperties.get(position).getId();
             mRealEstateViewModel.addSelectedRealEstateId(id);
             if (!isTabletLand)
                 openDetailsFragment();

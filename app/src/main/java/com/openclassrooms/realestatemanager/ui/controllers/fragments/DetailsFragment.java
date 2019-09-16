@@ -29,7 +29,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.data.entities.Pictures;
-import com.openclassrooms.realestatemanager.data.entities.RealEstate;
+import com.openclassrooms.realestatemanager.data.entities.Property;
 import com.openclassrooms.realestatemanager.injections.Injection;
 import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
 import com.openclassrooms.realestatemanager.ui.adapters.DetailsPhotoAdapter;
@@ -203,31 +203,31 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         mRealEstateViewModel.addUriList(uriList);
     }
 
-    private void initDetails(RealEstate realEstate) {
+    private void initDetails(Property property) {
         String address, zipcode, city;
-        if (realEstate.getAddress() == null)
+        if (property.getAddress() == null)
             address = "";
         else
-            address = realEstate.getAddress();
-        if (realEstate.getZipCode() == 0)
+            address = property.getAddress();
+        if (property.getZipCode() == 0)
             zipcode = "";
         else
-            zipcode = String.valueOf(realEstate.getZipCode());
-        if (realEstate.getCity() == null)
+            zipcode = String.valueOf(property.getZipCode());
+        if (property.getCity() == null)
             city = "";
         else
-            city = realEstate.getCity();
-        mDescription.setText(realEstate.getDescription());
-        mSurface.setText(Utils.displayAreaUnitAccordingToPreferences(mActivity, realEstate.getSurface()));
-        mRooms.setText(String.valueOf(realEstate.getNbRooms()));
-        mBedrooms.setText(String.valueOf(realEstate.getNbBedrooms()));
-        mBathroom.setText(String.valueOf(realEstate.getNbBathrooms()));
+            city = property.getCity();
+        mDescription.setText(property.getDescription());
+        mSurface.setText(Utils.displayAreaUnitAccordingToPreferences(mActivity, property.getSurface()));
+        mRooms.setText(String.valueOf(property.getNbRooms()));
+        mBedrooms.setText(String.valueOf(property.getNbBedrooms()));
+        mBathroom.setText(String.valueOf(property.getNbBathrooms()));
         mLocation.setText(getString(R.string.adress_details, address, zipcode, city));
-        mFloors.setText(String.valueOf(realEstate.getFloors()));
-        mCoownershipTxt.setText(String.valueOf(realEstate.isCoOwnership()));
-        mConstructionTxt.setText(Utils.convertDateToString(realEstate.getYearConstruction(), mActivity));
-        mLatitude = realEstate.getLatitude();
-        mLongitude = realEstate.getLongitude();
+        mFloors.setText(String.valueOf(property.getFloors()));
+        mCoownershipTxt.setText(String.valueOf(property.isCoOwnership()));
+        mConstructionTxt.setText(Utils.convertDateToString(property.getYearConstruction(), mActivity));
+        mLatitude = property.getLatitude();
+        mLongitude = property.getLongitude();
         addRealEstatePositionOnMap();
     }
 

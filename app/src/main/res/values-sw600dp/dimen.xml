@@ -18,4 +18,6 @@
 
     <dimen name="full_screen_img_top">0.1</dimen>
     <dimen name="full_screen_img_bottom">0.9</dimen>
+
+    <dimen name="nav_header_height">176dp</dimen>
 </resources>
