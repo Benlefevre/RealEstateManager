@@ -76,7 +76,6 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
 
     private long mRealEstateId;
     private RealEstateViewModel mRealEstateViewModel;
-
     private DetailsPhotoAdapter mPhotoAdapter;
     private List<Pictures> mPicturesList;
 
@@ -122,7 +121,7 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
             toolbar.setTitle("Details");
         configureViewModel();
         configureRecyclerView();
-        getSelectedRealEstateId();
+        getSelectedPropertyId();
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(this);
     }
@@ -143,6 +142,10 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         return true;
     }
 
+    /**
+     * Gets a GoogleMap object ready to use and defines the UI parameters and the expected behavior
+     * (nothing) when the user clicks on the map.
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
@@ -151,7 +154,10 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
-    private void addRealEstatePositionOnMap() {
+    /**
+     * Adds a marker corresponding to the property's latitude and longitude on the map.
+     */
+    private void addPropertyPositionOnMap() {
         LatLng latLng = new LatLng(mLatitude, mLongitude);
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
         mGoogleMap.addMarker(new MarkerOptions().position(latLng));
@@ -163,22 +169,35 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         mRealEstateViewModel = ViewModelProviders.of((FragmentActivity) mActivity, viewModelFactory).get(RealEstateViewModel.class);
     }
 
-    private void getSelectedRealEstateId() {
-        mRealEstateViewModel.getSelectedRealEstateId().observe(getViewLifecycleOwner(), this::getRealEstateDetails);
+    /**
+     * Sets an observer to get the selected Property's id defines in the MutableLiveData.
+     */
+    private void getSelectedPropertyId() {
+        mRealEstateViewModel.getSelectedPropertyId().observe(getViewLifecycleOwner(), this::getPropertyDetails);
     }
 
-    private void getRealEstateDetails(long realEstateId) {
+    /**
+     * Sets observers to fetch the property's attributes and the pictures that have property's id in their attributes
+     * into database.
+     */
+    private void getPropertyDetails(long realEstateId) {
         mRealEstateId = realEstateId;
-        mRealEstateViewModel.getRealEstate(realEstateId).observe(getViewLifecycleOwner(), this::initDetails);
-        mRealEstateViewModel.getPictures(realEstateId).observe(getViewLifecycleOwner(), this::bindPhotoInRecyclerView);
+        mRealEstateViewModel.getRealEstate(mRealEstateId).observe(getViewLifecycleOwner(), this::initDetails);
+        mRealEstateViewModel.getPictures(mRealEstateId).observe(getViewLifecycleOwner(), this::bindPhotoInRecyclerView);
     }
 
+    /**
+     * Gets the LiveData's content and add it in mPicturesList that is bound in RecyclerView.
+     */
     private void bindPhotoInRecyclerView(List<Pictures> pictures) {
         mPicturesList.clear();
         mPicturesList.addAll(pictures);
         mPhotoAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Defines the RecyclerView's adapter and the expected behavior when user clicks on a RecyclerView's item.
+     */
     private void configureRecyclerView() {
         mPicturesList = new ArrayList<>();
         mPhotoAdapter = new DetailsPhotoAdapter(mPicturesList, 1);
@@ -193,6 +212,9 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         mPhotoRecyclerview.setAdapter(mPhotoAdapter);
     }
 
+    /**
+     * Fetches the selected item's uri and set a MutableLiveData's value with this uri and mPicturesList.
+     */
     private void setUriListInMutableLiveData(Uri uri) {
         List<Uri> uriList = new ArrayList<>();
         uriList.add(uri);
@@ -203,6 +225,9 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         mRealEstateViewModel.addUriList(uriList);
     }
 
+    /**
+     * Gets the LiveData's content and bind it into the corresponding view.
+     */
     private void initDetails(Property property) {
         String address, zipcode, city;
         if (property.getAddress() == null)
@@ -228,7 +253,7 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         mConstructionTxt.setText(Utils.convertDateToString(property.getYearConstruction(), mActivity));
         mLatitude = property.getLatitude();
         mLongitude = property.getLongitude();
-        addRealEstatePositionOnMap();
+        addPropertyPositionOnMap();
     }
 
 
@@ -280,6 +305,7 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onDestroyView() {
+//        Sets adapters and listeners to null to avoid memory leaks.
         mPhotoRecyclerview.setAdapter(null);
         mPhotoAdapter.setOnClickListener(null);
         super.onDestroyView();

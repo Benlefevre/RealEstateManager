@@ -43,6 +43,11 @@ public class PropertyViewHolder extends RecyclerView.ViewHolder {
         mContext = context;
     }
 
+    /**
+     * Checks that one pictures in the pictures list has the property's id in its attributes and bind
+     * the selected picture in the ImageView.
+     * Gets the property's details and bind them in the corresponding fields.
+     */
     public void updateUI(Property property, List<Pictures> pictures) {
         for (Pictures pictures1 : pictures) {
             if (pictures1.getRealEstateId() == property.getId())

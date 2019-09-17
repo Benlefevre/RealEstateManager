@@ -26,6 +26,9 @@ public abstract class RealEstateManagerDatabase extends RoomDatabase {
     public abstract PropertyDao mPropertyDao();
     public abstract PicturesDao mPicturesDao();
 
+    /**
+     * Returns a single instance of the database. When the database is created with room, it is populated by callbacks.
+     */
     public static RealEstateManagerDatabase getInstance(Context context){
         if (INSTANCE == null){
             synchronized (RealEstateManagerDatabase.class){
@@ -41,6 +44,9 @@ public abstract class RealEstateManagerDatabase extends RoomDatabase {
         return INSTANCE;
     }
 
+    /**
+     * Populate database through the insertAll method of DAO. This method is asynchronous.
+     */
     private static Callback prepopulateDataBaseWithRealEstate(Context context){
         return new Callback() {
             @Override
@@ -52,6 +58,9 @@ public abstract class RealEstateManagerDatabase extends RoomDatabase {
         };
     }
 
+    /**
+     * Populate database through the insertAll method of DAO. This method is asynchronous.
+     */
     private static Callback prepopulateDatabaseWithPictures(Context context){
         return new Callback() {
             @Override

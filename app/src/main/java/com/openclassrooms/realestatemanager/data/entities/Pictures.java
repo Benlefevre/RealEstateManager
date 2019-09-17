@@ -7,6 +7,8 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
+import com.openclassrooms.realestatemanager.R;
+
 @Entity(foreignKeys = @ForeignKey(entity = Property.class,
         parentColumns = "mId",
         childColumns = "mRealEstateId"))
@@ -50,7 +52,7 @@ public class Pictures {
         return mDescription;
     }
 
-    //    -------------------------------------- Setters -----------------------------------------------
+//    -------------------------------------- Setters -----------------------------------------------
 
 
     public void setId(long id) {

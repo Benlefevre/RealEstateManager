@@ -22,14 +22,13 @@ import java.util.concurrent.Future;
 
 public class RealEstateViewModel extends ViewModel {
 
-//    Repositories
     private final PropertyDataRepository mPropertyDataRepository;
     private final PicturesDataRepository mPicturesDataRepository;
     private final Executor mExecutor;
     private ExecutorService mExecutorService;
 
-    private MutableLiveData<List<Property>> mRealEstateList = new MutableLiveData<>();
-    private MutableLiveData<Long> mSelectedRealEstateId = new MutableLiveData<>();
+    private MutableLiveData<List<Property>> mPropertyList = new MutableLiveData<>();
+    private MutableLiveData<Long> mSelectedPropertyId = new MutableLiveData<>();
     private MutableLiveData<List<Uri>> mUriList = new MutableLiveData<>();
 
     public RealEstateViewModel(PropertyDataRepository propertyDataRepository, Executor executor,
@@ -63,6 +62,10 @@ public class RealEstateViewModel extends ViewModel {
         return mPicturesDataRepository.getOnePicture(realEstateId);
     }
 
+    /**
+     * Creates a property in database and return a long that is the inserted row's id or -1L if the
+     * insert failed.
+     */
     public long createRealEstate(Property property){
         Callable<Long> insertCallable = () -> mPropertyDataRepository.createRealEstate(property);
         long rowId = 0;
@@ -77,6 +80,10 @@ public class RealEstateViewModel extends ViewModel {
         return rowId;
     }
 
+    /**
+     * Creates a pictures in database and return a long that is the inserted row's id or -1L if the
+     * insert failed.
+     */
     public long createPictures(Pictures pictures){
         Callable<Long> insertCallable = () -> mPicturesDataRepository.createRealEstatePicture(pictures);
         long rowId = 0;
@@ -91,6 +98,9 @@ public class RealEstateViewModel extends ViewModel {
         return rowId;
     }
 
+    /**
+     * Updates a property saved in database and return an int that is the number of impacted rows.
+     */
     public int updateRealEstate(Property property){
         Callable<Integer> insertCallable = () -> mPropertyDataRepository.updateRealEstate(property);
         int nbRows = 0;
@@ -109,20 +119,21 @@ public class RealEstateViewModel extends ViewModel {
         mExecutor.execute(() -> mPicturesDataRepository.deletePicture(pictures));
     }
 
-    public void addRealEstateList(List<Property> properties){
-        mRealEstateList.setValue(properties);
+//    ------------------------Getters and Setters MutableLiveData-----------------------------------
+    public void addPropertyList(List<Property> properties){
+        mPropertyList.setValue(properties);
     }
 
-    public LiveData<List<Property>> getRealEstateList(){
-        return mRealEstateList;
+    public LiveData<List<Property>> getPropertyList(){
+        return mPropertyList;
     }
 
-    public void addSelectedRealEstateId(long realEstateId){
-        mSelectedRealEstateId.setValue(realEstateId);
+    public void addSelectedPropertyId(long realEstateId){
+        mSelectedPropertyId.setValue(realEstateId);
     }
 
-    public LiveData<Long> getSelectedRealEstateId(){
-        return mSelectedRealEstateId;
+    public LiveData<Long> getSelectedPropertyId(){
+        return mSelectedPropertyId;
     }
 
     public void addUriList(List<Uri> uriList){

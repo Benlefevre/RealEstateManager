@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -161,12 +160,32 @@ public class SearchFragment extends Fragment {
         configureViewModel();
     }
 
+//    Configuring ViewModel
     private void configureViewModel() {
         ViewModelFactory viewModelFactory = Injection.providerViewModelFactory(mActivity);
         mRealEstateViewModel = ViewModelProviders.of((FragmentActivity) mActivity, viewModelFactory).get(RealEstateViewModel.class);
     }
 
+    /**
+     * Calls all the needed methods to get all the user's input
+     */
     private void getUserInput() {
+        getUserTextInput();
+        getUserPhotoChoice();
+        getUserRoomChoice();
+        getUserBedroomsChoice();
+        getUserBathroomsChoice();
+        getUserCoownerChoice();
+        getUserIsSoldChoice();
+        getUserTypeChoice();
+        mAmenitiesInput = Utils.getUserAmenitiesChoice(mChipSchool, mChipShop, mChipTransport, mChipGarden);
+    }
+
+    /**
+     * Checks if the text fields are empty and if it's not the case, sets the user's input in the
+     * corresponding  fields.
+     */
+    private void getUserTextInput() {
         if (!TextUtils.isEmpty(mZipcodeTxt.getText()))
             mZipcodeInput = Integer.parseInt(mZipcodeTxt.getText().toString().trim());
         if (!TextUtils.isEmpty(mCityTxt.getText()))
@@ -185,19 +204,11 @@ public class SearchFragment extends Fragment {
             mForSaleDate = Converters.dateToTimestamp(Utils.convertStringToDate(mForSaleTxt.getText().toString().trim()));
         if (!TextUtils.isEmpty(mSoldTxt.getText()))
             mSoldDate = Converters.dateToTimestamp(Utils.convertStringToDate(mSoldTxt.getText().toString().trim()));
-
-        getUserPhotoChoice();
-        getUserRoomChoice();
-        getUserBedroomsChoice();
-        getUserBathroomsChoice();
-        getUserCoownerChoice();
-        getUserIsSoldChoice();
-        getUserTypeChoice();
-        mAmenitiesInput = Utils.getUserAmenitiesChoice(mChipSchool, mChipShop, mChipTransport, mChipGarden);
-
-
     }
 
+    /**
+     * Verifies if each chip of the ChipGroup is checked and add values in a String field.
+     */
     private void getUserTypeChoice() {
         mTypeInput = "(";
         if (mChipApartment.isChecked()) {
@@ -228,6 +239,9 @@ public class SearchFragment extends Fragment {
         mTypeInput += ")";
     }
 
+    /**
+     * Verifies which chip of the ChipGroup is checked and defines the mChipCoownerInput's value.
+     */
     private void getUserCoownerChoice() {
         switch (mChipGroupCoowner.getCheckedChipId()) {
             case R.id.chip_yes:
@@ -242,6 +256,9 @@ public class SearchFragment extends Fragment {
         }
     }
 
+    /**
+     * Verifies which chip of the ChipGroup is checked and defines the mChipIsSoldInput's value.
+     */
     private void getUserIsSoldChoice() {
         switch (mChipGroupIsSold.getCheckedChipId()) {
             case R.id.chip_yes_sold:
@@ -256,6 +273,9 @@ public class SearchFragment extends Fragment {
         }
     }
 
+    /**
+     * Verifies which chip of the ChipGroup is checked and defines the mChipBathroomsInput's value.
+     */
     private void getUserBathroomsChoice() {
         switch (mChipGroupBathrooms.getCheckedChipId()) {
             case R.id.chip_1_bathroom:
@@ -279,6 +299,9 @@ public class SearchFragment extends Fragment {
         }
     }
 
+    /**
+     * Verifies which chip of the ChipGroup is checked and defines the mChipBedroomsInput's value.
+     */
     private void getUserBedroomsChoice() {
         switch (mChipGroupBedrooms.getCheckedChipId()) {
             case R.id.chip_1_bedroom:
@@ -302,6 +325,9 @@ public class SearchFragment extends Fragment {
         }
     }
 
+    /**
+     * Verifies which chip of the ChipGroup is checked and defines the mChipRoomsInput's value.
+     */
     private void getUserRoomChoice() {
         switch (mChipGroupRooms.getCheckedChipId()) {
             case R.id.chip_1_room:
@@ -325,6 +351,9 @@ public class SearchFragment extends Fragment {
         }
     }
 
+    /**
+     * Verifies which chip of the ChipGroup is checked and defines the mChipPhotoInput's value.
+     */
     private void getUserPhotoChoice() {
         switch (mChipGroupPhoto.getCheckedChipId()) {
             case R.id.chip_1_photo:
@@ -342,6 +371,9 @@ public class SearchFragment extends Fragment {
         }
     }
 
+    /**
+     * Checks the user's preferences and set the TextView's values with the right String.
+     */
     private void configureTextViewAccordingToPreference() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mActivity);
         String area = preferences.getString("area", "sq ft");
@@ -358,6 +390,9 @@ public class SearchFragment extends Fragment {
             mPriceTxt.setText(R.string.price_euros);
     }
 
+    /**
+     * Displays a DatePicker to select a date and sets the selected value in the corresponding view.
+     */
     private void displayDatePickerAndUpdateUi(View view) {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -386,7 +421,10 @@ public class SearchFragment extends Fragment {
         datePickerDialog.show();
     }
 
-    private void fetchRealEstateAccordingToUserInput() {
+    /**
+     * Sets the query's content depending to the user's input.
+     */
+    private void fetchPropertiesAccordingToUserInput() {
         String query = "SELECT * FROM Property WHERE mId > 0";
         if (!TextUtils.isEmpty(mZipcodeTxt.getText()))
             query += " AND mZipCode = " + mZipcodeInput;
@@ -428,16 +466,22 @@ public class SearchFragment extends Fragment {
             query += " AND Property.mFinalSale <= " + mSoldDate;
         if (mChipPhotoInput != 0)
             query += " AND Property.mNbPictures >= " + mChipPhotoInput;
-
         query += " ;";
 
-        Log.i("test", "fetchRealEstateAccordingToUserInput: " + query);
+        fetchPropertiesAccordingToCriteria(query);
+    }
 
+    /**
+     * Sets an observer to fetch the properties that matched the user's criteria and displays an error
+     * message in a snackbar if there is no result or passes the LiveData's content in a MutableLiveData
+     * to the PropertyListFragment.
+     */
+    private void fetchPropertiesAccordingToCriteria(String query) {
         mRealEstateViewModel.getRealEstateAccordingUserSearch(new SimpleSQLiteQuery(query)).observe(getViewLifecycleOwner(), realEstates -> {
             if (realEstates.isEmpty())
-                Snackbar.make(mActivity.findViewById(R.id.activity_main_container), "Sorry, there is no results", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(mActivity.findViewById(R.id.activity_main_container), getString(R.string.sorry_no_result), Snackbar.LENGTH_SHORT).show();
             else {
-                mRealEstateViewModel.addRealEstateList(realEstates);
+                mRealEstateViewModel.addPropertyList(realEstates);
                 if (mListener != null) {
                     mListener.passSearchedRealEstate();
                 }
@@ -480,14 +524,12 @@ public class SearchFragment extends Fragment {
     void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.fragment_search_for_sale_txt:
-                displayDatePickerAndUpdateUi(view);
-                break;
             case R.id.fragment_search_sold_txt:
                 displayDatePickerAndUpdateUi(view);
                 break;
             case R.id.fragment_search_search_btn:
                 getUserInput();
-                fetchRealEstateAccordingToUserInput();
+                fetchPropertiesAccordingToUserInput();
                 break;
         }
     }

@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -71,8 +72,11 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static android.app.Activity.RESULT_OK;
+import static com.openclassrooms.realestatemanager.utils.Constants.ADD_REAL_ESTATE_FRAGMENT;
 import static com.openclassrooms.realestatemanager.utils.Constants.IMAGE_CAPTURE_CODE;
 import static com.openclassrooms.realestatemanager.utils.Constants.IMAGE_PICK_CODE;
+import static com.openclassrooms.realestatemanager.utils.Constants.MOVIE_CAPTURE_CODE;
+import static com.openclassrooms.realestatemanager.utils.Constants.MOVIE_PICK_CODE;
 import static com.openclassrooms.realestatemanager.utils.Constants.READ_AND_WRITE_EXTERNAL_STORAGE_AND_CAMERA;
 
 
@@ -80,9 +84,6 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
 
     private static final String REAL_ESTATE_ID = "realEstateId";
 
-    /*--------------------------------------------------------------------------------------------------
-                                            VIEWS
-     _________________________________________________________________________________________________*/
     @BindView(R.id.fragment_add_type_property_spinner)
     AppCompatAutoCompleteTextView mTypePropertySpinner;
     @BindView(R.id.fragment_add_price_txt)
@@ -142,8 +143,6 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
     @BindView(R.id.layout_city)
     TextInputLayout mLayoutCity;
 
-    private Unbinder mUnbinder;
-
     private Property mProperty;
     private String mTypePropertyInput;
     private String mCountryCodeInput;
@@ -169,12 +168,16 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
     private int mNbPictures;
 
     private String currentPhotoPath;
+    private String currentVideoPath;
     private long mRealEstateId;
     private List<Pictures> mPicturesList;
     private DetailsPhotoAdapter mPhotoAdapter;
 
     private Activity mActivity;
     private RealEstateViewModel mRealEstateViewModel;
+    private Unbinder mUnbinder;
+
+    private AddPropertyFragment.OnFragmentInteractionListener mListener;
 
     public AddPropertyFragment() {
         // Required empty public constructor
@@ -198,6 +201,12 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
         if (getArguments() != null)
             mRealEstateId = getArguments().getLong(REAL_ESTATE_ID);
         mPicturesList = new ArrayList<>();
+//        Restores the values of currentPhotoPath and currentVideoPath to prevent the loss of values
+//        during the rotation of the device.
+        if (savedInstanceState != null) {
+            currentPhotoPath = savedInstanceState.getString("photoFile", null);
+            currentVideoPath = savedInstanceState.getString("movieFile", null);
+        }
     }
 
     @Override
@@ -222,6 +231,7 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
         configureSpinner();
         configureRecyclerView();
         configureTextLayoutHintAccordingToPreferences();
+//        If this fragment is used to edit a property, it calls the following method to fetch the property's attributes.
         if (mRealEstateId != 0)
             fetchDetailsAndPicturesAccordingToRealEstateId(mRealEstateId);
     }
@@ -233,11 +243,17 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
         mRealEstateViewModel = ViewModelProviders.of((FragmentActivity) mActivity, viewModelFactory).get(RealEstateViewModel.class);
     }
 
+    /**
+     * Configures observers to fetch the property's attributes and the property's pictures.
+     */
     private void fetchDetailsAndPicturesAccordingToRealEstateId(long realEstateId) {
         mRealEstateViewModel.getRealEstate(realEstateId).observe(getViewLifecycleOwner(), this::updateUiAfterFetchRealEstate);
         mRealEstateViewModel.getPictures(realEstateId).observe(getViewLifecycleOwner(), this::bindPicturesIntoRecyclerViewAfterFetch);
     }
 
+    /**
+     * Sets the LiveData values in mPicturesList and notifies the RecyclerView adapter that the data changed
+     */
     private void bindPicturesIntoRecyclerViewAfterFetch(List<Pictures> pictures) {
         mPicturesList.clear();
         for (Pictures pictures1 : pictures) {
@@ -248,6 +264,9 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
         mPhotoAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Sets the LiveData values in mProperty and binds mProperty's attributes into the dedicated views.
+     */
     private void updateUiAfterFetchRealEstate(Property property) {
         mProperty = property;
         mTypePropertySpinner.setText(mProperty.getTypeProperty(), false);
@@ -260,10 +279,12 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
         mAddAddressTxt.setText(mProperty.getAddress());
         mCityTxt.setText(mProperty.getCity());
         mFloorsTxt.setText(String.valueOf(mProperty.getFloors()));
+//        We use displayed values more user friendly so we use methods to find the existing value in the database
         if (mProperty.getCountryCode() != null)
             mCountryCodeSpinner.setText(getCountryAccordingToCountryCode(mProperty.getCountryCode()), false);
         if (mCountryCodeSpinner.getText() != null && mCountryCodeSpinner.getText().length() != 0)
             mCountryCodeInput = getCountryCodeAccordingToCountry(mCountryCodeSpinner.getText().toString());
+//        We use methods to convert the values in database into values corresponding to the user's preferences
         if (mProperty.getPrice() != 0)
             mPriceTxt.setText(String.valueOf(Utils.convertPriceAccordingToPreferenceToEdit(mActivity, mProperty.getPrice())));
         if (mProperty.getSurface() != 0)
@@ -276,6 +297,7 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
             mBathroomsTxt.setText(String.valueOf(mProperty.getNbBathrooms()));
         if (mProperty.getZipCode() != 0)
             mZipcodeTxt.setText(String.valueOf(mProperty.getZipCode()));
+//        We convert the dates in database into String values
         if (mProperty.getInitialSale() != null)
             mInitialSaleTxt.setText(Utils.convertDateToString(mProperty.getInitialSale(), mActivity));
         if (mProperty.getFinalSale() != null)
@@ -294,6 +316,10 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
         }
     }
 
+    /**
+     * Configures different spinner with the right entries and values. Sets OnItemClickListener for
+     * all spinner with "this" to override only once the corresponding method.
+     */
     private void configureSpinner() {
         ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(mActivity, R.array.typeProperty,
                 R.layout.dropdown_item_spinner);
@@ -316,6 +342,26 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
         mCoOwnershipSpinner.setOnItemClickListener(this);
     }
 
+    /**
+     * Sets the selected item's value in a String.
+     */
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        if (adapterView.getAdapter() == mTypePropertySpinner.getAdapter()) {
+            mTypePropertyInput = adapterView.getItemAtPosition(i).toString();
+        } else if (adapterView.getAdapter() == mCountryCodeSpinner.getAdapter()) {
+            mCountryCodeInput = getCountryCodeAccordingToCountry(adapterView.getItemAtPosition(i).toString());
+        } else if (adapterView.getAdapter() == mAgentSpinner.getAdapter()) {
+            mAgentInput = adapterView.getItemAtPosition(i).toString();
+        } else if (adapterView.getAdapter() == mCoOwnershipSpinner.getAdapter()) {
+            mCoOwnershipInput = adapterView.getItemAtPosition(i).toString();
+        }
+    }
+
+    /**
+     * Configures the RecyclerView's adapter and sets the expected behavior when user click on an
+     * RecyclerView's item
+     */
     private void configureRecyclerView() {
         mRecyclerView.setVisibility(View.GONE);
         mPhotoAdapter = new DetailsPhotoAdapter(mPicturesList, 2);
@@ -327,9 +373,13 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
                     .setMessage(getString(R.string.would_you_delete_picture))
                     .setNegativeButton(getString(R.string.cancel), (dialogInterface, i) -> dialogInterface.cancel())
                     .setPositiveButton(getString(R.string.delete), (dialogInterface, i) -> {
+//                        If this fragment is used to add a property in database, it removes le selected
+//                        picture of the list
                         if (mRealEstateId == 0) {
                             mPicturesList.remove(position);
                         } else {
+//                            If the fragment is used to edit a property, it deletes the picture in
+//                            database too.
                             mRealEstateViewModel.deletePicture(mPicturesList.get(position));
                             mPicturesList.remove(position);
                         }
@@ -343,6 +393,10 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
         mRecyclerView.setAdapter(mPhotoAdapter);
     }
 
+    /**
+     * Defines the mLayoutSurface and mLayoutPrice hints according to the user's preferences for
+     * currency and units of measure.
+     */
     private void configureTextLayoutHintAccordingToPreferences() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mActivity);
         String area = preferences.getString("area", "sq ft");
@@ -359,46 +413,10 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
             mLayoutPrice.setHint(getString(R.string.enter_price_euros));
     }
 
-    private void updateRealEstateWithNewValues() {
-        getTheUserInput();
-        mNbPictures = mPicturesList.size();
-        updateCurrentRealEstate(mTypePropertyInput, price, surface, nbRooms, nbBedrooms, nbBathrooms,
-                description, address, zipCode, mCountryCodeInput, mLatitude, mLongitude, city, amenities, isSold, initialDate,
-                finalDate, mAgentInput, yearConstruction, floors, Boolean.valueOf(mCoOwnershipInput), mNbPictures);
-        savePictureInDb(mRealEstateId);
-        int nbRows = mRealEstateViewModel.updateRealEstate(mProperty);
-        if (nbRows == 1) {
-            Snackbar.make(mActivity.findViewById(R.id.activity_main_container),
-                    getString(R.string.update_success), Snackbar.LENGTH_LONG).show();
-            Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
-        } else
-            Snackbar.make(mActivity.findViewById(R.id.activity_main_container),
-                    getString(R.string.update_failed), Snackbar.LENGTH_LONG).show();
-    }
-
-    private void createNewRealEstateFromInputValues() {
-        getTheUserInput();
-        mNbPictures = mPicturesList.size();
-        long rowId = mRealEstateViewModel.createRealEstate(new Property(mTypePropertyInput, price, surface, nbRooms,
-                nbBedrooms, nbBathrooms, description, address, zipCode, mCountryCodeInput, mLatitude,
-                mLongitude, city, amenities, isSold, initialDate, finalDate, mAgentInput, yearConstruction,
-                floors, Boolean.valueOf(mCoOwnershipInput), mNbPictures));
-        if (rowId != -1L) {
-            savePictureInDb(rowId);
-            Snackbar.make(mActivity.findViewById(R.id.activity_main_container), getString(R.string.save_success),
-                    Snackbar.LENGTH_LONG).show();
-            Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
-        } else
-            Snackbar.make(mActivity.findViewById(R.id.activity_main_container), getString(R.string.save_failed), Snackbar.LENGTH_LONG).show();
-    }
-
-    private void savePictureInDb(long realEstateId) {
-        for (Pictures pictures : mPicturesList) {
-            pictures.setRealEstateId(realEstateId);
-            mRealEstateViewModel.createPictures(pictures);
-        }
-    }
-
+    /**
+     * Recovers the user's input, verifies if the input is not empty and sets the values into the
+     * corresponding fields.
+     */
     private void getTheUserInput() {
         if (!TextUtils.isEmpty(mPriceTxt.getText()))
             price = Utils.convertPriceAccordingToPreferences(mActivity, mPriceTxt.getText().toString());
@@ -425,32 +443,23 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
             initialDate = Utils.convertStringToDate(Objects.requireNonNull(mInitialSaleTxt.getText()).toString());
         if (!TextUtils.isEmpty(mFinalSaleTxt.getText())) {
             finalDate = Utils.convertStringToDate(Objects.requireNonNull(mFinalSaleTxt.getText()).toString());
+//            If a sale date is filled then the property is considered sold
             isSold = true;
         } else
             isSold = false;
         if (!TextUtils.isEmpty(mYearConstructionTxt.getText()))
             yearConstruction = Utils.convertStringToDate(Objects.requireNonNull(mYearConstructionTxt.getText()).toString());
         amenities = Utils.getUserAmenitiesChoice(mChipSchool, mChipShop, mChipTransport, mChipGarden);
-
+//        If the set of fields relative to the address are filled then it calls the method getLocation.
         if (address != null && zipCode != 0 && city != null) {
             if (Utils.isInternetAvailable(mActivity))
                 getLocation(address + " " + zipCode + " " + city);
         }
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        if (adapterView.getAdapter() == mTypePropertySpinner.getAdapter()) {
-            mTypePropertyInput = adapterView.getItemAtPosition(i).toString();
-        } else if (adapterView.getAdapter() == mCountryCodeSpinner.getAdapter()) {
-            mCountryCodeInput = getCountryCodeAccordingToCountry(adapterView.getItemAtPosition(i).toString());
-        } else if (adapterView.getAdapter() == mAgentSpinner.getAdapter()) {
-            mAgentInput = adapterView.getItemAtPosition(i).toString();
-        } else if (adapterView.getAdapter() == mCoOwnershipSpinner.getAdapter()) {
-            mCoOwnershipInput = adapterView.getItemAtPosition(i).toString();
-        }
-    }
-
+    /**
+     * Updates mProperty that is the current Property with the fetched user's input.
+     */
     private void updateCurrentRealEstate(String typePropertyInput, int price, int surface, int nbRooms,
                                          int nbBedrooms, int nbBathrooms, String description, String address,
                                          int zipCode, String countryCodeInput, double latitude, double longitude, String city, String amenities,
@@ -480,6 +489,78 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
         mProperty.setNbPictures(nbPictures);
     }
 
+    /**
+     * Creates the selected pictures in database with the current Property's Id for attribute.
+     */
+    private void savePictureInDb(long realEstateId) {
+        for (Pictures pictures : mPicturesList) {
+            pictures.setRealEstateId(realEstateId);
+            mRealEstateViewModel.createPictures(pictures);
+        }
+    }
+
+    /**
+     * Uses Geocoder object to fetch the latitude and the longitude from an address.
+     */
+    private void getLocation(String address) {
+        Geocoder geocoder = new Geocoder(mActivity);
+        try {
+            List<Address> addresses = geocoder.getFromLocationName(address, 1);
+            for (Address address1 : addresses) {
+                mLatitude = address1.getLatitude();
+                mLongitude = address1.getLongitude();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Updates a property in database with the user's input. Displays a notification message with a
+     * SnackBar to inform user of the update's successful.
+     */
+    private void updateRealEstateWithNewValues() {
+        getTheUserInput();
+        mNbPictures = mPicturesList.size();
+        updateCurrentRealEstate(mTypePropertyInput, price, surface, nbRooms, nbBedrooms, nbBathrooms,
+                description, address, zipCode, mCountryCodeInput, mLatitude, mLongitude, city, amenities, isSold, initialDate,
+                finalDate, mAgentInput, yearConstruction, floors, Boolean.valueOf(mCoOwnershipInput), mNbPictures);
+        savePictureInDb(mRealEstateId);
+        int nbRows = mRealEstateViewModel.updateRealEstate(mProperty);
+        if (nbRows == 1) {
+            Snackbar.make(mActivity.findViewById(R.id.activity_main_container),
+                    getString(R.string.update_success), Snackbar.LENGTH_LONG).show();
+            Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
+        } else
+            Snackbar.make(mActivity.findViewById(R.id.activity_main_container),
+                    getString(R.string.update_failed), Snackbar.LENGTH_LONG).show();
+    }
+
+    /**
+     * Creates a property in database with the user's input. Displays a notification message with a
+     * SnackBar to inform user of the create's successful.
+     */
+    private void createNewRealEstateFromInputValues() {
+        getTheUserInput();
+        mNbPictures = mPicturesList.size();
+        long rowId = mRealEstateViewModel.createRealEstate(new Property(mTypePropertyInput, price, surface, nbRooms,
+                nbBedrooms, nbBathrooms, description, address, zipCode, mCountryCodeInput, mLatitude,
+                mLongitude, city, amenities, isSold, initialDate, finalDate, mAgentInput, yearConstruction,
+                floors, Boolean.valueOf(mCoOwnershipInput), mNbPictures));
+//        Fetch the row's Id to save chosen pictures with the Property's Id in attributes.
+        if (rowId != -1L) {
+            savePictureInDb(rowId);
+            Snackbar.make(mActivity.findViewById(R.id.activity_main_container), getString(R.string.save_success),
+                    Snackbar.LENGTH_LONG).show();
+            Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
+        } else
+            Snackbar.make(mActivity.findViewById(R.id.activity_main_container), getString(R.string.save_failed), Snackbar.LENGTH_LONG).show();
+    }
+
+
+    /**
+     * Returns the right country code according the user's friendly value set in a spinner.
+     */
     private String getCountryCodeAccordingToCountry(String country) {
         switch (country) {
             case "FRANCE":
@@ -499,6 +580,9 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
         }
     }
 
+    /**
+     * Returns the user's frinedly value according to a country code.
+     */
     private String getCountryAccordingToCountryCode(String countryCode) {
         switch (countryCode) {
             case "FR":
@@ -518,19 +602,9 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
         }
     }
 
-    private void getLocation(String address) {
-        Geocoder geocoder = new Geocoder(mActivity);
-        try {
-            List<Address> addresses = geocoder.getFromLocationName(address, 1);
-            for (Address address1 : addresses) {
-                mLatitude = address1.getLatitude();
-                mLongitude = address1.getLongitude();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
+    /**
+     * Displays a DatePicker to select a date and sets the selected value in the corresponding view.
+     */
     private void displayDatePickerAndUpdateUi(View view) {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -549,7 +623,7 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
                     break;
             }
         }, year, month, day);
-        datePickerDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Delete Date", (dialogInterface, i) -> {
+        datePickerDialog.setButton(DialogInterface.BUTTON_NEUTRAL, getString(R.string.delete_date), (dialogInterface, i) -> {
             switch (view.getId()) {
                 case R.id.fragment_add_initial_sale_txt:
                     mInitialSaleTxt.setText(null);
@@ -565,33 +639,10 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
         datePickerDialog.show();
     }
 
-    @OnClick({R.id.fragment_add_year_construction_txt, R.id.fragment_add_initial_sale_txt,
-            R.id.fragment_add_final_sale_txt, R.id.fragment_add_validation_btn, R.id.fragment_add_pictures_txt})
-    void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.fragment_add_year_construction_txt:
-                displayDatePickerAndUpdateUi(view);
-                break;
-            case R.id.fragment_add_initial_sale_txt:
-                displayDatePickerAndUpdateUi(view);
-                break;
-            case R.id.fragment_add_final_sale_txt:
-                displayDatePickerAndUpdateUi(view);
-                break;
-            case R.id.fragment_add_validation_btn:
-                if (mRealEstateId == 0) {
-                    if (verifyAddressInputForGeoCoding())
-                        createNewRealEstateFromInputValues();
-                } else {
-                    if (verifyAddressInputForGeoCoding())
-                        updateRealEstateWithNewValues();
-                }
-                break;
-            case R.id.fragment_add_pictures_txt:
-                getPermissionsExternalStorageAndCamera();
-        }
-    }
-
+    /**
+     * Checks if all the text fields relating to the address are filled, and if necessary show an
+     * error message on the missing fields
+     */
     private boolean verifyAddressInputForGeoCoding() {
         if (!TextUtils.isEmpty(mAddAddressTxt.getText()) && (TextUtils.isEmpty(mZipcodeTxt.getText()) || TextUtils.isEmpty(mCityTxt.getText()))) {
             if (TextUtils.isEmpty(mZipcodeTxt.getText()))
@@ -615,29 +666,54 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
             return true;
     }
 
-
+    /**
+     * Checks if read, write on external storage and camera permissions are granted with EasyPermission
+     * and request permissions if it's not the case.
+     * If permissions are granted, calls the right method.
+     */
     @AfterPermissionGranted(READ_AND_WRITE_EXTERNAL_STORAGE_AND_CAMERA)
     private void getPermissionsExternalStorageAndCamera() {
-        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
         if (!EasyPermissions.hasPermissions(mActivity, perms)) {
             EasyPermissions.requestPermissions(this, getString(R.string.storage_rationale),
                     READ_AND_WRITE_EXTERNAL_STORAGE_AND_CAMERA, perms);
-        }else
+        } else
             openDialogToFetchPictures();
     }
 
+    /**
+     * Displays a MaterialAlertDialog to propose to the user to add to the choice either a photo or
+     * a video. Depending on the user's choice, call the corresponding method.
+     */
     private void openDialogToFetchPictures() {
         new MaterialAlertDialogBuilder(mActivity)
-                .setTitle(getString(R.string.which_mean_pictures))
-                .setMessage(getString(R.string.gallery_or_camera))
-                .setNegativeButton(getString(R.string.camera), (dialogInterface, i) -> openCamera())
+                .setTitle(getString(R.string.what_you_add))
+                .setMessage(getString(R.string.pictures_or_movie))
+                .setNegativeButton(getString(R.string.add_pictures), (dialogInterface, i) -> new MaterialAlertDialogBuilder(mActivity)
+                        .setTitle(getString(R.string.which_mean_pictures))
+                        .setMessage(getString(R.string.gallery_or_camera))
+                        .setNegativeButton(getString(R.string.camera), (dialogInterface1, i1) -> openCameraForPhoto())
+                        .setNeutralButton(getString(R.string.cancel), (dialogInterface12, i12) -> dialogInterface12.cancel())
+                        .setPositiveButton(getString(R.string.memory), (dialogInterface13, i13) -> pickPhotoFromGallery())
+                        .setCancelable(false)
+                        .show())
                 .setNeutralButton(getString(R.string.cancel), (dialogInterface, i) -> dialogInterface.cancel())
-                .setPositiveButton(getString(R.string.memory), (dialogInterface, i) -> pickImageFromGallery())
+                .setPositiveButton(getString(R.string.add_movies), (dialogInterface, i) -> new MaterialAlertDialogBuilder(mActivity)
+                        .setTitle(getString(R.string.which_mean_movies))
+                        .setMessage(getString(R.string.gallery_or_camera_movie))
+                        .setNegativeButton(getString(R.string.camera), (dialogInterface14, i14) -> openCameraForVideo())
+                        .setNeutralButton(getString(R.string.cancel), (dialogInterface15, i15) -> dialogInterface15.cancel())
+                        .setPositiveButton(getString(R.string.memory), (dialogInterface16, i16) -> pickMovieFromGallery())
+                        .setCancelable(false)
+                        .show())
                 .setCancelable(false)
                 .show();
     }
 
-    private File createImageFile() throws IOException {
+    /**
+     * Creates the file to save the taken photo by user.
+     */
+    private File createPhotoFile() throws IOException {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timestamp + "_";
         File storageDir = mActivity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
@@ -647,14 +723,48 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
     }
 
     /**
-     * Opens the device's camera to take a picture and fetch the file's path
+     * Creates the file to save the taken movie by user.+
      */
-    private void openCamera() {
+    private File createMovieFile() throws IOException {
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String videoFileName = "MP4_" + timestamp + "_";
+        File storageDir = mActivity.getExternalFilesDir(Environment.DIRECTORY_MOVIES);
+        File video = File.createTempFile(videoFileName, ".mp4", storageDir);
+        currentVideoPath = video.getAbsolutePath();
+        return video;
+    }
+
+    /**
+     * Creates an intent to allow the user to take a movie with his device's camera and with the
+     * right camera application. Passes the created file by "createMovieFile" in intent's extra.
+     */
+    private void openCameraForVideo() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        if (cameraIntent.resolveActivity(mActivity.getPackageManager()) != null) {
+            File videoFile = null;
+            try {
+                videoFile = createMovieFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (videoFile != null) {
+                Uri videoUri = FileProvider.getUriForFile(mActivity, BuildConfig.APPLICATION_ID + ".fileprovider", videoFile);
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri);
+                startActivityForResult(cameraIntent, MOVIE_CAPTURE_CODE);
+            }
+        }
+    }
+
+    /**
+     * Creates an intent to allow the user to take a photo with his device's camera and with the
+     * right camera application. Passes the created file by "createPhotoFile" in intent's extra.
+     */
+    private void openCameraForPhoto() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (cameraIntent.resolveActivity(mActivity.getPackageManager()) != null) {
             File photoFile = null;
             try {
-                photoFile = createImageFile();
+                photoFile = createPhotoFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -667,14 +777,26 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
     }
 
     /**
-     * Opens an App to pick a picture and fetch the file's path
+     * Creates an intent to allow the user to pick a photo in memory with the right application.
      */
-    private void pickImageFromGallery() {
+    private void pickPhotoFromGallery() {
         Intent intentGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intentGallery.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivityForResult(intentGallery, IMAGE_PICK_CODE);
     }
 
+    /**
+     * Creates an intent to allow the user to pick a video in memory with the right application.
+     */
+    private void pickMovieFromGallery() {
+        Intent intentGallery = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+        intentGallery.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivityForResult(intentGallery, MOVIE_PICK_CODE);
+    }
+
+    /**
+     * Displays a MaterialAlertDialog to ask the user to enter a caption for the chosen photo.
+     */
     private void savePictureCaption(String uri) {
         View customDialog = mActivity.getLayoutInflater().inflate(R.layout.dialog_pictures_validation, null);
         ImageView imageView = customDialog.findViewById(R.id.dialog_picture_preview_img);
@@ -705,12 +827,51 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
         });
     }
 
+    /**
+     * Displays a MaterialAlertDialog to ask the user to enter a caption for the chosen movie.
+     */
+    private void saveMovieCaption(String uri) {
+        View customDialog = mActivity.getLayoutInflater().inflate(R.layout.dialog_movies_validation, null);
+        VideoView videoView = customDialog.findViewById(R.id.dialog_picture_preview_movie);
+        videoView.setVideoURI(Uri.parse(uri));
+        videoView.setOnPreparedListener(mediaPlayer -> mediaPlayer.setLooping(true));
+        videoView.start();
+        TextInputEditText editText = customDialog.findViewById(R.id.dialog_layout_title_txt);
+        TextInputLayout textInputLayout = customDialog.findViewById(R.id.dialog_layout_title);
+        MaterialButton negativeBtn = customDialog.findViewById(R.id.dialog_layout_negative_btn);
+        MaterialButton positiveBtn = customDialog.findViewById(R.id.dialog_layout_positive_btn);
+
+        AlertDialog builder = new MaterialAlertDialogBuilder(mActivity)
+                .setView(customDialog)
+                .setTitle(getString(R.string.save_movie_dialog))
+                .setCancelable(false)
+                .show();
+
+        negativeBtn.setOnClickListener(view -> builder.cancel());
+        positiveBtn.setOnClickListener(view -> {
+            if (editText.getText() != null && editText.getText().length() == 0) {
+                textInputLayout.setError(getString(R.string.please_caption));
+            } else {
+                textInputLayout.setError(null);
+                mPicturesList.add(new Pictures(Uri.parse(uri), editText.getText().toString()));
+                builder.cancel();
+                mRecyclerView.setVisibility(View.VISIBLE);
+                mPhotoAdapter.notifyDataSetChanged();
+            }
+
+        });
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode,permissions,grantResults,this);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
+    /**
+     * Calls the right method according to the requestCode defined in startActivityForResult() if
+     * the resultCode equals RESULT_OK
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -720,12 +881,23 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
             Uri uri = data.getData();
             String path = getRealPathFromURI(uri);
             savePictureCaption(path);
+        } else if (resultCode == RESULT_OK && requestCode == MOVIE_CAPTURE_CODE) {
+            saveMovieCaption(currentVideoPath);
+        } else if (resultCode == RESULT_OK && requestCode == MOVIE_PICK_CODE && data != null) {
+            Uri uri = data.getData();
+            String path = getRealPathMovieFromURI(uri);
+            saveMovieCaption(path);
         }
     }
 
+    /**
+     * Gets the real path from a picture pick in memory. The path is needed to save the chosen path
+     * in database.
+     */
     private String getRealPathFromURI(Uri contentUri) {
         String[] proj = {MediaStore.Images.Media.DATA};
-        CursorLoader loader = new CursorLoader(mActivity, contentUri, proj, null, null, null);
+        CursorLoader loader = new CursorLoader(mActivity, contentUri, proj, null, null,
+                null);
         Cursor cursor = loader.loadInBackground();
         int column_index = Objects.requireNonNull(cursor).getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
@@ -734,22 +906,88 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
         return result;
     }
 
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
+    /**
+     * Gets the real path from a movie pick in memory. The path is needed to save the chosen path
+     * in database.
+     */
+    private String getRealPathMovieFromURI(Uri contentUri) {
+        String[] proj = {MediaStore.Video.Media.DATA};
+        Cursor cursor = mActivity.getContentResolver().query(contentUri, proj, null, null,
+                null);
+        if (cursor != null) {
+            int column_index = Objects.requireNonNull(cursor).getColumnIndexOrThrow(MediaStore.Video.Media.DATA);
+            cursor.moveToFirst();
+            String result = cursor.getString(column_index);
+            cursor.close();
+            return result;
+        } else
+            return null;
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
+    @OnClick({R.id.fragment_add_year_construction_txt, R.id.fragment_add_initial_sale_txt,
+            R.id.fragment_add_final_sale_txt, R.id.fragment_add_validation_btn, R.id.fragment_add_pictures_txt})
+    void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.fragment_add_validation_btn:
+                if (mRealEstateId == 0) {
+                    if (verifyAddressInputForGeoCoding())
+                        createNewRealEstateFromInputValues();
+                } else {
+                    if (verifyAddressInputForGeoCoding())
+                        updateRealEstateWithNewValues();
+                }
+                break;
+            case R.id.fragment_add_pictures_txt:
+                getPermissionsExternalStorageAndCamera();
+                break;
+            default:
+                displayDatePickerAndUpdateUi(view);
+                break;
+        }
     }
 
     @Override
     public void onDestroyView() {
+//        Sets adapters and listeners to null to avoid memory leaks.
         mRecyclerView.setAdapter(null);
         mPhotoAdapter.setOnClickListener(null);
         super.onDestroyView();
         mUnbinder.unbind();
     }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString("photoFile", currentPhotoPath);
+        outState.putString("movieFile", currentVideoPath);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof AddPropertyFragment.OnFragmentInteractionListener) {
+            mListener = (AddPropertyFragment.OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        mListener = null;
+        super.onDetach();
+    }
+
+    @Override
+    public void onResume() {
+        if (getResources().getBoolean(R.bool.isTabletLand) && mListener != null)
+            mListener.checkVisibility(ADD_REAL_ESTATE_FRAGMENT);
+        super.onResume();
+    }
+
+    public interface OnFragmentInteractionListener {
+        void checkVisibility(String destination);
+    }
+
 }

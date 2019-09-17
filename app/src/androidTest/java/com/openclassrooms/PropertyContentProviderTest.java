@@ -31,6 +31,9 @@ public class PropertyContentProviderTest {
     private ContentResolver mContentResolver;
     private RealEstateManagerDatabase mRealEstateManagerDatabase;
 
+//    To execute this tests, the application needs a first install to initialize the database and the
+//    Property with Id 1 and the corresponding Pictures don't be modified.
+
     @Before
     public void setUp() {
         mRealEstateManagerDatabase = Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getInstrumentation().getTargetContext(), RealEstateManagerDatabase.class)
@@ -44,8 +47,11 @@ public class PropertyContentProviderTest {
         mRealEstateManagerDatabase.close();
     }
 
+    /**
+     * Checks that the ContentProvider's cursor contains no values if the Property's id is wrong.
+     */
     @Test
-    public void getRealEstateWhenWrongIdInserted() {
+    public void getPropertiesWhenWrongIdInserted() {
         final Cursor cursor = mContentResolver.query(ContentUris.withAppendedId(RealEstateManagerContentProvider.URI_REALESTATE, 250000), null, null, null, null);
 
         assertThat(cursor, notNullValue());
@@ -53,15 +59,21 @@ public class PropertyContentProviderTest {
         cursor.close();
     }
 
+    /**
+     * Checks that the ContentProvider's cursor contains all the properties saved in database.
+     */
     @Test
-    public void getAllRealEstatesWhenIdEquals0(){
+    public void getAllPropertiesWhenIdEquals0(){
         final Cursor cursor = mContentResolver.query(ContentUris.withAppendedId(RealEstateManagerContentProvider.URI_REALESTATE,0),null,null,null,null);
 
         assertThat(cursor, notNullValue());
-        assertThat(cursor.getCount(), is(greaterThan(2)));
+        assertThat(cursor.getCount(), is(greaterThan(5)));
 
     }
 
+    /**
+     * Checks that the ContentProvider's cursor contains the right property according to the property's id.
+     */
     @Test
     public void getRealEstateWithId() {
         final Cursor cursor = mContentResolver.query(ContentUris.withAppendedId(RealEstateManagerContentProvider.URI_REALESTATE, 1), null, null, null, null);
@@ -94,6 +106,10 @@ public class PropertyContentProviderTest {
         cursor.close();
     }
 
+    /**
+     * Checks that the ContentProvider's cursor contains all the pictures that have the property's id
+     * in their attributes.
+     */
     @Test
     public void getPicturesWithId() {
         final Cursor cursor = mContentResolver.query(ContentUris.withAppendedId(RealEstateManagerContentProvider.URI_PICTURE, 1), null, null, null, null);

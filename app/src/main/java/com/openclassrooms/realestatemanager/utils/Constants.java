@@ -6,6 +6,8 @@ public class Constants {
     public static final int ACCESS_LOCATION = 2;
     public static final int IMAGE_CAPTURE_CODE = 3;
     public static final int IMAGE_PICK_CODE = 4;
+    public static final int MOVIE_CAPTURE_CODE = 5;
+    public static final int MOVIE_PICK_CODE = 6;
 
     public static final String ESTATE_LIST_FRAGMENT = "estateListFragment";
     public static final String DETAILS_FRAGMENT = "DetailsFragment";

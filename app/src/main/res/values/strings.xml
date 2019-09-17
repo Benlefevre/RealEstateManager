@@ -49,9 +49,11 @@
     <string name="add_the_real_estate">Add the property</string>
     <string name="save_the_real_estate">Save the property</string>
     <string name="add_pictures">Add pictures</string>
+    <string name="add_movies">Add movies</string>
     <string name="unknown_date">Unknown date</string>
     <string name="enter_the_picture_s_caption">Enter the picture\'s caption</string>
     <string name="save_picture_dialog">Would you save this picture?</string>
+    <string name="save_movie_dialog">Would you save this movie?</string>
     <string name="cancel">Cancel</string>
     <string name="camera">From camera</string>
     <string name="memory">From memory</string>
@@ -129,8 +131,17 @@
     <string name="please_city">Please enter the city</string>
     <string name="please_address">Please enter the address</string>
     <string name="which_mean_pictures">By which means would you like to add a picture?</string>
-    <string name="gallery_or_camera">You can either take a picture from the camera of this camera or choose a picture stored on the camera\'s memory</string>
+    <string name="which_mean_movies">By which means would you like to add a movie?</string>
+    <string name="what_you_add">What do you want to add?</string>
+    <string name="gallery_or_camera">You can either take a picture from the camera of this device or choose a picture stored on the camera\'s memory</string>
+    <string name="gallery_or_camera_movie">You can either take a movie from the camera of this device or choose a movie stored on the camera\'s memory</string>
+    <string name="pictures_or_movie">You can either add a pictures or add a movie</string>
     <string name="please_caption">Please enter the picture\'s caption</string>
+    <string name="enter_the_movie_caption">Enter the movie caption</string>
+    <string name="save_the_movie">Save the movie</string>
+    <string name="details_pictures">Details pictures</string>
+    <string name="delete_date">Delete Date</string>
+    <string name="sorry_no_result">Sorry, there is no results</string>
 
 
     <string-array name="typeProperty">

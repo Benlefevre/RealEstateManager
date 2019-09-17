@@ -32,11 +32,10 @@ import butterknife.Unbinder;
 
 public class FullScreenFragment extends Fragment {
 
-    private Unbinder mUnbinder;
-
     @BindView(R.id.fragment_fullscreen_viewpager)
     ViewPager mViewPager;
 
+    private Unbinder mUnbinder;
     private List<Uri> mUriList;
     private Activity mActivity;
     private RealEstateViewModel mRealEstateViewModel;
@@ -72,21 +71,29 @@ public class FullScreenFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mActivity = getActivity();
         Toolbar toolbar = Objects.requireNonNull(mActivity).findViewById(R.id.activity_main_toolbar);
-        toolbar.setTitle("Details pictures");
+        toolbar.setTitle(getString(R.string.details_pictures));
         configureViewModel();
         getUriList();
     }
 
+//    Configuring ViewModel
     private void configureViewModel() {
         ViewModelFactory viewModelFactory = Injection.providerViewModelFactory(mActivity);
         mRealEstateViewModel = ViewModelProviders.of((FragmentActivity) mActivity, viewModelFactory).get(RealEstateViewModel.class);
     }
 
+    /**
+     * Sets an observer to fetch the MutableLiveData's content.
+     */
     private void getUriList(){
         mUriList = new ArrayList<>();
         mRealEstateViewModel.getUriList().observe(getViewLifecycleOwner(),this::configureViewPager);
     }
 
+    /**
+     * Gets the MutableLiveData's content and add it in mUriList that is used to set the ViewPager's
+     * adapter.
+     */
     private void configureViewPager(List<Uri> uriList) {
         mUriList = new ArrayList<>();
         mUriList.addAll(uriList);

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <VideoView
+        android:id="@+id/dialog_picture_preview_movie"
+        android:layout_width="@dimen/img_view_details_width"
+        android:layout_height="@dimen/img_view_details_height"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/a_preview_of_the_chosen_picture"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/dialog_layout_title"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:errorTextColor="@android:color/holo_red_dark"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="@string/enter_the_movie_caption"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_picture_preview_movie">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/dialog_layout_title_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/dialog_layout_negative_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="@string/cancel"
+        app:layout_constraintBottom_toBottomOf="@+id/dialog_layout_positive_btn"
+        app:layout_constraintEnd_toStartOf="@+id/dialog_layout_positive_btn"
+        app:layout_constraintTop_toTopOf="@+id/dialog_layout_positive_btn" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/dialog_layout_positive_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/save_the_movie"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_layout_title" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

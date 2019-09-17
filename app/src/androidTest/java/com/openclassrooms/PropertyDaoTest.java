@@ -49,7 +49,7 @@ public class PropertyDaoTest {
 
     @Test
     public void insertAndGetRealEstate() throws InterruptedException {
-        mRealEstateManagerDatabase.mPropertyDao().insertRealEstate(sPropertyDemo);
+        mRealEstateManagerDatabase.mPropertyDao().insertProperty(sPropertyDemo);
 
         List<Property> properties = LiveDataTestUtil.getValue(mRealEstateManagerDatabase.mPropertyDao().getAllRealEstate());
         Property property = properties.get(0);

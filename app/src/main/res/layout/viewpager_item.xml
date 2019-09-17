@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/viewpager_root"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <VideoView
+        android:id="@+id/viewpager_video_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true" />
+
+    <ImageView
+        android:id="@+id/viewpager_img_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:background="@color/colorPrimaryVariant"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true"
+        android:contentDescription="@string/a_preview_of_the_chosen_picture"/>
+
+</RelativeLayout>

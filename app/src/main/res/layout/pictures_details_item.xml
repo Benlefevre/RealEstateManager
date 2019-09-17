@@ -17,6 +17,17 @@
         app:layout_constraintTop_toTopOf="parent"
         android:contentDescription="@string/the_photo_title"/>
 
+
+    <VideoView
+        android:id="@+id/fragment_details_video_view"
+        android:layout_width="@dimen/img_view_details_width"
+        android:layout_height="@dimen/img_view_details_height"
+        android:layout_marginStart="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/fragment_details_photo_title"
         android:layout_width="0dp"

@@ -28,21 +28,21 @@ public class PropertyDataRepository {
 
 //    Get
     public LiveData<List<Property>> getRealEstateByZipcodeAndCountry(int zipcode, String countryCode){
-        return mPropertyDao.getRealEstateByZipcodeAndCountry(zipcode, countryCode);
+        return mPropertyDao.getPropertiesByZipcodeAndCountry(zipcode, countryCode);
     }
 
 //    Get
     public LiveData<List<Property>> getRealEstateAccordingUserSearch(SupportSQLiteQuery query){
-        return mPropertyDao.getRealEstateAccordingUserSearch(query);
+        return mPropertyDao.getPropertiesAccordingUserSearch(query);
     }
 
 //    Create
     public long createRealEstate(Property property){
-        return mPropertyDao.insertRealEstate(property);
+        return mPropertyDao.insertProperty(property);
     }
 
 //    Update
     public int updateRealEstate(Property property){
-        return mPropertyDao.updateRealEstate(property);
+        return mPropertyDao.updateProperty(property);
     }
 }

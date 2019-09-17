@@ -17,6 +17,8 @@ import com.openclassrooms.realestatemanager.data.entities.Property;
 
 public class RealEstateManagerContentProvider extends ContentProvider {
 
+//    This Content Provider is only sets to read into the database. Methods that allow writing are empties.
+
     public static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".dbprovider";
     public static final String TABLE_REALESTATE = Property.class.getSimpleName();
     public static final String TABLE_REALESTATE_ITEM = Property.class.getSimpleName() + "/#";

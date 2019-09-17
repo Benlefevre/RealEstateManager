@@ -210,6 +210,9 @@ public class Utils {
             return price;
     }
 
+    /**
+     * Verifies which chip of the ChipGroup is checked and defines the amenitiesInput's value.
+     */
     public static String getUserAmenitiesChoice(Chip chipSchool, Chip chipShop, Chip chipTransport,
                                                 Chip chipGarden) {
         String amenitiesInput = "(";

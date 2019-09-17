@@ -31,9 +31,10 @@ public class DetailsPhotoAdapter extends RecyclerView.Adapter<PicturesDetailsVie
     public PicturesDetailsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.pictures_details_item, parent, false);
-        PicturesDetailsViewHolder picturesDetailsViewHolder = new PicturesDetailsViewHolder(view,mOrigin);
+        PicturesDetailsViewHolder picturesDetailsViewHolder = new PicturesDetailsViewHolder(view, mOrigin);
+//        According to the origin, the OnClickListener is set on the entire item or only on the delete button.
         if (mOrigin == 1)
-        picturesDetailsViewHolder.itemView.setOnClickListener(view1 -> mClickListener.onClick(view1));
+            picturesDetailsViewHolder.itemView.setOnClickListener(view1 -> mClickListener.onClick(view1));
         else
             picturesDetailsViewHolder.itemView.findViewById(R.id.fragment_details_delete_btn).setOnClickListener(view1 -> mClickListener.onClick(view1));
         return picturesDetailsViewHolder;
@@ -41,7 +42,7 @@ public class DetailsPhotoAdapter extends RecyclerView.Adapter<PicturesDetailsVie
 
     @Override
     public void onBindViewHolder(@NonNull PicturesDetailsViewHolder holder, int position) {
-        holder.bindPhotoInImgView(mPictures.get(position));
+        holder.bindPicturesInCorrespondingView(mPictures.get(position));
     }
 
     @Override
@@ -49,7 +50,7 @@ public class DetailsPhotoAdapter extends RecyclerView.Adapter<PicturesDetailsVie
         return mPictures.size();
     }
 
-    public void setOnClickListener(View.OnClickListener clickListener){
+    public void setOnClickListener(View.OnClickListener clickListener) {
         mClickListener = clickListener;
     }
 }
