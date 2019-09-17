@@ -48,8 +48,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0-alpha10'
 
 //    LeakCanary
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-alpha-2'
-    androidTestImplementation 'com.squareup.leakcanary:leakcanary-android-instrumentation:2.0-alpha-2'
+//    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-alpha-2'
+//    androidTestImplementation 'com.squareup.leakcanary:leakcanary-android-instrumentation:2.0-alpha-2'
 
 //    Room
     implementation 'android.arch.persistence.room:runtime:1.1.1'
