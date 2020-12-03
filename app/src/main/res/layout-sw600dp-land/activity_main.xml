@@ -12,29 +12,35 @@
         android:layout_height="match_parent"
         android:gravity="center">
 
-        <FrameLayout
-            android:id="@+id/activity_main_container"
+        <fragment
+            android:id="@+id/nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            app:defaultNavHost="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline5"
+            app:layout_constraintEnd_toStartOf="@+id/divider5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/activity_main_toolbar" />
+            app:layout_constraintTop_toBottomOf="@id/activity_main_toolbar"
+            app:navGraph="@navigation/main_navigation" />
 
-        <FrameLayout
-            android:id="@+id/activity_main_container2"
+        <fragment
+            android:id="@+id/nav_host_fragment2"
+            android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            app:defaultNavHost="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline5"
-            app:layout_constraintTop_toBottomOf="@+id/activity_main_toolbar" >
-
-        </FrameLayout>
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/divider5"
+            app:layout_constraintTop_toBottomOf="@id/activity_main_toolbar"
+            app:layout_constraintVertical_bias="1.0"
+            app:navGraph="@navigation/main_navigation_land" />
 
         <View
             android:id="@+id/divider5"
-            android:layout_width="1dp"
+            android:layout_width="2dp"
             android:layout_height="match_parent"
             android:background="?android:attr/listDivider"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -71,6 +77,7 @@
         app:itemIconSize="@dimen/drawer_icon_size"
         app:itemIconTint="@android:color/white"
         app:menu="@menu/drawer_menu"
+        app:headerLayout="@layout/activity_main_nav_header"
         app:itemTextColor="@android:color/white">
 
     </com.google.android.material.navigation.NavigationView>

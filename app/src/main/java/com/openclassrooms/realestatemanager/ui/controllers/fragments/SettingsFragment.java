@@ -12,58 +12,50 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.openclassrooms.realestatemanager.R;
+import com.openclassrooms.realestatemanager.ui.controllers.TakeOrNotFullScreen;
 
 import java.util.Objects;
-
-import static com.openclassrooms.realestatemanager.utils.Constants.SETTING_FRAGMENT;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class SettingsFragment extends PreferenceFragmentCompat {
 
-    private Activity mActivity;
-    private OnFragmentInteractionListener mListener;
+    private TakeOrNotFullScreen mCallback;
 
     public SettingsFragment() {
         // Required empty public constructor
     }
 
-    public interface OnFragmentInteractionListener {
-        void checkVisibility(String destination);
-    }
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mActivity = getActivity();
-        Objects.requireNonNull(mActivity).setTheme(R.style.customPreferencesStyle);
-        Toolbar toolbar = Objects.requireNonNull(mActivity).findViewById(R.id.activity_main_toolbar);
+        Activity activity = getActivity();
+        Objects.requireNonNull(activity).setTheme(R.style.customPreferencesStyle);
+        Toolbar toolbar = Objects.requireNonNull(activity).findViewById(R.id.activity_main_toolbar);
         toolbar.setTitle("Settings");
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof SettingsFragment.OnFragmentInteractionListener) {
-            mListener = (SettingsFragment.OnFragmentInteractionListener) context;
+        if (context instanceof TakeOrNotFullScreen) {
+            mCallback = (TakeOrNotFullScreen) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement TakeFullScreen");
         }
     }
-
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        mCallback = null;
     }
 
     @Override
     public void onResume() {
-        if (getResources().getBoolean(R.bool.isTabletLand))
-            mListener.checkVisibility(SETTING_FRAGMENT);
         super.onResume();
+        mCallback.takeFullScreenFragment();
     }
 
     @Override
@@ -71,8 +63,4 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         setPreferencesFromResource(R.xml.settings, rootKey);
 
     }
-
-
-
-
 }

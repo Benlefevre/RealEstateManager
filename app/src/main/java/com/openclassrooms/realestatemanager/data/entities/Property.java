@@ -2,6 +2,7 @@ package com.openclassrooms.realestatemanager.data.entities;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.util.Date;
@@ -38,6 +39,7 @@ public class Property {
     public Property() {
     }
 
+    @Ignore
     public Property(String typeProperty, int price, int surface, int nbRooms,
                     int nbBedrooms, int nbBathrooms, String description, String address,
                     int zipCode, String countryCode, double latitude, double longitude, String city, String amenities, boolean isSold,

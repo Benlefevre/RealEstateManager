@@ -5,19 +5,19 @@
     <dimen name="subtitle2">14sp</dimen>
     <dimen name="body2">14sp</dimen>
 
-    <dimen name="recycler_details_height">150dp</dimen>
+    <dimen name="recycler_details_height">@dimen/img_view_details_height</dimen>
     <dimen name="mapview_details_height">180dp</dimen>
 
-    <dimen name="img_view_details_width">150dp</dimen>
+    <dimen name="img_view_details_width">175dp</dimen>
     <dimen name="img_view_details_height">@dimen/img_view_details_width</dimen>
     <dimen name="title_details_height">35dp</dimen>
-    <dimen name="delete_details_height">15dp</dimen>
+    <dimen name="delete_details_height">25dp</dimen>
     <dimen name="delete_details_width">@dimen/delete_details_height</dimen>
 
     <dimen name="drawer_icon_size">24dp</dimen>
 
-    <dimen name="full_screen_img_top">0.2</dimen>
-    <dimen name="full_screen_img_bottom">0.8</dimen>
+    <dimen name="full_screen_img_top">0.1</dimen>
+    <dimen name="full_screen_img_bottom">0.9</dimen>
 
     <dimen name="nav_header_height">176dp</dimen>
 </resources>

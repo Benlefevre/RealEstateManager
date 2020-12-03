@@ -36,7 +36,6 @@ public abstract class RealEstateManagerDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(), RealEstateManagerDatabase.class,
                             "RealEstateManager.db")
                             .addCallback(prepopulateDataBaseWithRealEstate(context.getApplicationContext()))
-                            .addCallback(prepopulateDatabaseWithPictures(context.getApplicationContext()))
                             .build();
                 }
             }
@@ -54,22 +53,9 @@ public abstract class RealEstateManagerDatabase extends RoomDatabase {
                 super.onCreate(db);
                 Executors.newSingleThreadScheduledExecutor().execute(() ->
                         getInstance(context).mPropertyDao().insertAll(Property.populateData()));
-            }
-        };
-    }
-
-    /**
-     * Populate database through the insertAll method of DAO. This method is asynchronous.
-     */
-    private static Callback prepopulateDatabaseWithPictures(Context context){
-        return new Callback() {
-            @Override
-            public void onCreate(@NonNull SupportSQLiteDatabase db) {
-                super.onCreate(db);
                 Executors.newSingleThreadScheduledExecutor().execute(() ->
                         getInstance(context).mPicturesDao().insertAll(Pictures.populateData()));
             }
         };
     }
-
 }

@@ -1,6 +1,5 @@
 *.iml
 .gradle
-/gradle.properties
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries
@@ -8,3 +7,4 @@
 /build
 /captures
 .externalNativeBuild
+/app-debug.apk

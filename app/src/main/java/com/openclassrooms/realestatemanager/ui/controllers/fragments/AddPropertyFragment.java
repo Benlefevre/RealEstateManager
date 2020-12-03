@@ -11,34 +11,37 @@ import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.loader.content.CursorLoader;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.ui.StyledPlayerView;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.chip.Chip;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -47,9 +50,11 @@ import com.openclassrooms.realestatemanager.BuildConfig;
 import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.data.entities.Pictures;
 import com.openclassrooms.realestatemanager.data.entities.Property;
+import com.openclassrooms.realestatemanager.databinding.FragmentAddRealEstateBinding;
 import com.openclassrooms.realestatemanager.injections.Injection;
 import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
 import com.openclassrooms.realestatemanager.ui.adapters.DetailsPhotoAdapter;
+import com.openclassrooms.realestatemanager.ui.controllers.TakeOrNotFullScreen;
 import com.openclassrooms.realestatemanager.ui.viewholder.PicturesDetailsViewHolder;
 import com.openclassrooms.realestatemanager.ui.viewmodel.RealEstateViewModel;
 import com.openclassrooms.realestatemanager.utils.Utils;
@@ -64,15 +69,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.Unbinder;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static android.app.Activity.RESULT_OK;
-import static com.openclassrooms.realestatemanager.utils.Constants.ADD_REAL_ESTATE_FRAGMENT;
 import static com.openclassrooms.realestatemanager.utils.Constants.IMAGE_CAPTURE_CODE;
 import static com.openclassrooms.realestatemanager.utils.Constants.IMAGE_PICK_CODE;
 import static com.openclassrooms.realestatemanager.utils.Constants.MOVIE_CAPTURE_CODE;
@@ -84,64 +84,7 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
 
     private static final String REAL_ESTATE_ID = "realEstateId";
 
-    @BindView(R.id.fragment_add_type_property_spinner)
-    AppCompatAutoCompleteTextView mTypePropertySpinner;
-    @BindView(R.id.fragment_add_price_txt)
-    TextInputEditText mPriceTxt;
-    @BindView(R.id.fragment_add_surface_txt)
-    TextInputEditText mSurfaceTxt;
-    @BindView(R.id.fragment_add_rooms_txt)
-    TextInputEditText mRoomsTxt;
-    @BindView(R.id.fragment_add_bedrooms_txt)
-    TextInputEditText mBedroomsTxt;
-    @BindView(R.id.fragment_add_bathrooms_txt)
-    TextInputEditText mBathroomsTxt;
-    @BindView(R.id.fragment_add_floors_txt)
-    TextInputEditText mFloorsTxt;
-    @BindView(R.id.fragment_add_description_txt)
-    TextInputEditText mDescriptionTxt;
-    @BindView(R.id.fragment_add_country_code_spinner)
-    AppCompatAutoCompleteTextView mCountryCodeSpinner;
-    @BindView(R.id.fragment_add_year_construction_txt)
-    TextInputEditText mYearConstructionTxt;
-    @BindView(R.id.fragment_add_address_txt)
-    TextInputEditText mAddAddressTxt;
-    @BindView(R.id.fragment_add_zipcode_txt)
-    TextInputEditText mZipcodeTxt;
-    @BindView(R.id.fragment_add_city_txt)
-    TextInputEditText mCityTxt;
-    @BindView(R.id.fragment_add_initial_sale_txt)
-    TextInputEditText mInitialSaleTxt;
-    @BindView(R.id.fragment_add_final_sale_txt)
-    TextInputEditText mFinalSaleTxt;
-    @BindView(R.id.fragment_add_co_ownership_spinner)
-    AppCompatAutoCompleteTextView mCoOwnershipSpinner;
-    @BindView(R.id.fragment_add_agent_spinner)
-    AppCompatAutoCompleteTextView mAgentSpinner;
-    @BindView(R.id.fragment_add_validation_btn)
-    MaterialButton mValidationBtn;
-    @BindView(R.id.fragment_add_pictures_txt)
-    TextInputEditText mPicturesTxt;
-    @BindView(R.id.fragment_add_recycler_view)
-    RecyclerView mRecyclerView;
-    @BindView(R.id.layout_price)
-    TextInputLayout mLayoutPrice;
-    @BindView(R.id.layout_surface)
-    TextInputLayout mLayoutSurface;
-    @BindView(R.id.chip_school)
-    Chip mChipSchool;
-    @BindView(R.id.chip_shop)
-    Chip mChipShop;
-    @BindView(R.id.chip_transport)
-    Chip mChipTransport;
-    @BindView(R.id.chip_garden)
-    Chip mChipGarden;
-    @BindView(R.id.layout_address)
-    TextInputLayout mLayoutAddress;
-    @BindView(R.id.layout_zipcode)
-    TextInputLayout mLayoutZipcode;
-    @BindView(R.id.layout_city)
-    TextInputLayout mLayoutCity;
+    FragmentAddRealEstateBinding mBinding;
 
     private Property mProperty;
     private String mTypePropertyInput;
@@ -175,24 +118,10 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
 
     private Activity mActivity;
     private RealEstateViewModel mRealEstateViewModel;
-    private Unbinder mUnbinder;
-
-    private AddPropertyFragment.OnFragmentInteractionListener mListener;
+    private TakeOrNotFullScreen mCallback;
 
     public AddPropertyFragment() {
         // Required empty public constructor
-    }
-
-    public static AddPropertyFragment newInstance() {
-        return new AddPropertyFragment();
-    }
-
-    public static AddPropertyFragment newInstance(long realEstateId) {
-        AddPropertyFragment fragment = new AddPropertyFragment();
-        Bundle args = new Bundle();
-        args.putLong(REAL_ESTATE_ID, realEstateId);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -210,23 +139,26 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_add_real_estate, container, false);
-        mUnbinder = ButterKnife.bind(this, view);
-        return view;
+        mBinding = FragmentAddRealEstateBinding.inflate(inflater, container, false);
+        return mBinding.getRoot();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mActivity = getActivity();
+        setClickListener();
         Toolbar toolbar = Objects.requireNonNull(mActivity).findViewById(R.id.activity_main_toolbar);
         if (mRealEstateId == 0)
             toolbar.setTitle(getString(R.string.add_a_real_estate));
         else
             toolbar.setTitle(getString(R.string.edit_the_real_estate));
+        if (!Utils.isNetworkAccessEnabled(requireContext())) {
+            Snackbar.make(mActivity.findViewById(R.id.nav_host_fragment),
+                    getString(R.string.verify_for_geocoder), Snackbar.LENGTH_LONG).show();
+        }
         configureViewModel();
         configureSpinner();
         configureRecyclerView();
@@ -240,7 +172,7 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
     //    Configuring ViewModel
     private void configureViewModel() {
         ViewModelFactory viewModelFactory = Injection.providerViewModelFactory(mActivity);
-        mRealEstateViewModel = ViewModelProviders.of((FragmentActivity) mActivity, viewModelFactory).get(RealEstateViewModel.class);
+        mRealEstateViewModel = new ViewModelProvider((FragmentActivity) mActivity, viewModelFactory).get(RealEstateViewModel.class);
     }
 
     /**
@@ -260,7 +192,7 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
             if (!mPicturesList.contains(pictures1))
                 mPicturesList.add(pictures1);
         }
-        mRecyclerView.setVisibility(View.VISIBLE);
+        mBinding.fragmentAddRecyclerView.setVisibility(View.VISIBLE);
         mPhotoAdapter.notifyDataSetChanged();
     }
 
@@ -269,50 +201,50 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
      */
     private void updateUiAfterFetchRealEstate(Property property) {
         mProperty = property;
-        mTypePropertySpinner.setText(mProperty.getTypeProperty(), false);
-        mTypePropertyInput = mTypePropertySpinner.getText().toString();
-        mCoOwnershipSpinner.setText(String.valueOf(mProperty.isCoOwnership()), false);
-        mCoOwnershipInput = mCoOwnershipSpinner.getText().toString();
-        mAgentSpinner.setText(mProperty.getRealEstateAgent(), false);
-        mAgentInput = mAgentSpinner.getText().toString();
-        mDescriptionTxt.setText(mProperty.getDescription());
-        mAddAddressTxt.setText(mProperty.getAddress());
-        mCityTxt.setText(mProperty.getCity());
-        mFloorsTxt.setText(String.valueOf(mProperty.getFloors()));
+        mBinding.fragmentAddTypePropertySpinner.setText(mProperty.getTypeProperty(), false);
+        mTypePropertyInput = mBinding.fragmentAddTypePropertySpinner.getText().toString();
+        mBinding.fragmentAddCoOwnershipSpinner.setText(String.valueOf(mProperty.isCoOwnership()), false);
+        mCoOwnershipInput = mBinding.fragmentAddCoOwnershipSpinner.getText().toString();
+        mBinding.fragmentAddAgentSpinner.setText(mProperty.getRealEstateAgent(), false);
+        mAgentInput = mBinding.fragmentAddAgentSpinner.getText().toString();
+        mBinding.fragmentAddDescriptionTxt.setText(mProperty.getDescription());
+        mBinding.fragmentAddAddressTxt.setText(mProperty.getAddress());
+        mBinding.fragmentAddCityTxt.setText(mProperty.getCity());
+        mBinding.fragmentAddFloorsTxt.setText(String.valueOf(mProperty.getFloors()));
 //        We use displayed values more user friendly so we use methods to find the existing value in the database
         if (mProperty.getCountryCode() != null)
-            mCountryCodeSpinner.setText(getCountryAccordingToCountryCode(mProperty.getCountryCode()), false);
-        if (mCountryCodeSpinner.getText() != null && mCountryCodeSpinner.getText().length() != 0)
-            mCountryCodeInput = getCountryCodeAccordingToCountry(mCountryCodeSpinner.getText().toString());
+            mBinding.fragmentAddCountryCodeSpinner.setText(getCountryAccordingToCountryCode(mProperty.getCountryCode()), false);
+        if (mBinding.fragmentAddCountryCodeSpinner.getText() != null && mBinding.fragmentAddCountryCodeSpinner.getText().length() != 0)
+            mCountryCodeInput = getCountryCodeAccordingToCountry(mBinding.fragmentAddCountryCodeSpinner.getText().toString());
 //        We use methods to convert the values in database into values corresponding to the user's preferences
         if (mProperty.getPrice() != 0)
-            mPriceTxt.setText(String.valueOf(Utils.convertPriceAccordingToPreferenceToEdit(mActivity, mProperty.getPrice())));
+            mBinding.fragmentAddPriceTxt.setText(String.valueOf(Utils.convertPriceAccordingToPreferenceToEdit(mActivity, mProperty.getPrice())));
         if (mProperty.getSurface() != 0)
-            mSurfaceTxt.setText(String.valueOf(Utils.convertAreaAccordingToPreferencesToEdit(mActivity, mProperty.getSurface())));
+            mBinding.fragmentAddSurfaceTxt.setText(String.valueOf(Utils.convertAreaAccordingToPreferencesToEdit(mActivity, mProperty.getSurface())));
         if (mProperty.getNbRooms() != 0)
-            mRoomsTxt.setText(String.valueOf(mProperty.getNbRooms()));
+            mBinding.fragmentAddRoomsTxt.setText(String.valueOf(mProperty.getNbRooms()));
         if (mProperty.getNbBedrooms() != 0)
-            mBedroomsTxt.setText(String.valueOf(mProperty.getNbBedrooms()));
+            mBinding.fragmentAddBedroomsTxt.setText(String.valueOf(mProperty.getNbBedrooms()));
         if (mProperty.getNbBathrooms() != 0)
-            mBathroomsTxt.setText(String.valueOf(mProperty.getNbBathrooms()));
+            mBinding.fragmentAddBathroomsTxt.setText(String.valueOf(mProperty.getNbBathrooms()));
         if (mProperty.getZipCode() != 0)
-            mZipcodeTxt.setText(String.valueOf(mProperty.getZipCode()));
+            mBinding.fragmentAddZipcodeTxt.setText(String.valueOf(mProperty.getZipCode()));
 //        We convert the dates in database into String values
         if (mProperty.getInitialSale() != null)
-            mInitialSaleTxt.setText(Utils.convertDateToString(mProperty.getInitialSale(), mActivity));
+            mBinding.fragmentAddInitialSaleTxt.setText(Utils.convertDateToString(mProperty.getInitialSale(), mActivity));
         if (mProperty.getFinalSale() != null)
-            mFinalSaleTxt.setText(Utils.convertDateToString(mProperty.getFinalSale(), mActivity));
+            mBinding.fragmentAddFinalSaleTxt.setText(Utils.convertDateToString(mProperty.getFinalSale(), mActivity));
         if (mProperty.getYearConstruction() != null)
-            mYearConstructionTxt.setText(Utils.convertDateToString(mProperty.getYearConstruction(), mActivity));
+            mBinding.fragmentAddYearConstructionTxt.setText(Utils.convertDateToString(mProperty.getYearConstruction(), mActivity));
         if (mProperty.getAmenities() != null) {
             if (mProperty.getAmenities().contains("School"))
-                mChipSchool.setChecked(true);
+                mBinding.chipGroupAmenities.chipSchool.setChecked(true);
             if (mProperty.getAmenities().contains("Shops"))
-                mChipShop.setChecked(true);
+                mBinding.chipGroupAmenities.chipShop.setChecked(true);
             if (mProperty.getAmenities().contains("Public transport"))
-                mChipTransport.setChecked(true);
+                mBinding.chipGroupAmenities.chipTransport.setChecked(true);
             if (mProperty.getAmenities().contains("Garden"))
-                mChipGarden.setChecked(true);
+                mBinding.chipGroupAmenities.chipGarden.setChecked(true);
         }
     }
 
@@ -323,23 +255,23 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
     private void configureSpinner() {
         ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(mActivity, R.array.typeProperty,
                 R.layout.dropdown_item_spinner);
-        mTypePropertySpinner.setAdapter(typeAdapter);
-        mTypePropertySpinner.setOnItemClickListener(this);
+        mBinding.fragmentAddTypePropertySpinner.setAdapter(typeAdapter);
+        mBinding.fragmentAddTypePropertySpinner.setOnItemClickListener(this);
 
         ArrayAdapter<CharSequence> countryAdapter = ArrayAdapter.createFromResource(mActivity, R.array.countryCode,
                 R.layout.dropdown_item_spinner);
-        mCountryCodeSpinner.setAdapter(countryAdapter);
-        mCountryCodeSpinner.setOnItemClickListener(this);
+        mBinding.fragmentAddCountryCodeSpinner.setAdapter(countryAdapter);
+        mBinding.fragmentAddCountryCodeSpinner.setOnItemClickListener(this);
 
         ArrayAdapter<CharSequence> agentAdapter = ArrayAdapter.createFromResource(mActivity, R.array.agent,
                 R.layout.dropdown_item_spinner);
-        mAgentSpinner.setAdapter(agentAdapter);
-        mAgentSpinner.setOnItemClickListener(this);
+        mBinding.fragmentAddAgentSpinner.setAdapter(agentAdapter);
+        mBinding.fragmentAddAgentSpinner.setOnItemClickListener(this);
 
         ArrayAdapter<CharSequence> coOwnershipAdapter = ArrayAdapter.createFromResource(mActivity, R.array.co_ownership,
                 R.layout.dropdown_item_spinner);
-        mCoOwnershipSpinner.setAdapter(coOwnershipAdapter);
-        mCoOwnershipSpinner.setOnItemClickListener(this);
+        mBinding.fragmentAddCoOwnershipSpinner.setAdapter(coOwnershipAdapter);
+        mBinding.fragmentAddCoOwnershipSpinner.setOnItemClickListener(this);
     }
 
     /**
@@ -347,13 +279,13 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
      */
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        if (adapterView.getAdapter() == mTypePropertySpinner.getAdapter()) {
+        if (adapterView.getAdapter() == mBinding.fragmentAddTypePropertySpinner.getAdapter()) {
             mTypePropertyInput = adapterView.getItemAtPosition(i).toString();
-        } else if (adapterView.getAdapter() == mCountryCodeSpinner.getAdapter()) {
+        } else if (adapterView.getAdapter() == mBinding.fragmentAddCountryCodeSpinner.getAdapter()) {
             mCountryCodeInput = getCountryCodeAccordingToCountry(adapterView.getItemAtPosition(i).toString());
-        } else if (adapterView.getAdapter() == mAgentSpinner.getAdapter()) {
+        } else if (adapterView.getAdapter() == mBinding.fragmentAddAgentSpinner.getAdapter()) {
             mAgentInput = adapterView.getItemAtPosition(i).toString();
-        } else if (adapterView.getAdapter() == mCoOwnershipSpinner.getAdapter()) {
+        } else if (adapterView.getAdapter() == mBinding.fragmentAddCoOwnershipSpinner.getAdapter()) {
             mCoOwnershipInput = adapterView.getItemAtPosition(i).toString();
         }
     }
@@ -363,7 +295,7 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
      * RecyclerView's item
      */
     private void configureRecyclerView() {
-        mRecyclerView.setVisibility(View.GONE);
+        mBinding.fragmentAddRecyclerView.setVisibility(View.GONE);
         mPhotoAdapter = new DetailsPhotoAdapter(mPicturesList, 2);
         mPhotoAdapter.setOnClickListener(view -> {
             PicturesDetailsViewHolder holder = (PicturesDetailsViewHolder) view.getTag();
@@ -375,22 +307,20 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
                     .setPositiveButton(getString(R.string.delete), (dialogInterface, i) -> {
 //                        If this fragment is used to add a property in database, it removes le selected
 //                        picture of the list
-                        if (mRealEstateId == 0) {
-                            mPicturesList.remove(position);
-                        } else {
+                        if (mRealEstateId != 0) {
 //                            If the fragment is used to edit a property, it deletes the picture in
 //                            database too.
                             mRealEstateViewModel.deletePicture(mPicturesList.get(position));
-                            mPicturesList.remove(position);
                         }
+                        mPicturesList.remove(position);
                         mPhotoAdapter.notifyDataSetChanged();
                         if (mPicturesList.size() == 0)
-                            mRecyclerView.setVisibility(View.GONE);
+                            mBinding.fragmentAddRecyclerView.setVisibility(View.GONE);
                     })
                     .show();
         });
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity, RecyclerView.HORIZONTAL, false));
-        mRecyclerView.setAdapter(mPhotoAdapter);
+        mBinding.fragmentAddRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity, RecyclerView.HORIZONTAL, false));
+        mBinding.fragmentAddRecyclerView.setAdapter(mPhotoAdapter);
     }
 
     /**
@@ -403,14 +333,14 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
         String currency = preferences.getString("currency", "$");
 
         if (area.equals("sq ft"))
-            mLayoutSurface.setHint(getString(R.string.enter_surface_sqft));
+            mBinding.layoutSurface.setHint(getString(R.string.enter_surface_sqft));
         else
-            mLayoutSurface.setHint(getString(R.string.enter_surface_m));
+            mBinding.layoutSurface.setHint(getString(R.string.enter_surface_m));
 
         if (currency.equals("$"))
-            mLayoutPrice.setHint(getString(R.string.enter_price_dollars));
+            mBinding.layoutPrice.setHint(getString(R.string.enter_price_dollars));
         else
-            mLayoutPrice.setHint(getString(R.string.enter_price_euros));
+            mBinding.layoutPrice.setHint(getString(R.string.enter_price_euros));
     }
 
     /**
@@ -418,42 +348,47 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
      * corresponding fields.
      */
     private void getTheUserInput() {
-        if (!TextUtils.isEmpty(mPriceTxt.getText()))
-            price = Utils.convertPriceAccordingToPreferences(mActivity, mPriceTxt.getText().toString());
-        if (!TextUtils.isEmpty(mSurfaceTxt.getText()))
-            surface = Utils.convertAreaAccordingToPreferences(mActivity, mSurfaceTxt.getText().toString());
-        if (!TextUtils.isEmpty(mRoomsTxt.getText()))
-            nbRooms = Integer.parseInt(mRoomsTxt.getText().toString());
-        if (!TextUtils.isEmpty(mBedroomsTxt.getText()))
-            nbBedrooms = Integer.parseInt(mBedroomsTxt.getText().toString());
-        if (!TextUtils.isEmpty(mBathroomsTxt.getText()))
-            nbBathrooms = Integer.parseInt(mBathroomsTxt.getText().toString());
-        if (!TextUtils.isEmpty(mDescriptionTxt.getText()))
-            description = mDescriptionTxt.getText().toString();
-        if (!TextUtils.isEmpty(mAddAddressTxt.getText())) {
-            address = mAddAddressTxt.getText().toString();
+        if (!TextUtils.isEmpty(mBinding.fragmentAddPriceTxt.getText()))
+            price = Utils.convertPriceAccordingToPreferences(mActivity, mBinding.fragmentAddPriceTxt.getText().toString());
+        if (!TextUtils.isEmpty(mBinding.fragmentAddSurfaceTxt.getText()))
+            surface = Utils.convertAreaAccordingToPreferences(mActivity, mBinding.fragmentAddSurfaceTxt.getText().toString());
+        if (!TextUtils.isEmpty(mBinding.fragmentAddRoomsTxt.getText()))
+            nbRooms = Integer.parseInt(mBinding.fragmentAddRoomsTxt.getText().toString());
+        if (!TextUtils.isEmpty(mBinding.fragmentAddBedroomsTxt.getText()))
+            nbBedrooms = Integer.parseInt(mBinding.fragmentAddBedroomsTxt.getText().toString());
+        if (!TextUtils.isEmpty(mBinding.fragmentAddBathroomsTxt.getText()))
+            nbBathrooms = Integer.parseInt(mBinding.fragmentAddBathroomsTxt.getText().toString());
+        if (!TextUtils.isEmpty(mBinding.fragmentAddDescriptionTxt.getText()))
+            description = mBinding.fragmentAddDescriptionTxt.getText().toString();
+        if (!TextUtils.isEmpty(mBinding.fragmentAddAddressTxt.getText())) {
+            address = mBinding.fragmentAddAddressTxt.getText().toString();
         }
-        if (!TextUtils.isEmpty(mZipcodeTxt.getText()))
-            zipCode = Integer.parseInt(mZipcodeTxt.getText().toString());
-        if (!TextUtils.isEmpty(mCityTxt.getText()))
-            city = mCityTxt.getText().toString();
-        if (!TextUtils.isEmpty(mFloorsTxt.getText()))
-            floors = Integer.parseInt(mFloorsTxt.getText().toString());
-        if (!TextUtils.isEmpty(mInitialSaleTxt.getText()))
-            initialDate = Utils.convertStringToDate(Objects.requireNonNull(mInitialSaleTxt.getText()).toString());
-        if (!TextUtils.isEmpty(mFinalSaleTxt.getText())) {
-            finalDate = Utils.convertStringToDate(Objects.requireNonNull(mFinalSaleTxt.getText()).toString());
+        if (!TextUtils.isEmpty(mBinding.fragmentAddZipcodeTxt.getText()))
+            zipCode = Integer.parseInt(mBinding.fragmentAddZipcodeTxt.getText().toString());
+        if (!TextUtils.isEmpty(mBinding.fragmentAddCityTxt.getText()))
+            city = mBinding.fragmentAddCityTxt.getText().toString();
+        if (!TextUtils.isEmpty(mBinding.fragmentAddFloorsTxt.getText()))
+            floors = Integer.parseInt(mBinding.fragmentAddFloorsTxt.getText().toString());
+        if (!TextUtils.isEmpty(mBinding.fragmentAddInitialSaleTxt.getText()))
+            initialDate = Utils.convertStringToDate(Objects.requireNonNull(mBinding.fragmentAddInitialSaleTxt.getText()).toString());
+        if (!TextUtils.isEmpty(mBinding.fragmentAddFinalSaleTxt.getText())) {
+            finalDate = Utils.convertStringToDate(Objects.requireNonNull(mBinding.fragmentAddFinalSaleTxt.getText()).toString());
 //            If a sale date is filled then the property is considered sold
             isSold = true;
         } else
             isSold = false;
-        if (!TextUtils.isEmpty(mYearConstructionTxt.getText()))
-            yearConstruction = Utils.convertStringToDate(Objects.requireNonNull(mYearConstructionTxt.getText()).toString());
-        amenities = Utils.getUserAmenitiesChoice(mChipSchool, mChipShop, mChipTransport, mChipGarden);
+        if (!TextUtils.isEmpty(mBinding.fragmentAddYearConstructionTxt.getText()))
+            yearConstruction = Utils.convertStringToDate(Objects.requireNonNull(
+                    mBinding.fragmentAddYearConstructionTxt.getText()).toString()
+            );
+        amenities = Utils.getUserAmenitiesChoice(mBinding.chipGroupAmenities.chipSchool,
+                mBinding.chipGroupAmenities.chipShop, mBinding.chipGroupAmenities.chipTransport,
+                mBinding.chipGroupAmenities.chipGarden);
 //        If the set of fields relative to the address are filled then it calls the method getLocation.
         if (address != null && zipCode != 0 && city != null) {
-            if (Utils.isInternetAvailable(mActivity))
+            if (Utils.isNetworkAccessEnabled(mActivity)) {
                 getLocation(address + " " + zipCode + " " + city);
+            }
         }
     }
 
@@ -503,9 +438,10 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
      * Uses Geocoder object to fetch the latitude and the longitude from an address.
      */
     private void getLocation(String address) {
-        Geocoder geocoder = new Geocoder(mActivity);
+        Geocoder geocoder = new Geocoder(requireActivity(), Locale.getDefault());
         try {
             List<Address> addresses = geocoder.getFromLocationName(address, 1);
+            Log.i("Location", "Location : Lat :" + addresses.get(0).getLatitude() + " / Long" + addresses.get(0).getLongitude());
             for (Address address1 : addresses) {
                 mLatitude = address1.getLatitude();
                 mLongitude = address1.getLongitude();
@@ -528,11 +464,11 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
         savePictureInDb(mRealEstateId);
         int nbRows = mRealEstateViewModel.updateRealEstate(mProperty);
         if (nbRows == 1) {
-            Snackbar.make(mActivity.findViewById(R.id.activity_main_container),
+            Snackbar.make(mActivity.findViewById(R.id.nav_host_fragment),
                     getString(R.string.update_success), Snackbar.LENGTH_LONG).show();
-            Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
+            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).popBackStack();
         } else
-            Snackbar.make(mActivity.findViewById(R.id.activity_main_container),
+            Snackbar.make(mActivity.findViewById(R.id.nav_host_fragment),
                     getString(R.string.update_failed), Snackbar.LENGTH_LONG).show();
     }
 
@@ -546,15 +482,15 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
         long rowId = mRealEstateViewModel.createRealEstate(new Property(mTypePropertyInput, price, surface, nbRooms,
                 nbBedrooms, nbBathrooms, description, address, zipCode, mCountryCodeInput, mLatitude,
                 mLongitude, city, amenities, isSold, initialDate, finalDate, mAgentInput, yearConstruction,
-                floors, Boolean.valueOf(mCoOwnershipInput), mNbPictures));
+                floors, Boolean.parseBoolean(mCoOwnershipInput), mNbPictures));
 //        Fetch the row's Id to save chosen pictures with the Property's Id in attributes.
         if (rowId != -1L) {
             savePictureInDb(rowId);
-            Snackbar.make(mActivity.findViewById(R.id.activity_main_container), getString(R.string.save_success),
+            Snackbar.make(mActivity.findViewById(R.id.nav_host_fragment), getString(R.string.save_success),
                     Snackbar.LENGTH_LONG).show();
-            Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
+            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).popBackStack();
         } else
-            Snackbar.make(mActivity.findViewById(R.id.activity_main_container), getString(R.string.save_failed), Snackbar.LENGTH_LONG).show();
+            Snackbar.make(mActivity.findViewById(R.id.nav_host_fragment), getString(R.string.save_failed), Snackbar.LENGTH_LONG).show();
     }
 
 
@@ -611,29 +547,23 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         DatePickerDialog datePickerDialog = new DatePickerDialog(mActivity, (datePicker, year1, month1, day1) -> {
-            switch (view.getId()) {
-                case R.id.fragment_add_initial_sale_txt:
-                    mInitialSaleTxt.setText(getString(R.string.hour_format, day1, month1 + 1, year1));
-                    break;
-                case R.id.fragment_add_final_sale_txt:
-                    mFinalSaleTxt.setText(getString(R.string.hour_format, day1, month1 + 1, year1));
-                    break;
-                case R.id.fragment_add_year_construction_txt:
-                    mYearConstructionTxt.setText(getString(R.string.hour_format, day1, month1 + 1, year1));
-                    break;
+            int id = view.getId();
+            if (id == R.id.fragment_add_initial_sale_txt) {
+                mBinding.fragmentAddInitialSaleTxt.setText(getString(R.string.hour_format, day1, month1 + 1, year1));
+            } else if (id == R.id.fragment_add_final_sale_txt) {
+                mBinding.fragmentAddFinalSaleTxt.setText(getString(R.string.hour_format, day1, month1 + 1, year1));
+            } else if (id == R.id.fragment_add_year_construction_txt) {
+                mBinding.fragmentAddYearConstructionTxt.setText(getString(R.string.hour_format, day1, month1 + 1, year1));
             }
         }, year, month, day);
         datePickerDialog.setButton(DialogInterface.BUTTON_NEUTRAL, getString(R.string.delete_date), (dialogInterface, i) -> {
-            switch (view.getId()) {
-                case R.id.fragment_add_initial_sale_txt:
-                    mInitialSaleTxt.setText(null);
-                    break;
-                case R.id.fragment_add_final_sale_txt:
-                    mFinalSaleTxt.setText(null);
-                    break;
-                case R.id.fragment_add_year_construction_txt:
-                    mYearConstructionTxt.setText(null);
-                    break;
+            int id = view.getId();
+            if (id == R.id.fragment_add_initial_sale_txt) {
+                mBinding.fragmentAddInitialSaleTxt.setText(null);
+            } else if (id == R.id.fragment_add_final_sale_txt) {
+                mBinding.fragmentAddFinalSaleTxt.setText(null);
+            } else if (id == R.id.fragment_add_year_construction_txt) {
+                mBinding.fragmentAddYearConstructionTxt.setText(null);
             }
         });
         datePickerDialog.show();
@@ -644,23 +574,29 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
      * error message on the missing fields
      */
     private boolean verifyAddressInputForGeoCoding() {
-        if (!TextUtils.isEmpty(mAddAddressTxt.getText()) && (TextUtils.isEmpty(mZipcodeTxt.getText()) || TextUtils.isEmpty(mCityTxt.getText()))) {
-            if (TextUtils.isEmpty(mZipcodeTxt.getText()))
-                mLayoutZipcode.setError(getString(R.string.please_zipcode));
-            if (TextUtils.isEmpty(mCityTxt.getText()))
-                mLayoutCity.setError(getString(R.string.please_city));
+        if (!TextUtils.isEmpty(mBinding.fragmentAddAddressTxt.getText())
+                && (TextUtils.isEmpty(mBinding.fragmentAddZipcodeTxt.getText())
+                || TextUtils.isEmpty(mBinding.fragmentAddCityTxt.getText()))) {
+            if (TextUtils.isEmpty(mBinding.fragmentAddZipcodeTxt.getText()))
+                mBinding.layoutZipcode.setError(getString(R.string.please_zipcode));
+            if (TextUtils.isEmpty(mBinding.fragmentAddCityTxt.getText()))
+                mBinding.layoutCity.setError(getString(R.string.please_city));
             return false;
-        } else if (!TextUtils.isEmpty(mZipcodeTxt.getText()) && (TextUtils.isEmpty(mAddAddressTxt.getText()) || TextUtils.isEmpty(mCityTxt.getText()))) {
-            if (TextUtils.isEmpty(mAddAddressTxt.getText()))
-                mLayoutAddress.setError(getString(R.string.please_address));
-            if (TextUtils.isEmpty(mCityTxt.getText()))
-                mLayoutCity.setError(getString(R.string.please_city));
+        } else if (!TextUtils.isEmpty(mBinding.fragmentAddZipcodeTxt.getText())
+                && (TextUtils.isEmpty(mBinding.fragmentAddAddressTxt.getText())
+                | TextUtils.isEmpty(mBinding.fragmentAddCityTxt.getText()))) {
+            if (TextUtils.isEmpty(mBinding.fragmentAddAddressTxt.getText()))
+                mBinding.layoutAddress.setError(getString(R.string.please_address));
+            if (TextUtils.isEmpty(mBinding.fragmentAddCityTxt.getText()))
+                mBinding.layoutCity.setError(getString(R.string.please_city));
             return false;
-        } else if (!TextUtils.isEmpty(mCityTxt.getText()) && (TextUtils.isEmpty(mAddAddressTxt.getText()) || TextUtils.isEmpty(mZipcodeTxt.getText()))) {
-            if (TextUtils.isEmpty(mAddAddressTxt.getText()))
-                mLayoutAddress.setError(getString(R.string.please_address));
-            if (TextUtils.isEmpty(mZipcodeTxt.getText()))
-                mLayoutZipcode.setError(getString(R.string.please_zipcode));
+        } else if (!TextUtils.isEmpty(mBinding.fragmentAddCityTxt.getText())
+                && (TextUtils.isEmpty(mBinding.fragmentAddAddressTxt.getText())
+                || TextUtils.isEmpty(mBinding.fragmentAddZipcodeTxt.getText()))) {
+            if (TextUtils.isEmpty(mBinding.fragmentAddAddressTxt.getText()))
+                mBinding.layoutAddress.setError(getString(R.string.please_address));
+            if (TextUtils.isEmpty(mBinding.fragmentAddZipcodeTxt.getText()))
+                mBinding.layoutZipcode.setError(getString(R.string.please_zipcode));
             return false;
         } else
             return true;
@@ -673,7 +609,7 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
      */
     @AfterPermissionGranted(READ_AND_WRITE_EXTERNAL_STORAGE_AND_CAMERA)
     private void getPermissionsExternalStorageAndCamera() {
-        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+        String[] perms = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
         if (!EasyPermissions.hasPermissions(mActivity, perms)) {
             EasyPermissions.requestPermissions(this, getString(R.string.storage_rationale),
                     READ_AND_WRITE_EXTERNAL_STORAGE_AND_CAMERA, perms);
@@ -780,7 +716,14 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
      * Creates an intent to allow the user to pick a photo in memory with the right application.
      */
     private void pickPhotoFromGallery() {
-        Intent intentGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Uri collection;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            collection = MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL);
+        } else {
+            collection = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+        }
+        Intent intentGallery = new Intent(Intent.ACTION_PICK);
+        intentGallery.setDataAndType(collection, "image/*");
         intentGallery.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivityForResult(intentGallery, IMAGE_PICK_CODE);
     }
@@ -789,7 +732,14 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
      * Creates an intent to allow the user to pick a video in memory with the right application.
      */
     private void pickMovieFromGallery() {
-        Intent intentGallery = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+        Uri collection;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            collection = MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL);
+        } else {
+            collection = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+        }
+        Intent intentGallery = new Intent(Intent.ACTION_PICK);
+        intentGallery.setDataAndType(collection, "video/mp4");
         intentGallery.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivityForResult(intentGallery, MOVIE_PICK_CODE);
     }
@@ -800,7 +750,7 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
     private void savePictureCaption(String uri) {
         View customDialog = mActivity.getLayoutInflater().inflate(R.layout.dialog_pictures_validation, null);
         ImageView imageView = customDialog.findViewById(R.id.dialog_picture_preview_img);
-        imageView.setImageURI(Uri.parse(uri));
+        Glide.with(requireContext()).load(uri).into(imageView);
         TextInputEditText editText = customDialog.findViewById(R.id.dialog_layout_title_txt);
         TextInputLayout textInputLayout = customDialog.findViewById(R.id.dialog_layout_title);
         MaterialButton negativeBtn = customDialog.findViewById(R.id.dialog_layout_negative_btn);
@@ -819,11 +769,10 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
             } else {
                 textInputLayout.setError(null);
                 mPicturesList.add(new Pictures(Uri.parse(uri), editText.getText().toString()));
-                builder.cancel();
-                mRecyclerView.setVisibility(View.VISIBLE);
+                mBinding.fragmentAddRecyclerView.setVisibility(View.VISIBLE);
                 mPhotoAdapter.notifyDataSetChanged();
+                builder.cancel();
             }
-
         });
     }
 
@@ -832,10 +781,12 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
      */
     private void saveMovieCaption(String uri) {
         View customDialog = mActivity.getLayoutInflater().inflate(R.layout.dialog_movies_validation, null);
-        VideoView videoView = customDialog.findViewById(R.id.dialog_picture_preview_movie);
-        videoView.setVideoURI(Uri.parse(uri));
-        videoView.setOnPreparedListener(mediaPlayer -> mediaPlayer.setLooping(true));
-        videoView.start();
+        StyledPlayerView videoView = customDialog.findViewById(R.id.dialog_picture_preview_movie);
+        SimpleExoPlayer player = new SimpleExoPlayer.Builder(mActivity).build();
+        videoView.setPlayer(player);
+        player.setMediaItem(MediaItem.fromUri(Uri.parse(uri)));
+        player.prepare();
+        player.play();
         TextInputEditText editText = customDialog.findViewById(R.id.dialog_layout_title_txt);
         TextInputLayout textInputLayout = customDialog.findViewById(R.id.dialog_layout_title);
         MaterialButton negativeBtn = customDialog.findViewById(R.id.dialog_layout_negative_btn);
@@ -854,11 +805,11 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
             } else {
                 textInputLayout.setError(null);
                 mPicturesList.add(new Pictures(Uri.parse(uri), editText.getText().toString()));
-                builder.cancel();
-                mRecyclerView.setVisibility(View.VISIBLE);
+                mBinding.fragmentAddRecyclerView.setVisibility(View.VISIBLE);
                 mPhotoAdapter.notifyDataSetChanged();
+                builder.cancel();
             }
-
+            player.release();
         });
     }
 
@@ -895,15 +846,18 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
      * in database.
      */
     private String getRealPathFromURI(Uri contentUri) {
-        String[] proj = {MediaStore.Images.Media.DATA};
-        CursorLoader loader = new CursorLoader(mActivity, contentUri, proj, null, null,
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = mActivity.getContentResolver().query(contentUri, projection, null, null,
                 null);
-        Cursor cursor = loader.loadInBackground();
-        int column_index = Objects.requireNonNull(cursor).getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        String result = cursor.getString(column_index);
-        cursor.close();
-        return result;
+        if (cursor != null) {
+            int column_index = Objects.requireNonNull(cursor).getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            String result = cursor.getString(column_index);
+            cursor.close();
+            return result;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -911,8 +865,8 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
      * in database.
      */
     private String getRealPathMovieFromURI(Uri contentUri) {
-        String[] proj = {MediaStore.Video.Media.DATA};
-        Cursor cursor = mActivity.getContentResolver().query(contentUri, proj, null, null,
+        String[] projection = {MediaStore.Video.Media.DATA};
+        Cursor cursor = mActivity.getContentResolver().query(contentUri, projection, null, null,
                 null);
         if (cursor != null) {
             int column_index = Objects.requireNonNull(cursor).getColumnIndexOrThrow(MediaStore.Video.Media.DATA);
@@ -924,35 +878,32 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
             return null;
     }
 
-    @OnClick({R.id.fragment_add_year_construction_txt, R.id.fragment_add_initial_sale_txt,
-            R.id.fragment_add_final_sale_txt, R.id.fragment_add_validation_btn, R.id.fragment_add_pictures_txt})
-    void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.fragment_add_validation_btn:
-                if (mRealEstateId == 0) {
-                    if (verifyAddressInputForGeoCoding())
-                        createNewRealEstateFromInputValues();
-                } else {
-                    if (verifyAddressInputForGeoCoding())
-                        updateRealEstateWithNewValues();
+    void setClickListener() {
+        mBinding.fragmentAddInitialSaleTxt.setOnClickListener(this::displayDatePickerAndUpdateUi);
+        mBinding.fragmentAddYearConstructionTxt.setOnClickListener(this::displayDatePickerAndUpdateUi);
+        mBinding.fragmentAddFinalSaleTxt.setOnClickListener(this::displayDatePickerAndUpdateUi);
+        mBinding.fragmentAddValidationBtn.setOnClickListener(v -> {
+            if (mRealEstateId == 0) {
+                if (verifyAddressInputForGeoCoding()) {
+                    createNewRealEstateFromInputValues();
                 }
-                break;
-            case R.id.fragment_add_pictures_txt:
-                getPermissionsExternalStorageAndCamera();
-                break;
-            default:
-                displayDatePickerAndUpdateUi(view);
-                break;
-        }
+            } else {
+                if (verifyAddressInputForGeoCoding()) {
+                    updateRealEstateWithNewValues();
+                }
+            }
+        });
+
+        mBinding.fragmentAddPicturesTxt.setOnClickListener(v -> getPermissionsExternalStorageAndCamera());
     }
 
     @Override
     public void onDestroyView() {
 //        Sets adapters and listeners to null to avoid memory leaks.
-        mRecyclerView.setAdapter(null);
+        mBinding.fragmentAddRecyclerView.setAdapter(null);
         mPhotoAdapter.setOnClickListener(null);
         super.onDestroyView();
-        mUnbinder.unbind();
+        mBinding = null;
     }
 
     @Override
@@ -965,29 +916,23 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof AddPropertyFragment.OnFragmentInteractionListener) {
-            mListener = (AddPropertyFragment.OnFragmentInteractionListener) context;
+        if (context instanceof TakeOrNotFullScreen) {
+            mCallback = (TakeOrNotFullScreen) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement TakeFullScreen");
         }
     }
 
     @Override
     public void onDetach() {
-        mListener = null;
         super.onDetach();
+        mCallback = null;
     }
 
     @Override
     public void onResume() {
-        if (getResources().getBoolean(R.bool.isTabletLand) && mListener != null)
-            mListener.checkVisibility(ADD_REAL_ESTATE_FRAGMENT);
         super.onResume();
+        mCallback.takeFullScreenFragment();
     }
-
-    public interface OnFragmentInteractionListener {
-        void checkVisibility(String destination);
-    }
-
 }

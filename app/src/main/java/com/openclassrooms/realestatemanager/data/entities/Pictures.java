@@ -5,11 +5,12 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-import com.openclassrooms.realestatemanager.R;
-
-@Entity(foreignKeys = @ForeignKey(entity = Property.class,
+@Entity(indices = {@Index("mRealEstateId")},
+        foreignKeys = @ForeignKey(entity = Property.class,
         parentColumns = "mId",
         childColumns = "mRealEstateId"))
 
@@ -21,13 +22,16 @@ public class Pictures {
     private String mDescription;
     private long mRealEstateId;
 
+
     public Pictures(){}
 
+    @Ignore
     public Pictures(Uri uri, String description){
         mUri  = uri;
         mDescription = description;
     }
 
+    @Ignore
     public Pictures(Uri uri,String description , long realEstateId){
         mUri = uri;
         mDescription = description;

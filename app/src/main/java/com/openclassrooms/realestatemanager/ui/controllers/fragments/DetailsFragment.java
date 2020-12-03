@@ -10,29 +10,30 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.data.entities.Pictures;
 import com.openclassrooms.realestatemanager.data.entities.Property;
+import com.openclassrooms.realestatemanager.databinding.FragmentDetailsBinding;
 import com.openclassrooms.realestatemanager.injections.Injection;
 import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
 import com.openclassrooms.realestatemanager.ui.adapters.DetailsPhotoAdapter;
+import com.openclassrooms.realestatemanager.ui.controllers.TakeOrNotFullScreen;
 import com.openclassrooms.realestatemanager.ui.viewholder.PicturesDetailsViewHolder;
 import com.openclassrooms.realestatemanager.ui.viewmodel.RealEstateViewModel;
 import com.openclassrooms.realestatemanager.utils.Utils;
@@ -41,36 +42,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
-
 public class DetailsFragment extends Fragment implements OnMapReadyCallback {
 
-    @BindView(R.id.fragment_details_desc_txt)
-    TextView mDescription;
-    @BindView(R.id.fragment_details_surface_txt)
-    TextView mSurface;
-    @BindView(R.id.fragment_details_rooms_txt)
-    TextView mRooms;
-    @BindView(R.id.fragment_details_bedrooms_txt)
-    TextView mBedrooms;
-    @BindView(R.id.fragment_details_bathroom_txt)
-    TextView mBathroom;
-    @BindView(R.id.fragment_details_location_txt)
-    TextView mLocation;
-    @BindView(R.id.fragment_details_floors_txt)
-    TextView mFloors;
-    @BindView(R.id.fragment_details_recyclerview)
-    RecyclerView mPhotoRecyclerview;
-    @BindView(R.id.fragment_details_mapView)
-    MapView mMapView;
-    @BindView(R.id.fragment_details_coownership_txt)
-    TextView mCoownershipTxt;
-    @BindView(R.id.fragment_details_construction_txt)
-    TextView mConstructionTxt;
+    private FragmentDetailsBinding mBinding;
 
-    private Unbinder mUnbinder;
     private Activity mActivity;
     private GoogleMap mGoogleMap;
 
@@ -78,38 +53,32 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     private RealEstateViewModel mRealEstateViewModel;
     private DetailsPhotoAdapter mPhotoAdapter;
     private List<Pictures> mPicturesList;
+    private int mSelectedPosition;
 
     private double mLatitude;
     private double mLongitude;
-
-    private OnFragmentInteractionListener mListener;
+    private TakeOrNotFullScreen mCallback;
 
 
     public DetailsFragment() {
         // Required empty public constructor
     }
 
-    public static DetailsFragment newInstance() {
-        DetailsFragment fragment = new DetailsFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mRealEstateId = DetailsFragmentArgs.fromBundle(getArguments()).getPropertyId();
+        }
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_details, container, false);
+        mBinding = FragmentDetailsBinding.inflate(inflater, container, false);
         if (!getResources().getBoolean(R.bool.isTabletLand))
             setHasOptionsMenu(true);
-        mUnbinder = ButterKnife.bind(this, view);
-        return view;
+        return mBinding.getRoot();
     }
 
     @Override
@@ -121,9 +90,9 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
             toolbar.setTitle("Details");
         configureViewModel();
         configureRecyclerView();
-        getSelectedPropertyId();
-        mMapView.onCreate(savedInstanceState);
-        mMapView.getMapAsync(this);
+        getPropertyDetails();
+        mBinding.fragmentDetailsMapView.onCreate(savedInstanceState);
+        mBinding.fragmentDetailsMapView.getMapAsync(this);
     }
 
     @Override
@@ -166,22 +135,18 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     //    Configuring ViewModel
     private void configureViewModel() {
         ViewModelFactory viewModelFactory = Injection.providerViewModelFactory(mActivity);
-        mRealEstateViewModel = ViewModelProviders.of((FragmentActivity) mActivity, viewModelFactory).get(RealEstateViewModel.class);
-    }
-
-    /**
-     * Sets an observer to get the selected Property's id defines in the MutableLiveData.
-     */
-    private void getSelectedPropertyId() {
-        mRealEstateViewModel.getSelectedPropertyId().observe(getViewLifecycleOwner(), this::getPropertyDetails);
+        mRealEstateViewModel = new ViewModelProvider((FragmentActivity) mActivity, viewModelFactory).get(RealEstateViewModel.class);
+        mRealEstateViewModel.getSelectedPropertyId().observe(getViewLifecycleOwner(), aLong -> {
+            mRealEstateId = aLong;
+            getPropertyDetails();
+        });
     }
 
     /**
      * Sets observers to fetch the property's attributes and the pictures that have property's id in their attributes
      * into database.
      */
-    private void getPropertyDetails(long realEstateId) {
-        mRealEstateId = realEstateId;
+    private void getPropertyDetails() {
         mRealEstateViewModel.getRealEstate(mRealEstateId).observe(getViewLifecycleOwner(), this::initDetails);
         mRealEstateViewModel.getPictures(mRealEstateId).observe(getViewLifecycleOwner(), this::bindPhotoInRecyclerView);
     }
@@ -203,24 +168,21 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
         mPhotoAdapter = new DetailsPhotoAdapter(mPicturesList, 1);
         mPhotoAdapter.setOnClickListener(view -> {
             PicturesDetailsViewHolder holder = (PicturesDetailsViewHolder) view.getTag();
-            int position = holder.getAdapterPosition();
-            Uri uri = mPicturesList.get(position).getUri();
-            setUriListInMutableLiveData(uri);
+            mSelectedPosition = holder.getAdapterPosition();
+            setUriListInMutableLiveData();
             passPicturesAndUriToFullScreenFragment();
         });
-        mPhotoRecyclerview.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
-        mPhotoRecyclerview.setAdapter(mPhotoAdapter);
+        mBinding.fragmentDetailsRecyclerview.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
+        mBinding.fragmentDetailsRecyclerview.setAdapter(mPhotoAdapter);
     }
 
     /**
      * Fetches the selected item's uri and set a MutableLiveData's value with this uri and mPicturesList.
      */
-    private void setUriListInMutableLiveData(Uri uri) {
+    private void setUriListInMutableLiveData() {
         List<Uri> uriList = new ArrayList<>();
-        uriList.add(uri);
         for (Pictures pictures : mPicturesList) {
-            if (!pictures.getUri().equals(uri))
-                uriList.add(pictures.getUri());
+            uriList.add(pictures.getUri());
         }
         mRealEstateViewModel.addUriList(uriList);
     }
@@ -242,15 +204,15 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
             city = "";
         else
             city = property.getCity();
-        mDescription.setText(property.getDescription());
-        mSurface.setText(Utils.displayAreaUnitAccordingToPreferences(mActivity, property.getSurface()));
-        mRooms.setText(String.valueOf(property.getNbRooms()));
-        mBedrooms.setText(String.valueOf(property.getNbBedrooms()));
-        mBathroom.setText(String.valueOf(property.getNbBathrooms()));
-        mLocation.setText(getString(R.string.adress_details, address, zipcode, city));
-        mFloors.setText(String.valueOf(property.getFloors()));
-        mCoownershipTxt.setText(String.valueOf(property.isCoOwnership()));
-        mConstructionTxt.setText(Utils.convertDateToString(property.getYearConstruction(), mActivity));
+        mBinding.fragmentDetailsDescTxt.setText(property.getDescription());
+        mBinding.fragmentDetailsSurfaceTxt.setText(Utils.displayAreaUnitAccordingToPreferences(mActivity, property.getSurface()));
+        mBinding.fragmentDetailsRoomsTxt.setText(String.valueOf(property.getNbRooms()));
+        mBinding.fragmentDetailsBedroomsTxt.setText(String.valueOf(property.getNbBedrooms()));
+        mBinding.fragmentDetailsBathroomTxt.setText(String.valueOf(property.getNbBathrooms()));
+        mBinding.fragmentDetailsLocationTxt.setText(getString(R.string.adress_details, address, zipcode, city));
+        mBinding.fragmentDetailsFloorsTxt.setText(String.valueOf(property.getFloors()));
+        mBinding.fragmentDetailsCoownershipTxt.setText(String.valueOf(property.isCoOwnership()));
+        mBinding.fragmentDetailsConstructionTxt.setText(Utils.convertDateToString(property.getYearConstruction(), mActivity));
         mLatitude = property.getLatitude();
         mLongitude = property.getLongitude();
         addPropertyPositionOnMap();
@@ -258,25 +220,22 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
 
 
     private void passPicturesAndUriToFullScreenFragment() {
-        if (mListener != null) {
-            mListener.openFullScreenFragment();
-        }
+        NavController mController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+        Bundle args = new Bundle();
+        args.putInt("selectedPosition", mSelectedPosition);
+        mController.navigate(R.id.fullScreenFragment, args);
+        mCallback.takeFullScreenFragment();
     }
 
     private void openAddFragmentToEditRealEstate(long realEstateId) {
-        if (mListener != null) {
-            mListener.openAddFragmentToEditRealEstate(realEstateId);
-        }
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (!getResources().getBoolean(R.bool.isTabletLand)) {
+            NavController mController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+            mController.navigate(DetailsFragmentDirections.actionDetailsFragmentToAddPropertyFragment().setRealEstateId(realEstateId));
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+            NavController mControllerLand = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment2);
+            Bundle args = new Bundle();
+            args.putLong("realEstateId", realEstateId);
+            mControllerLand.navigate(R.id.addPropertyFragment, args);
         }
     }
 
@@ -289,28 +248,34 @@ public class DetailsFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onResume() {
         super.onResume();
-        mMapView.getMapAsync(this);
+        mBinding.fragmentDetailsMapView.getMapAsync(this);
+        mCallback.doNotTakeFullScreen();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof TakeOrNotFullScreen) {
+            mCallback = (TakeOrNotFullScreen) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement TakeFullScreen");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-        void openFullScreenFragment();
-        void openAddFragmentToEditRealEstate(long id);
+        mCallback = null;
     }
 
     @Override
     public void onDestroyView() {
 //        Sets adapters and listeners to null to avoid memory leaks.
-        mPhotoRecyclerview.setAdapter(null);
+        mBinding.fragmentDetailsRecyclerview.setAdapter(null);
         mPhotoAdapter.setOnClickListener(null);
+        mPhotoAdapter = null;
         super.onDestroyView();
-        mUnbinder.unbind();
+        mBinding = null;
     }
-
-
 }

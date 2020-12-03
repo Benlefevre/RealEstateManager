@@ -35,8 +35,8 @@ public interface PropertyDao {
      * Queries the database to get the properties having as attributes the postal code
      * and the country code passed in parameters. Returns a LiveData<Property>
      */
-    @Query("SELECT * FROM Property WHERE mZipCode = :zipCode AND mCountryCode = :countryCode")
-    LiveData<List<Property>> getPropertiesByZipcodeAndCountry(int zipCode, String countryCode);
+    @Query("SELECT * FROM Property WHERE mCity = :cityName AND mCountryCode = :countryCode")
+    LiveData<List<Property>> getPropertiesByCityAndCountry(String cityName, String countryCode);
 
     /**
      * Queries the database to get the properties having as attributes the query contents passed

@@ -13,6 +13,7 @@
     <color name="colorError">#000</color>
     <color name="colorOnError">#000</color>
     <color name="chipColor">#40513931</color>
+    <color name="listSelectedColor">#258E0000</color>
 
 
     <color name="colorPictureTitle">#70000000</color>

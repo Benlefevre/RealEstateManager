@@ -17,16 +17,19 @@
         app:layout_constraintTop_toTopOf="parent"
         android:contentDescription="@string/the_photo_title"/>
 
-
-    <VideoView
-        android:id="@+id/fragment_details_video_view"
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/fragment_details_exoplayer"
         android:layout_width="@dimen/img_view_details_width"
-        android:layout_height="@dimen/img_view_details_height"
+        android:layout_height="@dimen/img_view_details_width"
         android:layout_marginStart="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:controller_layout_id="@layout/pictures_details_video_controller"
+        app:layout_constraintTop_toTopOf="parent"
+        app:resize_mode="fit"
+        app:show_timeout="1000"
+        app:surface_type="texture_view"/>
 
     <TextView
         android:id="@+id/fragment_details_photo_title"

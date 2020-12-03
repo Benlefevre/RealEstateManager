@@ -3,28 +3,23 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/drawer_list"
-            android:icon="@drawable/ic_list"
-            android:title="@string/real_estate_list" />
-
-        <item
-            android:id="@+id/drawer_add"
+            android:id="@+id/addPropertyFragment"
             android:icon="@drawable/ic_add_circle"
             android:title="@string/add_a_real_estate" />
 
         <item
-            android:id="@+id/drawer_localisation"
+            android:id="@+id/mapFragment"
             android:icon="@drawable/ic_map"
             android:title="@string/around_me" />
 
         <item
-            android:id="@+id/drawer_search"
+            android:id="@+id/searchFragment"
             android:icon="@drawable/ic_search"
             android:title="@string/search_a_real_estate" />
     </group>
 
     <item
-        android:id="@+id/drawer_setting"
+        android:id="@+id/settingsFragment"
         android:icon="@drawable/ic_settings"
         android:title="@string/settings" />
 

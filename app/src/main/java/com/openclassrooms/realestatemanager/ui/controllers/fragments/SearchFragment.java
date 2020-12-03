@@ -10,25 +10,24 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.preference.PreferenceManager;
 import androidx.sqlite.db.SimpleSQLiteQuery;
 
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.textfield.TextInputEditText;
 import com.openclassrooms.realestatemanager.R;
+import com.openclassrooms.realestatemanager.databinding.FragmentSearchBinding;
 import com.openclassrooms.realestatemanager.injections.Injection;
 import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
+import com.openclassrooms.realestatemanager.ui.controllers.TakeOrNotFullScreen;
 import com.openclassrooms.realestatemanager.ui.viewmodel.RealEstateViewModel;
 import com.openclassrooms.realestatemanager.utils.Converters;
 import com.openclassrooms.realestatemanager.utils.Utils;
@@ -36,74 +35,13 @@ import com.openclassrooms.realestatemanager.utils.Utils;
 import java.util.Calendar;
 import java.util.Objects;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.Unbinder;
-
 import static com.openclassrooms.realestatemanager.utils.Constants.SEARCH_FRAGMENT;
 
 public class SearchFragment extends Fragment {
 
-    @BindView(R.id.search_price_txt)
-    TextView mPriceTxt;
-    @BindView(R.id.search_surface_txt)
-    TextView mSurfaceTxt;
-    @BindView(R.id.chip_apartment)
-    Chip mChipApartment;
-    @BindView(R.id.chip_loft)
-    Chip mChipLoft;
-    @BindView(R.id.chip_house)
-    Chip mChipHouse;
-    @BindView(R.id.chip_villa)
-    Chip mChipVilla;
-    @BindView(R.id.chip_manor)
-    Chip mChipManor;
-    @BindView(R.id.chipGroupPhoto)
-    ChipGroup mChipGroupPhoto;
-    @BindView(R.id.chip_school)
-    Chip mChipSchool;
-    @BindView(R.id.chip_shop)
-    Chip mChipShop;
-    @BindView(R.id.chip_transport)
-    Chip mChipTransport;
-    @BindView(R.id.chip_garden)
-    Chip mChipGarden;
-    @BindView(R.id.chipGroup_coowner)
-    ChipGroup mChipGroupCoowner;
-    @BindView(R.id.fragment_search_min_price_txt)
-    TextInputEditText mMinPriceTxt;
-    @BindView(R.id.fragment_search_max_price_txt)
-    TextInputEditText mMaxPriceTxt;
-    @BindView(R.id.fragment_search_min_surface_txt)
-    TextInputEditText mMinSurfaceTxt;
-    @BindView(R.id.fragment_search_max_surface_txt)
-    TextInputEditText mMaxSurfaceTxt;
-    @BindView(R.id.chipGroup_rooms)
-    ChipGroup mChipGroupRooms;
-    @BindView(R.id.chipGroup_bedrooms)
-    ChipGroup mChipGroupBedrooms;
-    @BindView(R.id.chipGroup_bathrooms)
-    ChipGroup mChipGroupBathrooms;
-    @BindView(R.id.fragment_search_min_floors_txt)
-    TextInputEditText mMinFloorsTxt;
-    @BindView(R.id.fragment_search_for_sale_txt)
-    TextInputEditText mForSaleTxt;
-    @BindView(R.id.fragment_search_sold_txt)
-    TextInputEditText mSoldTxt;
-    @BindView(R.id.fragment_search_zipcode_txt)
-    TextInputEditText mZipcodeTxt;
-    @BindView(R.id.fragment_search_city_txt)
-    TextInputEditText mCityTxt;
-    @BindView(R.id.fragment_search_search_btn)
-    MaterialButton mSearchBtn;
-    @BindView(R.id.chipGroup_is_sold)
-    ChipGroup mChipGroupIsSold;
-
     private RealEstateViewModel mRealEstateViewModel;
 
     private Activity mActivity;
-    private Unbinder mUnbinder;
 
     private int mZipcodeInput;
     private String mCityInput;
@@ -123,17 +61,11 @@ public class SearchFragment extends Fragment {
     private long mForSaleDate;
     private long mSoldDate;
 
-    private OnFragmentInteractionListener mListener;
+    FragmentSearchBinding mBinding;
+    private TakeOrNotFullScreen mCallback;
 
     public SearchFragment() {
         // Required empty public constructor
-    }
-
-    public static SearchFragment newInstance() {
-        SearchFragment fragment = new SearchFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -142,28 +74,27 @@ public class SearchFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_search, container, false);
-        mUnbinder = ButterKnife.bind(this, view);
-        return view;
+        mBinding = FragmentSearchBinding.inflate(inflater, container, false);
+        return mBinding.getRoot();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mActivity = getActivity();
+        setOnClickListeners();
         Toolbar toolbar = Objects.requireNonNull(mActivity).findViewById(R.id.activity_main_toolbar);
         toolbar.setTitle("Search a real estate");
         configureTextViewAccordingToPreference();
         configureViewModel();
     }
 
-//    Configuring ViewModel
+    //    Configuring ViewModel
     private void configureViewModel() {
         ViewModelFactory viewModelFactory = Injection.providerViewModelFactory(mActivity);
-        mRealEstateViewModel = ViewModelProviders.of((FragmentActivity) mActivity, viewModelFactory).get(RealEstateViewModel.class);
+        mRealEstateViewModel = new ViewModelProvider((FragmentActivity) mActivity, viewModelFactory).get(RealEstateViewModel.class);
     }
 
     /**
@@ -178,7 +109,9 @@ public class SearchFragment extends Fragment {
         getUserCoownerChoice();
         getUserIsSoldChoice();
         getUserTypeChoice();
-        mAmenitiesInput = Utils.getUserAmenitiesChoice(mChipSchool, mChipShop, mChipTransport, mChipGarden);
+        mAmenitiesInput = Utils.getUserAmenitiesChoice(mBinding.chipGroupAmenities.chipSchool,
+                mBinding.chipGroupAmenities.chipShop, mBinding.chipGroupAmenities.chipTransport,
+                mBinding.chipGroupAmenities.chipGarden);
     }
 
     /**
@@ -186,24 +119,24 @@ public class SearchFragment extends Fragment {
      * corresponding  fields.
      */
     private void getUserTextInput() {
-        if (!TextUtils.isEmpty(mZipcodeTxt.getText()))
-            mZipcodeInput = Integer.parseInt(mZipcodeTxt.getText().toString().trim());
-        if (!TextUtils.isEmpty(mCityTxt.getText()))
-            mCityInput = mCityTxt.getText().toString().trim();
-        if (!TextUtils.isEmpty(mMinSurfaceTxt.getText()))
-            mMinSurfaceInput = Utils.convertAreaAccordingToPreferences(mActivity, mMinSurfaceTxt.getText().toString().trim());
-        if (!TextUtils.isEmpty(mMaxSurfaceTxt.getText()))
-            mMaxSurfaceInput = Utils.convertAreaAccordingToPreferences(mActivity, mMaxSurfaceTxt.getText().toString().trim());
-        if (!TextUtils.isEmpty(mMinPriceTxt.getText()))
-            mMinPriceInput = Utils.convertPriceAccordingToPreferences(mActivity, mMinPriceTxt.getText().toString().trim());
-        if (!TextUtils.isEmpty(mMaxPriceTxt.getText()))
-            mMaxPriceInput = Utils.convertPriceAccordingToPreferences(mActivity, mMaxPriceTxt.getText().toString().trim());
-        if (!TextUtils.isEmpty(mMinFloorsTxt.getText()))
-            mFloorsInput = Integer.parseInt(mMinFloorsTxt.getText().toString().trim());
-        if (!TextUtils.isEmpty(mForSaleTxt.getText()))
-            mForSaleDate = Converters.dateToTimestamp(Utils.convertStringToDate(mForSaleTxt.getText().toString().trim()));
-        if (!TextUtils.isEmpty(mSoldTxt.getText()))
-            mSoldDate = Converters.dateToTimestamp(Utils.convertStringToDate(mSoldTxt.getText().toString().trim()));
+        if (!TextUtils.isEmpty(mBinding.fragmentSearchZipcodeTxt.getText()))
+            mZipcodeInput = Integer.parseInt(mBinding.fragmentSearchZipcodeTxt.getText().toString().trim());
+        if (!TextUtils.isEmpty(mBinding.fragmentSearchCityTxt.getText()))
+            mCityInput = mBinding.fragmentSearchCityTxt.getText().toString().trim();
+        if (!TextUtils.isEmpty(mBinding.fragmentSearchMinSurfaceTxt.getText()))
+            mMinSurfaceInput = Utils.convertAreaAccordingToPreferences(mActivity, mBinding.fragmentSearchMinSurfaceTxt.getText().toString().trim());
+        if (!TextUtils.isEmpty(mBinding.fragmentSearchMaxSurfaceTxt.getText()))
+            mMaxSurfaceInput = Utils.convertAreaAccordingToPreferences(mActivity, mBinding.fragmentSearchMaxSurfaceTxt.getText().toString().trim());
+        if (!TextUtils.isEmpty(mBinding.fragmentSearchMinPriceTxt.getText()))
+            mMinPriceInput = Utils.convertPriceAccordingToPreferences(mActivity, mBinding.fragmentSearchMinPriceTxt.getText().toString().trim());
+        if (!TextUtils.isEmpty(mBinding.fragmentSearchMaxPriceTxt.getText()))
+            mMaxPriceInput = Utils.convertPriceAccordingToPreferences(mActivity, mBinding.fragmentSearchMaxPriceTxt.getText().toString().trim());
+        if (!TextUtils.isEmpty(mBinding.fragmentSearchMinFloorsTxt.getText()))
+            mFloorsInput = Integer.parseInt(mBinding.fragmentSearchMinFloorsTxt.getText().toString().trim());
+        if (!TextUtils.isEmpty(mBinding.fragmentSearchForSaleTxt.getText()))
+            mForSaleDate = Converters.dateToTimestamp(Utils.convertStringToDate(mBinding.fragmentSearchForSaleTxt.getText().toString().trim()));
+        if (!TextUtils.isEmpty(mBinding.fragmentSearchSoldTxt.getText()))
+            mSoldDate = Converters.dateToTimestamp(Utils.convertStringToDate(mBinding.fragmentSearchSoldTxt.getText().toString().trim()));
     }
 
     /**
@@ -211,27 +144,27 @@ public class SearchFragment extends Fragment {
      */
     private void getUserTypeChoice() {
         mTypeInput = "(";
-        if (mChipApartment.isChecked()) {
+        if (mBinding.chipApartment.isChecked()) {
             if (!mTypeInput.equals("("))
                 mTypeInput += ", ";
             mTypeInput = mTypeInput + "'Apartment'";
         }
-        if (mChipLoft.isChecked()) {
+        if (mBinding.chipLoft.isChecked()) {
             if (!mTypeInput.equals("("))
                 mTypeInput += ", ";
             mTypeInput += "'Loft'";
         }
-        if (mChipHouse.isChecked()) {
+        if (mBinding.chipHouse.isChecked()) {
             if (!mTypeInput.equals("("))
                 mTypeInput += ", ";
             mTypeInput += "'House'";
         }
-        if (mChipVilla.isChecked()) {
+        if (mBinding.chipVilla.isChecked()) {
             if (!mTypeInput.equals("("))
                 mTypeInput += ", ";
             mTypeInput += "'Villa'";
         }
-        if (mChipManor.isChecked()) {
+        if (mBinding.chipManor.isChecked()) {
             if (!mTypeInput.equals("("))
                 mTypeInput += ", ";
             mTypeInput += "'Manor'";
@@ -243,16 +176,13 @@ public class SearchFragment extends Fragment {
      * Verifies which chip of the ChipGroup is checked and defines the mChipCoownerInput's value.
      */
     private void getUserCoownerChoice() {
-        switch (mChipGroupCoowner.getCheckedChipId()) {
-            case R.id.chip_yes:
-                mChipCoownerInput = 1;
-                break;
-            case R.id.chip_no:
-                mChipCoownerInput = 0;
-                break;
-            default:
-                mChipCoownerInput = 10;
-                break;
+        int checkedChipId = mBinding.chipGroupCoowner.getCheckedChipId();
+        if (checkedChipId == R.id.chip_yes) {
+            mChipCoownerInput = 1;
+        } else if (checkedChipId == R.id.chip_no) {
+            mChipCoownerInput = 0;
+        } else {
+            mChipCoownerInput = 10;
         }
     }
 
@@ -260,16 +190,13 @@ public class SearchFragment extends Fragment {
      * Verifies which chip of the ChipGroup is checked and defines the mChipIsSoldInput's value.
      */
     private void getUserIsSoldChoice() {
-        switch (mChipGroupIsSold.getCheckedChipId()) {
-            case R.id.chip_yes_sold:
-                mChipIsSoldInput = 1;
-                break;
-            case R.id.chip_no_sold:
-                mChipIsSoldInput = 0;
-                break;
-            default:
-                mChipIsSoldInput = 10;
-                break;
+        int checkedChipId = mBinding.chipGroupIsSold.getCheckedChipId();
+        if (checkedChipId == R.id.chip_yes_sold) {
+            mChipIsSoldInput = 1;
+        } else if (checkedChipId == R.id.chip_no_sold) {
+            mChipIsSoldInput = 0;
+        } else {
+            mChipIsSoldInput = 10;
         }
     }
 
@@ -277,25 +204,19 @@ public class SearchFragment extends Fragment {
      * Verifies which chip of the ChipGroup is checked and defines the mChipBathroomsInput's value.
      */
     private void getUserBathroomsChoice() {
-        switch (mChipGroupBathrooms.getCheckedChipId()) {
-            case R.id.chip_1_bathroom:
-                mChipBathroomsInput = 1;
-                break;
-            case R.id.chip_2_bathrooms:
-                mChipBathroomsInput = 2;
-                break;
-            case R.id.chip_3_bathrooms:
-                mChipBathroomsInput = 3;
-                break;
-            case R.id.chip_4_bathrooms:
-                mChipBathroomsInput = 4;
-                break;
-            case R.id.chip_5_bathrooms:
-                mChipBathroomsInput = 5;
-                break;
-            default:
-                mChipBathroomsInput = 0;
-                break;
+        int checkedChipId = mBinding.chipGroupBathrooms.getCheckedChipId();
+        if (checkedChipId == R.id.chip_1_bathroom) {
+            mChipBathroomsInput = 1;
+        } else if (checkedChipId == R.id.chip_2_bathrooms) {
+            mChipBathroomsInput = 2;
+        } else if (checkedChipId == R.id.chip_3_bathrooms) {
+            mChipBathroomsInput = 3;
+        } else if (checkedChipId == R.id.chip_4_bathrooms) {
+            mChipBathroomsInput = 4;
+        } else if (checkedChipId == R.id.chip_5_bathrooms) {
+            mChipBathroomsInput = 5;
+        } else {
+            mChipBathroomsInput = 0;
         }
     }
 
@@ -303,25 +224,19 @@ public class SearchFragment extends Fragment {
      * Verifies which chip of the ChipGroup is checked and defines the mChipBedroomsInput's value.
      */
     private void getUserBedroomsChoice() {
-        switch (mChipGroupBedrooms.getCheckedChipId()) {
-            case R.id.chip_1_bedroom:
-                mChipBedroomsInput = 1;
-                break;
-            case R.id.chip_2_bedrooms:
-                mChipBedroomsInput = 2;
-                break;
-            case R.id.chip_3_bedrooms:
-                mChipBedroomsInput = 3;
-                break;
-            case R.id.chip_4_bedrooms:
-                mChipBedroomsInput = 4;
-                break;
-            case R.id.chip_5_bedrooms:
-                mChipBedroomsInput = 5;
-                break;
-            default:
-                mChipBedroomsInput = 0;
-                break;
+        int checkedChipId = mBinding.chipGroupBedrooms.getCheckedChipId();
+        if (checkedChipId == R.id.chip_1_bedroom) {
+            mChipBedroomsInput = 1;
+        } else if (checkedChipId == R.id.chip_2_bedrooms) {
+            mChipBedroomsInput = 2;
+        } else if (checkedChipId == R.id.chip_3_bedrooms) {
+            mChipBedroomsInput = 3;
+        } else if (checkedChipId == R.id.chip_4_bedrooms) {
+            mChipBedroomsInput = 4;
+        } else if (checkedChipId == R.id.chip_5_bedrooms) {
+            mChipBedroomsInput = 5;
+        } else {
+            mChipBedroomsInput = 0;
         }
     }
 
@@ -329,25 +244,19 @@ public class SearchFragment extends Fragment {
      * Verifies which chip of the ChipGroup is checked and defines the mChipRoomsInput's value.
      */
     private void getUserRoomChoice() {
-        switch (mChipGroupRooms.getCheckedChipId()) {
-            case R.id.chip_1_room:
-                mChipRoomsInput = 1;
-                break;
-            case R.id.chip_2_rooms:
-                mChipRoomsInput = 2;
-                break;
-            case R.id.chip_3_rooms:
-                mChipRoomsInput = 3;
-                break;
-            case R.id.chip_4_rooms:
-                mChipRoomsInput = 4;
-                break;
-            case R.id.chip_5_rooms:
-                mChipRoomsInput = 5;
-                break;
-            default:
-                mChipRoomsInput = 0;
-                break;
+        int checkedChipId = mBinding.chipGroupRooms.getCheckedChipId();
+        if (checkedChipId == R.id.chip_1_room) {
+            mChipRoomsInput = 1;
+        } else if (checkedChipId == R.id.chip_2_rooms) {
+            mChipRoomsInput = 2;
+        } else if (checkedChipId == R.id.chip_3_rooms) {
+            mChipRoomsInput = 3;
+        } else if (checkedChipId == R.id.chip_4_rooms) {
+            mChipRoomsInput = 4;
+        } else if (checkedChipId == R.id.chip_5_rooms) {
+            mChipRoomsInput = 5;
+        } else {
+            mChipRoomsInput = 0;
         }
     }
 
@@ -355,19 +264,15 @@ public class SearchFragment extends Fragment {
      * Verifies which chip of the ChipGroup is checked and defines the mChipPhotoInput's value.
      */
     private void getUserPhotoChoice() {
-        switch (mChipGroupPhoto.getCheckedChipId()) {
-            case R.id.chip_1_photo:
-                mChipPhotoInput = 1;
-                break;
-            case R.id.chip_3_photo:
-                mChipPhotoInput = 3;
-                break;
-            case R.id.chip_5_photo:
-                mChipPhotoInput = 5;
-                break;
-            default:
-                mChipPhotoInput = 0;
-                break;
+        int checkedChipId = mBinding.chipGroupPhoto.getCheckedChipId();
+        if (checkedChipId == R.id.chip_1_photo) {
+            mChipPhotoInput = 1;
+        } else if (checkedChipId == R.id.chip_3_photo) {
+            mChipPhotoInput = 3;
+        } else if (checkedChipId == R.id.chip_5_photo) {
+            mChipPhotoInput = 5;
+        } else {
+            mChipPhotoInput = 0;
         }
     }
 
@@ -380,14 +285,14 @@ public class SearchFragment extends Fragment {
         String currency = preferences.getString("currency", "$");
 
         if (area.equals("sq ft"))
-            mSurfaceTxt.setText(R.string.surface_sqft);
+            mBinding.searchSurfaceTxt.setText(R.string.surface_sqft);
         else
-            mSurfaceTxt.setText(R.string.surface_m2);
+            mBinding.searchSurfaceTxt.setText(R.string.surface_m2);
 
         if (currency.equals("$"))
-            mPriceTxt.setText(R.string.price_dollars);
+            mBinding.searchPriceTxt.setText(R.string.price_dollars);
         else
-            mPriceTxt.setText(R.string.price_euros);
+            mBinding.searchPriceTxt.setText(R.string.price_euros);
     }
 
     /**
@@ -399,23 +304,19 @@ public class SearchFragment extends Fragment {
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         DatePickerDialog datePickerDialog = new DatePickerDialog(mActivity, (datePicker, year1, month1, day1) -> {
-            switch (view.getId()) {
-                case R.id.fragment_search_for_sale_txt:
-                    mForSaleTxt.setText(getString(R.string.hour_format, day1, month1 + 1, year1));
-                    break;
-                case R.id.fragment_search_sold_txt:
-                    mSoldTxt.setText(getString(R.string.hour_format, day1, month1 + 1, year1));
-                    break;
+            int id = view.getId();
+            if (id == R.id.fragment_search_for_sale_txt) {
+                mBinding.fragmentSearchForSaleTxt.setText(getString(R.string.hour_format, day1, month1 + 1, year1));
+            } else if (id == R.id.fragment_search_sold_txt) {
+                mBinding.fragmentSearchSoldTxt.setText(getString(R.string.hour_format, day1, month1 + 1, year1));
             }
         }, year, month, day);
         datePickerDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Delete Date", (dialogInterface, i) -> {
-            switch (view.getId()) {
-                case R.id.fragment_search_for_sale_txt:
-                    mForSaleTxt.setText(null);
-                    break;
-                case R.id.fragment_search_sold_txt:
-                    mSoldTxt.setText(null);
-                    break;
+            int id = view.getId();
+            if (id == R.id.fragment_search_for_sale_txt) {
+                mBinding.fragmentSearchForSaleTxt.setText(null);
+            } else if (id == R.id.fragment_search_sold_txt) {
+                mBinding.fragmentSearchSoldTxt.setText(null);
             }
         });
         datePickerDialog.show();
@@ -426,19 +327,19 @@ public class SearchFragment extends Fragment {
      */
     private void fetchPropertiesAccordingToUserInput() {
         String query = "SELECT * FROM Property WHERE mId > 0";
-        if (!TextUtils.isEmpty(mZipcodeTxt.getText()))
+        if (!TextUtils.isEmpty(mBinding.fragmentSearchZipcodeTxt.getText()))
             query += " AND mZipCode = " + mZipcodeInput;
-        if (!TextUtils.isEmpty(mCityTxt.getText()))
+        if (!TextUtils.isEmpty(mBinding.fragmentSearchCityTxt.getText()))
             query += " AND Property.mCity LIKE " + "'%" + mCityInput + "%'";
-        if (!TextUtils.isEmpty(mMinSurfaceTxt.getText()))
+        if (!TextUtils.isEmpty(mBinding.fragmentSearchMinSurfaceTxt.getText()))
             query += " AND Property.mSurface >= " + mMinSurfaceInput;
-        if (!TextUtils.isEmpty(mMaxSurfaceTxt.getText()))
+        if (!TextUtils.isEmpty(mBinding.fragmentSearchMaxSurfaceTxt.getText()))
             query += " AND Property.mSurface <= " + mMaxSurfaceInput;
-        if (!TextUtils.isEmpty(mMinPriceTxt.getText()))
+        if (!TextUtils.isEmpty(mBinding.fragmentSearchMinPriceTxt.getText()))
             query += " AND Property.mPrice >= " + mMinPriceInput;
-        if (!TextUtils.isEmpty(mMaxPriceTxt.getText()))
+        if (!TextUtils.isEmpty(mBinding.fragmentSearchMaxPriceTxt.getText()))
             query += " AND Property.mPrice <= " + mMaxPriceInput;
-        if (!TextUtils.isEmpty(mMinFloorsTxt.getText()))
+        if (!TextUtils.isEmpty(mBinding.fragmentSearchMinFloorsTxt.getText()))
             query += " AND Property.mFloors >= " + mFloorsInput;
         if (!mTypeInput.equals("()"))
             query += " AND Property.mTypeProperty IN " + mTypeInput;
@@ -479,63 +380,53 @@ public class SearchFragment extends Fragment {
     private void fetchPropertiesAccordingToCriteria(String query) {
         mRealEstateViewModel.getRealEstateAccordingUserSearch(new SimpleSQLiteQuery(query)).observe(getViewLifecycleOwner(), realEstates -> {
             if (realEstates.isEmpty())
-                Snackbar.make(mActivity.findViewById(R.id.activity_main_container), getString(R.string.sorry_no_result), Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(mActivity.findViewById(R.id.nav_host_fragment), getString(R.string.sorry_no_result), Snackbar.LENGTH_SHORT).show();
             else {
                 mRealEstateViewModel.addPropertyList(realEstates);
-                if (mListener != null) {
-                    mListener.passSearchedRealEstate();
-                }
+                NavController mController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+                SearchFragmentDirections.ActionSearchFragmentToPropertyListFragment action =
+                        SearchFragmentDirections.actionSearchFragmentToPropertyListFragment();
+                action.setOrigin(SEARCH_FRAGMENT);
+                mController.navigate(action);
             }
         });
     }
 
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof TakeOrNotFullScreen) {
+            mCallback = (TakeOrNotFullScreen) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement TakeFullScreen");
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        mCallback = null;
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mUnbinder.unbind();
+        mBinding = null;
     }
 
     @Override
     public void onResume() {
-        if (getResources().getBoolean(R.bool.isTabletLand))
-            mListener.checkVisibility(SEARCH_FRAGMENT);
         super.onResume();
+        mCallback.takeFullScreenFragment();
     }
 
-    @OnClick({R.id.fragment_search_for_sale_txt, R.id.fragment_search_sold_txt, R.id.fragment_search_search_btn})
-    void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.fragment_search_for_sale_txt:
-            case R.id.fragment_search_sold_txt:
-                displayDatePickerAndUpdateUi(view);
-                break;
-            case R.id.fragment_search_search_btn:
-                getUserInput();
-                fetchPropertiesAccordingToUserInput();
-                break;
-        }
-    }
-
-    public interface OnFragmentInteractionListener {
-        void passSearchedRealEstate();
-        void checkVisibility(String destination);
+    void setOnClickListeners() {
+        mBinding.fragmentSearchForSaleTxt.setOnClickListener(this::displayDatePickerAndUpdateUi);
+        mBinding.fragmentSearchSoldTxt.setOnClickListener(this::displayDatePickerAndUpdateUi);
+        mBinding.fragmentSearchSearchBtn.setOnClickListener(v -> {
+            getUserInput();
+            fetchPropertiesAccordingToUserInput();
+        });
     }
 }

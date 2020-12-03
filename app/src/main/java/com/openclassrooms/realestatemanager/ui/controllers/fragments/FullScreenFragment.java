@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager.ui.controllers.fragments;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,58 +13,51 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.viewpager.widget.ViewPager;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
+import androidx.recyclerview.widget.SnapHelper;
 
 import com.openclassrooms.realestatemanager.R;
+import com.openclassrooms.realestatemanager.databinding.FragmentFullScreenPhotoBinding;
 import com.openclassrooms.realestatemanager.injections.Injection;
 import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
-import com.openclassrooms.realestatemanager.ui.adapters.FullScreenViewPagerAdapter;
+import com.openclassrooms.realestatemanager.ui.adapters.FullScreenAdapter;
+import com.openclassrooms.realestatemanager.ui.adapters.OnSnapPositionChangeListener;
+import com.openclassrooms.realestatemanager.ui.adapters.SnapOnScrollListener;
 import com.openclassrooms.realestatemanager.ui.viewmodel.RealEstateViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
+public class FullScreenFragment extends Fragment implements OnSnapPositionChangeListener {
 
-
-public class FullScreenFragment extends Fragment {
-
-    @BindView(R.id.fragment_fullscreen_viewpager)
-    ViewPager mViewPager;
-
-    private Unbinder mUnbinder;
     private List<Uri> mUriList;
     private Activity mActivity;
     private RealEstateViewModel mRealEstateViewModel;
-
+    FragmentFullScreenPhotoBinding mBinding;
+    FullScreenAdapter mAdapter;
+    int mSelectedPosition;
 
     public FullScreenFragment() {
         // Required empty public constructor
     }
 
-    public static FullScreenFragment newInstance(){
-        FullScreenFragment fragment = new FullScreenFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getArguments() != null){
+            mSelectedPosition = FullScreenFragmentArgs.fromBundle(getArguments()).getSelectedPosition();
+        }
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_full_screen_photo, container, false);
-        mUnbinder = ButterKnife.bind(this, view);
-        return view;
+        mBinding = FragmentFullScreenPhotoBinding.inflate(inflater,container,false);
+        return mBinding.getRoot();
     }
 
     @Override
@@ -79,7 +73,7 @@ public class FullScreenFragment extends Fragment {
 //    Configuring ViewModel
     private void configureViewModel() {
         ViewModelFactory viewModelFactory = Injection.providerViewModelFactory(mActivity);
-        mRealEstateViewModel = ViewModelProviders.of((FragmentActivity) mActivity, viewModelFactory).get(RealEstateViewModel.class);
+        mRealEstateViewModel = new ViewModelProvider((FragmentActivity) mActivity, viewModelFactory).get(RealEstateViewModel.class);
     }
 
     /**
@@ -87,24 +81,34 @@ public class FullScreenFragment extends Fragment {
      */
     private void getUriList(){
         mUriList = new ArrayList<>();
-        mRealEstateViewModel.getUriList().observe(getViewLifecycleOwner(),this::configureViewPager);
+        mRealEstateViewModel.getUriList().observe(getViewLifecycleOwner(),this::configureRecyclerView);
     }
 
-    /**
-     * Gets the MutableLiveData's content and add it in mUriList that is used to set the ViewPager's
-     * adapter.
-     */
-    private void configureViewPager(List<Uri> uriList) {
+    private void configureRecyclerView(List<Uri> uriList){
         mUriList = new ArrayList<>();
         mUriList.addAll(uriList);
-        FullScreenViewPagerAdapter adapter = new FullScreenViewPagerAdapter(mActivity,mUriList);
-        mViewPager.setAdapter(adapter);
+        SnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(mBinding.fragmentFullscreenRecycler);
+        mAdapter = new FullScreenAdapter(mUriList);
+        mBinding.fragmentFullscreenRecycler.setLayoutManager(new LinearLayoutManager(requireActivity(),LinearLayoutManager.HORIZONTAL,false));
+        mBinding.fragmentFullscreenRecycler.setAdapter(mAdapter);
+        SnapOnScrollListener snapOnScrollListener = new SnapOnScrollListener(snapHelper,SnapOnScrollListener.Behavior.NOTIFY_ON_SCROLL,this);
+        mBinding.fragmentFullscreenRecycler.addOnScrollListener(snapOnScrollListener);
+        mBinding.fragmentFullscreenRecycler.getLayoutManager().scrollToPosition(mSelectedPosition);
     }
 
     @Override
     public void onDestroyView() {
-        mViewPager.setAdapter(null);
+        mBinding.fragmentFullscreenRecycler.setAdapter(null);
+        mAdapter = null;
         super.onDestroyView();
-        mUnbinder.unbind();
+        mBinding = null;
+    }
+
+    @Override
+    public void onSnapPositionChange(int lastPosition, int newPosition) {
+        Log.i("player", "last position : " + lastPosition + " / new position : " + newPosition);
+        mAdapter.pausePlayer(lastPosition);
+        mAdapter.reloadPlayer(newPosition);
     }
 }

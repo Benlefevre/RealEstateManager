@@ -27,8 +27,8 @@ public class PropertyDataRepository {
     }
 
 //    Get
-    public LiveData<List<Property>> getRealEstateByZipcodeAndCountry(int zipcode, String countryCode){
-        return mPropertyDao.getPropertiesByZipcodeAndCountry(zipcode, countryCode);
+    public LiveData<List<Property>> getRealEstateByCityAndCountry(String cityName, String countryCode){
+        return mPropertyDao.getPropertiesByCityAndCountry(cityName, countryCode);
     }
 
 //    Get

@@ -25,7 +25,7 @@ public class PropertyDaoTest {
 
     private RealEstateManagerDatabase mRealEstateManagerDatabase;
 
-    private static Property sPropertyDemo = new Property("apartment",3450000,
+    private static final Property sPropertyDemo = new Property("apartment",3450000,
             130,4,3,2,"Test description","Test Address",
             75000, "FR", 0, 0 ,"Paris","School, Supermarket ",false,new Date(), null,
             "Benoit Lefèvre", null, 3, true,3);

@@ -142,6 +142,7 @@
     <string name="details_pictures">Details pictures</string>
     <string name="delete_date">Delete Date</string>
     <string name="sorry_no_result">Sorry, there is no results</string>
+    <string name="verify_for_geocoder">Please verify your network access to save the coordonates of the property</string>
 
 
     <string-array name="typeProperty">

@@ -18,8 +18,8 @@
 
         <ImageView
             android:id="@+id/item_photo_img"
-            android:layout_width="125dp"
-            android:layout_height="125dp"
+            android:layout_width="250dp"
+            android:layout_height="150dp"
             android:contentDescription="@string/realestate_photo"
             android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"

@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/viewpager_root"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <VideoView
-        android:id="@+id/viewpager_video_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <com.google.android.exoplayer2.ui.StyledPlayerView
+        android:id="@+id/viewpager_exo_player"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_centerInParent="true" />
+        android:layout_centerInParent="true"
+        app:resize_mode="fill"
+        app:use_sensor_rotation="false"/>
 
     <ImageView
         android:id="@+id/viewpager_img_view"
