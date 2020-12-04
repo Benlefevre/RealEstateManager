@@ -74,19 +74,19 @@ You can find a french documentation video  at :
 
 ![add screen](assets/screenshots/add.webp)
 
-## Media permissions
+### Media permissions
 
 ![perm screen](assets/screenshots/photoperm.webp)
 
-## Dialog media choice
+### Dialog media choice
 
 ![dialog1 screen](assets/screenshots/dialogchoice.webp)
 
-## Dialog media source
+### Dialog media source
 
 ![dialog2 screen](assets/screenshots/dialogchoice2.webp)
 
-## Dialog save media
+### Dialog save media
 
 ![savepic screen](assets/screenshots/savepic.webp)
 
