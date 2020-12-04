@@ -87,10 +87,6 @@ public class PropertyListFragment extends Fragment {
             getSearchedRealEstate();
         else
             getAllRealEstate();
-////        If the device is a tablet in landscape mode, fetches the selected property's id defines in
-////        a ViewModel's MutableLiveData to open the right fragment when user clicks on a toolbar's item
-//        if (getResources().getBoolean(R.bool.isTabletLand))
-//            getSelectedRealEstateId();
         Toolbar toolbar = Objects.requireNonNull(mActivity).findViewById(R.id.activity_main_toolbar);
         toolbar.setTitle("Real Estate Manager");
     }
@@ -104,24 +100,29 @@ public class PropertyListFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         NavController controller = Navigation.findNavController(mActivity, R.id.nav_host_fragment);
-        NavOptions navOptions = new NavOptions.Builder()
-                .setEnterAnim(R.anim.slide_in_left)
-                .setPopExitAnim(R.anim.slide_out_letf)
-                .build();
         if (item.getItemId() == R.id.fragment_list_edit) {
             Bundle args = new Bundle();
             args.putLong("realEstateId", mRealEstateId);
-            controller.navigate(R.id.addPropertyFragment, args,navOptions);
+            controller.navigate(R.id.addPropertyFragment, args,getNavOptions());
             return true;
         } else if (item.getItemId() == R.id.fragment_list_search_btn) {
-            controller.navigate(R.id.searchFragment,null,navOptions);
+            controller.navigate(R.id.searchFragment,null,getNavOptions());
             return true;
         } else if (item.getItemId() == R.id.fragment_list_add_btn) {
-            controller.navigate(R.id.addPropertyFragment,null,navOptions);
+            controller.navigate(R.id.addPropertyFragment,null,getNavOptions());
             return true;
         } else {
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    private NavOptions getNavOptions(){
+        return new NavOptions.Builder()
+                .setEnterAnim(R.anim.slide_in_top)
+                .setExitAnim(R.anim.slide_out_top)
+                .setPopEnterAnim(R.anim.slide_in_bottom)
+                .setPopExitAnim(R.anim.slide_out_bottom)
+                .build();
     }
 
     //    Configuring ViewModel

@@ -7,6 +7,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -222,7 +223,11 @@ public class AgentLocationFragment extends Fragment implements OnMapReadyCallbac
 
     @Override
     public void onResume() {
+        Log.i("test", "onresume");
         mBinding.fragmentAgentLocationMapview.onResume();
+        if(mLastKnownLocation != null){
+            getTheCountryCodeAndZipCode(mLastKnownLocation);
+        }
         mCallback.takeFullScreenFragment();
         super.onResume();
     }

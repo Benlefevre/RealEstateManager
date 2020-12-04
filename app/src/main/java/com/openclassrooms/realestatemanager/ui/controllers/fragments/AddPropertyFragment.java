@@ -935,4 +935,5 @@ public class AddPropertyFragment extends Fragment implements AdapterView.OnItemC
         super.onResume();
         mCallback.takeFullScreenFragment();
     }
+
 }

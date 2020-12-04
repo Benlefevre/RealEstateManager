@@ -68,10 +68,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        NavOptions navoptions = new NavOptions.Builder()
-                .setEnterAnim(R.anim.slide_in_left)
-                .setPopExitAnim(R.anim.slide_out_letf)
-                .build();
         int itemId = item.getItemId();
         if (itemId == R.id.mapFragment) {
             verifyIfNetworkAccessEnabled();
@@ -79,13 +75,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 getPermissionsAccessLocation();
             }
         } else if (itemId == R.id.addPropertyFragment) {
-            mNavController.navigate(R.id.addPropertyFragment,null,navoptions);
+            mNavController.navigate(R.id.addPropertyFragment,null,getNavOptions());
             binding.activityHomeDrawer.close();
         } else if (itemId == R.id.searchFragment) {
-            mNavController.navigate(R.id.searchFragment,null,navoptions);
+            mNavController.navigate(R.id.searchFragment,null,getNavOptions());
             binding.activityHomeDrawer.close();
         } else if (itemId == R.id.settingsFragment) {
-            mNavController.navigate(R.id.settingsFragment,null,navoptions);
+            mNavController.navigate(R.id.settingsFragment,null,getNavOptions());
             binding.activityHomeDrawer.close();
         }
         return true;
@@ -94,7 +90,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private NavOptions getNavOptions(){
         return new NavOptions.Builder()
                 .setEnterAnim(R.anim.slide_in_left)
-                .setPopExitAnim(R.anim.slide_out_letf)
+                .setExitAnim(R.anim.slide_out_right)
+                .setPopEnterAnim(R.anim.slide_in_right)
+                .setPopExitAnim(R.anim.slide_out_left)
                 .build();
     }
 

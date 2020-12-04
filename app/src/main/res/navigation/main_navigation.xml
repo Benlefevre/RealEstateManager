@@ -18,8 +18,10 @@
         <action
             android:id="@+id/action_propertyListFragment_to_detailsFragment"
             app:destination="@id/detailsFragment"
-            app:enterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_letf" />
+            app:enterAnim="@anim/slide_in_top"
+            app:exitAnim="@anim/slide_out_top"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_bottom" />
     </fragment>
     <fragment
         android:id="@+id/detailsFragment"
@@ -38,8 +40,10 @@
         <action
             android:id="@+id/action_detailsFragment_to_addPropertyFragment"
             app:destination="@id/addPropertyFragment"
-            app:enterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_letf" />
+            app:enterAnim="@anim/slide_in_top"
+            app:exitAnim="@anim/slide_out_top"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_bottom" />
     </fragment>
     <fragment
         android:id="@+id/fullScreenFragment"
@@ -73,7 +77,7 @@
             app:destination="@id/detailsFragment"
             app:enterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right"
-            app:popUpTo="@id/propertyListFragment" />
+            app:popUpTo="@id/agentLocationFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -83,8 +87,8 @@
         <action
             android:id="@+id/action_searchFragment_to_propertyListFragment"
             app:destination="@id/propertyListFragment"
-            app:enterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_letf"
+            app:enterAnim="@anim/slide_in_top"
+            app:popExitAnim="@anim/slide_out_bottom"
             app:popUpTo="@id/searchFragment" />
     </fragment>
 
